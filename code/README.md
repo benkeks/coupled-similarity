@@ -12,13 +12,13 @@ Building the web tool
 ---------------------
 The web tool can be built using `sbt webStage`. After that, `web/target/web/stage/index.html` contains the tool.
 
-Test of the algorithms on a set of transition systems are triggered by `sbt test`. (Unfortunately, the node.js integration in the project is a little unfirm. It may be that you have to manually install node.js modules for the tests to run, for example, `npm install jsdom` in the `code` directory.)
+Tests of the algorithms on a set of transition systems are triggered by `sbt test`. (Unfortunately, the node.js integration in the project is a little unfirm. It may be that you have to manually install node.js modules for the tests to run, for example, `npm install jsdom` in the `code` directory.)
 
 (You will need sbt. For installation instructions, go to <https://www.scala-sbt.org/download.html>.)
 
 The Apache Flink program
 ------------------------
-A program to compute coupled simulation reslations using Apache Flink, can be used via `sbt flink/run`.
+A program to compute coupled simulation reslations using Apache Flink can be used via `sbt flink/run`.
 
 The program takes the following arguments:
 
@@ -35,4 +35,4 @@ Switch                   | Effect
 
 (Arguments are channelled through sbt like this: `sbt "flink/run --ts myTransitionSystem.csv"`)
 
-Test can be run by `sbt flink/test`.
+Tests can be run by `sbt flink/test`.

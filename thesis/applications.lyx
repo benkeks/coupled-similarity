@@ -1,0 +1,171 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass report
+\begin_preamble
+\input{preamble}
+\end_preamble
+\use_default_options true
+\master ../../../Dokumente/coupledsim/thesis/main.lyx
+\begin_modules
+logicalmkup
+fixltx2e
+algorithm2e
+fixme
+theorems-ams
+theorems-ams-extended
+theorems-chap
+\end_modules
+\maintain_unincluded_children false
+\language american
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 1
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle plain
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Chapter
+Applications
+\end_layout
+
+\begin_layout Standard
+x
+\end_layout
+
+\begin_layout Section
+Minimization and Canonical Representatives
+\end_layout
+
+\begin_layout Standard
+One of the key applications of equivalence 
+\end_layout
+
+\begin_layout Standard
+minimzation wrt.
+ amount of states, transitions?
+\end_layout
+
+\begin_layout Standard
+canonical representative by increasing the amount of transitions? (closure)S
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ehstz2013quotients"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Minimal Systems
+\end_layout
+
+\begin_layout Subsection
+Building Quotient Systems
+\end_layout
+
+\begin_layout Section
+Proofs
+\end_layout
+
+\begin_layout Standard
+Congruencies
+\end_layout
+
+\begin_layout Standard
+WB and CS no Congruence on CCS (initial tau!) – WS is a congruence 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "p.~173"
+key "sangiorgi2012"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+CS Congruence on asynchronous 
+\begin_inset Formula $\pi$
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "Prop.\\ 2.4.4"
+key "nestmann1996decoding"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Rooting Transformation
+\end_layout
+
+\end_body
+\end_document

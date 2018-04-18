@@ -1,0 +1,49 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{csquotes}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{isabelle,isabellesym}
+
+\usepackage{color}
+
+\usepackage[top=3cm,bottom=4.5cm]{geometry}
+
+% this should be the last package used
+\usepackage{pdfsetup}
+
+% urls in roman style, theory text in isabelle-similar-similar type-writer
+\urlstyle{rm}
+\isabellestyle{tt}
+
+\title{ Coupled Similarity and Friends\footnote{This theory accompanies Benjamin Bisping's master's thesis ``Computing Coupled Similarity'', which can be found on \url{https://coupledsim.bbisping.de/bisping_computingCoupledSimilarity_thesis.pdf}.} }
+\author{ Benjamin Bisping }
+%
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+This theory surveys a range of definitions of \emph{coupled simulation} from the literature, and proves properties relevant for algorithms computing coupled simulations.
+We provide a linear reduction of deciding weak simulation to coupled simulation.
+Moreover, we verify a polynomial-time coinductive fixed-point algorithm computing the coupled simulation preorder.
+We additionally characterize the coupled simulation preorder by a simple game.
+
+\end{abstract}
+
+\newpage
+
+\tableofcontents
+\newpage
+
+% include generated text of all theories
+\input{session}
+
+% \bibliographystyle{abbrv}
+% \bibliography{root}
+
+\end{document}

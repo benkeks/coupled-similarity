@@ -1,0 +1,1591 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass report
+\begin_preamble
+\input{preamble}
+
+%\fxsetup{draft}
+
+% lyx / algorithm2e ignores these settings for some reason :(
+\SetAlCapSty{textnormal}
+\SetArgSty{textnormal}
+\SetProgSty{textnormal}
+\SetFuncArgSty{textnormal}
+
+\LinesNumbered
+\DontPrintSemicolon
+\SetKwProg{For}{for}{\string:}{}
+\SetKwProg{Fn}{def}{\string:}{}
+\SetKwProg{While}{while}{\string:}{}
+\SetKwIF{If}{ElseIf}{Else}{if}{\string:}{elif}{else\string:}{}%
+\end_preamble
+\options intoc, english
+\use_default_options true
+\begin_modules
+logicalmkup
+fixltx2e
+algorithm2e
+theorems-ams
+theorems-ams-extended
+theorems-chap
+fix-cm
+fixme
+\end_modules
+\maintain_unincluded_children false
+\language american
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "lmtt" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format pdf2
+\output_sync 1
+\output_sync_macro "\synctex=-1"
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing other 1.2
+\use_hyperref true
+\pdf_title "Computing Coupled Similarity"
+\pdf_author "Benjamin Bisping"
+\pdf_keywords "Coupled Similarity, Simulation, Weak Bisimulation"
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks true
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref page
+\pdf_pdfusetitle true
+\papersize a4paper
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 0
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 4cm
+\topmargin 3cm
+\rightmargin 4cm
+\bottommargin 3cm
+\secnumdepth 3
+\tocdepth 1
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle plain
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{titlepage}
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+centering
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+includegraphics[width=0.3
+\backslash
+textwidth]{img/tuberlin.pdf}
+\backslash
+par
+\backslash
+vspace{0.7cm}
+\end_layout
+
+\begin_layout Plain Layout
+
+	{
+\backslash
+scshape
+\backslash
+LARGE Technische Universität Berlin 
+\backslash
+
+\backslash
+ 
+\backslash
+large Fakultät IV -- Elektrotechnik und Informatik 
+\backslash
+
+\backslash
+ Modelle und Theorie Verteilter Systeme 
+\backslash
+par}
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+vfill
+\end_layout
+
+\begin_layout Plain Layout
+
+	{
+\backslash
+scshape
+\backslash
+Large Master's Thesis
+\backslash
+par}
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+vspace{2cm}
+\end_layout
+
+\begin_layout Plain Layout
+
+	{
+\backslash
+huge
+\backslash
+bfseries Computing Coupled Similarity
+\backslash
+par}
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+vspace{2cm}
+\end_layout
+
+\begin_layout Plain Layout
+
+	{
+\backslash
+Large 
+\backslash
+textsc{Benjamin Bisping}
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+large ID: 321187 
+\backslash
+hspace{5pt}
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+url{info@bbisping.de}
+\backslash
+par}
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+vfill
+\end_layout
+
+\begin_layout Plain Layout
+
+	Supervised by
+\backslash
+par
+\end_layout
+
+\begin_layout Plain Layout
+
+	Prof.~Dr.~Uwe 
+\backslash
+textsc{Nestmann}
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	Prof.~Dr.~Holger 
+\backslash
+textsc{Hermanns}
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+vfill
+\end_layout
+
+\begin_layout Plain Layout
+
+	{
+\backslash
+large Berlin
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+    April 2018
+\backslash
+par}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{titlepage}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+pagenumbering{roman}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\defEq}{\operatorname{\coloneqq}}
+{:=}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\codeStyle}[1]{\mathrm{#1}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\varname}[1]{\mathsf{#1}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\cspInternalChoice}{\mathbin{\sqcap}}
+{\sqcap}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\cspExternalChoice}{\mathbin{\Box}}
+{\Box}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ccsRes}[1]{\left(\boldsymbol{\nu}#1\right)}
+{\left(\boldsymbol{\nu}#1\right)}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ccsStop}{\boldsymbol{0}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ccsPrefix}{\ldotp\!}
+{.}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ccsChoice}{+}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ccsDef}{\mathrel{\stackrel{\mathrm{def}}{=}}}
+{\stackrel{\mathrm{def}}{=}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ccsHide}{\mathrel{\backslash}}
+{\backslash}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ccsPar}{\mathrel{\mid}}
+{\mid}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ccsRepl}{\textbf{!}}
+{\textbf{!}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ccsProcessNames}{\mathcal{I}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\FN}{\mathrm{fn}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ccs}{\mathsf{CCS}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ccsValuation}{\mathcal{D}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ccsIdentifier}[1]{\mathsf{#1}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ccsOutm}[1]{\bar{#1}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ccsInm}[1]{#1}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\action}[1]{\mathrm{#1}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\csSimBy}{\sqsubseteq_{\mathit{CS}}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\csSimulates}{\sqsupseteq_{\mathit{CS}}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\csEq}{\equiv_{\mathit{CS}}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\csCongruent}{\equiv_{\mathit{CS}^{c}}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "relations-cs"
+symbol "$\\csEq, \\csSimBy, \\csCongruent$"
+description "Coupled similarity, coupled simulation preorder (Def.\\ \\ref{def:coupled_simulation}), rooted coupled similarity (Def.\\ \\ref{def:rooted-cs})"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\scsSimBy}{\sqsubseteq_{\mathit{SCS}}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\scsEq}{\equiv_{\mathit{SCS}}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\contraSimBy}{\sqsubseteq_{\mathit{C}}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\contraSimEq}{\equiv_{C}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "relations-c"
+symbol "$\\contraSimEq, \\contraSimBy$"
+description "Contrasimilarity, contrasimulation preorder (Def.\\ \\ref{def:contra_simulation})"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\weakSimBy}{\sqsubseteq_{\mathit{WS}}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\weakSimEq}{\equiv_{\mathit{WS}}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "relations-ws"
+symbol "$\\weakSimEq, \\weakSimBy$"
+description "Weak similarity, weak simulation preorder (Def.\\ \\ref{def:weak_simulation})"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\weakBisim}{\equiv_{\mathit{WB}}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\weakBisimCongruence}{\equiv_{\mathit{WB}^{c}}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "relations-wb"
+symbol "$\\weakBisim, \\weakBisimCongruence$"
+description "Weak bisimilarity (Def.\\ \\ref{def:weak_bisimulation}), rooted weak bisimilarity (Def.\\ \\ref{def:rooted-weak-bisim})"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\strongSimBy}{\sqsubseteq_{\mathit{S}}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\strongSimEq}{\equiv_{\mathit{S}}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "relations-ss"
+symbol "$\\strongSimEq, \\strongSimBy$"
+description "Strong similarity (like weak similarity, Def.\\ \\ref{def:weak_simulation}, but with $\\step{}$-answers instead of $\\weakStepTau{}$-answers), strong simulation preorder"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\strongBisim}{\equiv_{\mathit{B}}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "relations-sb"
+symbol "$\\strongBisim$"
+description "Strong bisimilarity (like weak bisimilarity, Def.\\ \\ref{def:weak_bisimulation}, but with $\\step{}$-answers instead of $\\weakStepTau{}$-answers)"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\step}[1]{\mathbin{\overset{#1}{\rightarrow}}}
+{\overset{#1}{\rightarrow}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "step-1"
+symbol "$\\step{\\alpha}$"
+description "Transition relation (Def.\\ \\ref{def:transition-system})"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\noStep}[1]{\mathbin{\not\overset{#1}{\rightarrow}}}
+{\overset{#1}{\not\rightarrow}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "step-2"
+symbol "$\\noStep{\\alpha}$"
+description "Absence of a transition (Disabledness of $\\alpha$)"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\stepMax}[1]{\mathbin{\step{#1}\!|}}
+{\overset{#1}{\rightarrow|}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\weakStep}[1]{\mathbin{\overset{#1}{\Rightarrow}}}
+{\overset{#1}{\Rightarrow}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "step-5"
+symbol "$\\weakStep{\\alpha}$"
+description "Weak transition relation (Def.\\ \\ref{def:weak-transition-relation})"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\weakStepTau}[1]{\mathbin{\overset{\hat{#1}}{\Rightarrow}}}
+{\overset{\hat{#1}}{\Rightarrow}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "step-6"
+symbol "$\\weakStepTau{\\alpha}$"
+description "Weak transition relation reflexive on $\\tau$ (Def.\\ \\ref{def:weak-transition-relation})"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\weakStepDelay}[1]{\mathbin{\overset{\hat{#1}}{=\hspace{-4pt}\triangleright}}}
+{\overset{\hat{#1}}{\Rrightarrow}}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "step-7"
+symbol "$\\weakStepDelay{\\alpha}$"
+description "Weak delay transition relation reflexive on $\\tau$ (Def.\\ \\ref{def:delay-coupled-simulation})"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\weakStepSeq}[1]{\mathbin{\overset{\vec{#1}}{\Rightarrow}}}
+{\overset{\vec{#1}}{\Rightarrow}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\gameMove}{\operatorname{\rightarrowtail}}
+{\rightarrowtail}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "step-9"
+symbol "$\\gameMove$"
+description "Game move (Def.\\ \\ref{def:simple-game})"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\hmlEX}[1]{\langle#1\rangle}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\hmlEXw}[1]{\llangle#1\rrangle}
+{\langle\langle#1\rangle\rangle}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\nneg}{\mathop{\mathrlap{\rule[3pt]{6pt}{0.4pt}}\rule[4pt]{6pt}{0.4pt}\rule[1pt]{0.4pt}{3.4pt}}}
+{\overline{\neg}}
+\end_inset
+
+
+\begin_inset Formula $\mathrlap{\qquad}$
+\end_inset
+
+
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+this dummy math environment is neccessary for lyx to include the packages
+ for nneg...
+\end_layout
+
+\end_inset
+
+
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+symbol "$\\nneg$"
+description "Weak negation in HML for coupled simulation (Definition \\ref{def:cs-hml})"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\rel}[1]{\mathcal{#1}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\actions}{\Sigma_{\tau}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\visibleActions}{\Sigma}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\system}{\mathcal{S}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\game}{\mathcal{G}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\hml}{\mathsf{HML}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\hmlEq}{\equiv_{\hml}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\bigo}{\mathcal{O}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\isabelleRef}[1]{\texttt{#1}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\ie}{\text{i.e.\,}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\complexityClass}[1]{\mathbf{#1}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\wdots}{...}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\relSize}[1]{\vert\mathord{#1}\vert}
+{\vert#1\vert}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FormulaMacro
+\newcommand{\diagonal}{\Delta}
+\end_inset
+
+
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "basics-identity"
+symbol "$\\diagonal_A$"
+description "Identity relation on $A$"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "basics-rtrancl"
+symbol "$\\rel{R}^*$"
+description "Reflexive transitive closure of relation $\\rel{R}$"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "basics-rinverse"
+symbol "$\\rel{R}^{-1}$"
+description "Inverse relation of $\\rel{R}$"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "basics-languages"
+symbol "$\\Sigma^*$, $\\Sigma^\\omega$, $\\Sigma^\\infty$"
+description "Language of finite, infinite, finite-or-infinite words over alphabet $\\Sigma$"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "basics-quotient"
+symbol "$A_{/ \\equiv_X}$"
+description "Quotient set of $A$ by equivalence $\\equiv_X$ (notation also used for quotient transition systems, Def.\\ \\ref{def:quotient-system})"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "basics-powerset"
+symbol "$2^A$"
+description "Power set of $A$ (set of subsets)"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "basics-a-iff"
+symbol "iff"
+description "``If and only if'' in definitions"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+prefix "basics-card"
+symbol "$\\relSize{A}$"
+description "Number of elements of $A$"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset nomenclature
+LatexCommand nomenclature
+symbol "$\\rel{R}^+$"
+description "Transitive closure of relation $\\rel{R}$"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Selbständigkeitserklärung
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\lang ngerman
+Hiermit erkläre ich, dass ich die vorliegende Arbeit selbständig und eigenhändig
+ sowie ohne unerlaubte fremde Hilfe und ausschließlich unter Verwendung
+ der aufgeführten Quellen und Hilfsmittel angefertigt habe.
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\lang ngerman
+\begin_inset VSpace 1cm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\lang ngerman
+Benjamin Bisping
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\lang ngerman
+Berlin, 18.
+\begin_inset space \thinspace{}
+\end_inset
+
+April 2018
+\lang american
+
+\begin_inset VSpace 0.8cm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Digital Version
+\end_layout
+
+\begin_layout Standard
+This master's thesis is accompanied by digital content, which is available
+ from
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://coupledsim.bbisping.de
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\noindent
+The Scala implementations and Isabelle/HOL formalizations referenced in
+ this thesis can be found there.
+ I pledge to keep the online version live for at least ten years, that is,
+ at least until December 2028.
+ Moreover, the printed version contains a DVD with the digital content.
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+This document corresponds to revision 
+\begin_inset Info
+type  "buffer"
+arg   "vcs-revision"
+\end_inset
+
+ from 
+\begin_inset Info
+type  "buffer"
+arg   "vcs-date"
+\end_inset
+
+ of the GIT repository.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset VSpace 0.6cm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Acknowledgements
+\end_layout
+
+\begin_layout Standard
+I'd like to thank everybody who helped me develop and finish this thesis
+ (in order of appearance).
+\end_layout
+
+\begin_layout Itemize
+Uwe Nestmann and Kirstin Peters for introducing me to coupled simulations.
+\end_layout
+
+\begin_layout Itemize
+My colleagues at Modelle und Theorie Verteilter Systeme, especially my awesome
+ office mate David Karcher, master of super-exponential normal forms, who
+ did a lot to support me in my research.
+\end_layout
+
+\begin_layout Itemize
+Holger Hermanns and the Dependable Systems and Software group, especially
+ Felix Freiberger, for their hospitality during my visit to Saarbrücken;
+ Ralf Wimmer for providing me with material on Sigref.
+\end_layout
+
+\begin_layout Itemize
+The people who attended my talk at D-CON
+\begin_inset space ~
+\end_inset
+
+2018 and discussed games and simulations with me, especially Stephan Mennicke.
+\end_layout
+
+\begin_layout Itemize
+My lovely writing mates Hai-Hsin and Baum, who currently are in the midst
+ of writing their master's thesis and dissertation.
+ I wish them lots of success!
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Abstract
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Coupled similarity
+\emph default
+ is a notion of equivalence for systems with internal actions.
+ It
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+ is finer than weak similarity but coarser than weak bisimilarity.
+ It
+\end_layout
+
+\end_inset
+
+ has its applications in contexts where internal choices must transparently
+ be distributed in time or space, for example, in process calculi encodings
+ or in action refinements.
+ To the author's knowledge, no tractable algorithms for the computation
+ of the coupled simulation preorder and coupled similarity have been presented
+ up to now.
+ Accordingly, there is no tool support for coupled similarity.
+\end_layout
+
+\begin_layout Standard
+In this master's thesis, we present three algorithms to compute coupled
+ similarity: An algorithm based on reduction to strong bisimilarity, a 
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+polynomial 
+\end_layout
+
+\end_inset
+
+coinductive fixed-point algorithm, and a 
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+polynomial 
+\end_layout
+
+\end_inset
+
+game-theoretic algorithm.
+ The game-theoretic algorithm runs in 
+\begin_inset Formula $\bigo(\relSize{\weakStepTau{\cdot}}\,|S|)$
+\end_inset
+
+ space and time
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+ and 
+\begin_inset Formula $\bigo(\relSize{\step{\cdot}}\,|S|)$
+\end_inset
+
+ space
+\end_layout
+
+\end_inset
+
+ where 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+ is the weak transition relation and 
+\begin_inset Formula $S$
+\end_inset
+
+ the state space of the input transition system.
+ This matches the time complexity of the best known simulation preorder
+ algorithms.
+ Additionally, we survey definitions of coupled simulation from the literature
+ and show that deciding the coupled simulation preorder is at least as hard
+ as deciding the weak simulation preorder.
+\end_layout
+
+\begin_layout Standard
+The thesis is accompanied by an Isabelle/HOL formalization of key results,
+ as well as by a Scala.js web tool implementation of the discussed algorithms,
+ and a parallelized version of the game algorithm using the Apache Flink
+ framework.
+\end_layout
+
+\begin_layout Section*
+
+\lang ngerman
+Zusammenfassung
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+\lang ngerman
+Gekoppelte Similarität
+\emph default
+ ist ein Gleichheitsbegriff auf Transitionssystemen mit internen Ereignissen.
+ Ihre Anwendungen liegen dort, wo interne Entscheidungen in Raum oder Zeit
+ zu verteilen sind, ohne dass das im Modell als Unterschied gilt.
+ Beispiele dafür sind Prozess-Kalkül-Übersetzungen und Aktionsverfeinerungen.
+ Bisher sind keine effizienten Algorithmen für gekoppelte Similarität und
+ ihre Quasiordnung vorgestellt worden.
+ Entsprechend gibt es auch keine Unterstützung durch Tools.
+\end_layout
+
+\begin_layout Standard
+
+\lang ngerman
+In dieser Master-Arbeit entwickeln wir drei Algorithmen zur Berechnung von
+ gekoppelten Similaritätsrelationen: Eine Reduktion auf starke Bisimilarität,
+ einen 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\lang ngerman
+polynomiellen 
+\end_layout
+
+\end_inset
+
+koinduktiven Fixpunkt-Algortihmus und einen spieltheoretischen Algorithmus.
+ Letzterer läuft in Zeit- und Speicher-Komplexität von 
+\begin_inset Formula $\bigo(\relSize{\weakStepTau{\cdot}}\,|S|)$
+\end_inset
+
+, wobei 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+ die schwache Schrittrelation bezeichnet und 
+\begin_inset Formula $S$
+\end_inset
+
+ den Zustandsraum des eingegebenen Transitionssystems.
+ Das entspricht in der Zeitkomplexität den besten bekannten Algorithmen
+ der schwachen Simulations-Quasi\SpecialChar softhyphen
+ord\SpecialChar softhyphen
+nung.
+ Des Weiteren ordnen wir Definitionen von gekoppelter Similarität aus der
+ Literatur und zeigen, dass das Entscheidungsproblem der gekoppelten Simulations
+-Qua\SpecialChar softhyphen
+si\SpecialChar softhyphen
+ordnung mindestens so komplex ist wie das der schwachen Simulations-Quasi\SpecialChar softhyphen
+o
+rd\SpecialChar softhyphen
+nung.
+\end_layout
+
+\begin_layout Standard
+
+\lang ngerman
+Eine Isabelle/HOL-Formalisierung der Kernergebnisse, ein die Algorithmen
+ in Scala.js implementierendes Webtool und eine parallelisierte Version des
+ spieltheoretischen Algorithmus für die Apache-Flink-Plattform begleiten
+ die Arbeit
+\lang american
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+setstretch{1.0}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+pagenumbering{arabic}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+setcounter{page}{1}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+renewcommand*{
+\backslash
+algorithmcfname}{Algorithm}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand include
+filename "introduction.lyx"
+
+\end_inset
+
+
+\begin_inset CommandInset include
+LatexCommand include
+filename "preliminaries.lyx"
+
+\end_inset
+
+
+\begin_inset CommandInset include
+LatexCommand include
+filename "coupledsims.lyx"
+
+\end_inset
+
+
+\begin_inset CommandInset include
+LatexCommand include
+filename "algorithms.lyx"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand include
+filename "implementation.lyx"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand include
+filename "conclusion.lyx"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing single
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "/home/ben/Documents/coupledsim/bib/coupledsim"
+options "bibtotoc,alpha"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing single
+\begin_inset CommandInset nomencl_print
+LatexCommand printnomenclature
+set_width "auto"
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "nomenclature"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

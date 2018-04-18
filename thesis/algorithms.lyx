@@ -1,0 +1,7339 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass report
+\begin_preamble
+\input{preamble}
+\end_preamble
+\use_default_options true
+\master ../../../Dokumente/coupledsim/thesis/main.lyx
+\begin_modules
+logicalmkup
+fixltx2e
+algorithm2e
+fixme
+theorems-ams
+theorems-ams-extended
+theorems-chap
+\end_modules
+\maintain_unincluded_children false
+\language american
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 1
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle plain
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Chapter
+Algorithms
+\begin_inset CommandInset label
+LatexCommand label
+name "chap:algorithms"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The previous chapters have laid the groundwork for three approaches towards
+ computing coupled similarity.
+ In this chapter, we turn the axiomatization of 
+\begin_inset Formula $\csEq$
+\end_inset
+
+ from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+ into a reduction algorithm, develop a fixed-point algorithm from the 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+-definition of 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glabbeek2017"
+
+\end_inset
+
+, and adapt our game characterization to decide 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Setting the Stage
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:setting-the-stage"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+First, it is necessary to explicate some assumptions about the setting our
+ coupled similarity algorithms are expecting.
+\end_layout
+
+\begin_layout Standard
+Obviously, in finite time, they can only deal with a finite portion of a
+ transition system.
+ So, it does not hurt to assume that the systems are restricted to be finite
+ and free of disconnected junk states and actions.
+\end_layout
+
+\begin_layout Assumption
+The transition systems 
+\begin_inset Formula $\system=(S,\actions,\step{})$
+\end_inset
+
+ we are working on are finite (meaning 
+\begin_inset Formula $S$
+\end_inset
+
+ and 
+\begin_inset Formula $\actions$
+\end_inset
+
+ are finite).
+ Their data structures use linear space and can be traversed in linear time.
+ 
+\begin_inset Formula $\visibleActions$
+\end_inset
+
+ and 
+\begin_inset Formula $S$
+\end_inset
+
+ only contain actions and states appearing in 
+\begin_inset Formula $\step{}$
+\end_inset
+
+.
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+Moreover, we will assume, that there are no junk states and actions without
+ connection to the remaining model.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We should make two more assumptions concerning the context of 
+\emph on
+minimizations
+\emph default
+ in which our coupled simulation algorithms are applied.
+\end_layout
+
+\begin_layout Subsection
+Dealing with the 
+\begin_inset Formula $\tau$
+\end_inset
+
+-Closure
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:tau-closure"
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:tau-loops"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A lot of headaches can be avoided by ruling out 
+\begin_inset Formula $\tau$
+\end_inset
+
+-cycles right from the start.
+\end_layout
+
+\begin_layout Assumption
+\begin_inset CommandInset label
+LatexCommand label
+name "assu:no-tau-loops"
+
+\end_inset
+
+The input transition systems of our core algorithm are 
+\begin_inset Formula $\tau$
+\end_inset
+
+-cycle-free.
+\end_layout
+
+\begin_layout Standard
+This is no hack because the cycles can actually be removed quite easily.
+ First, they can be conflated to 
+\begin_inset Formula $\tau$
+\end_inset
+
+-loops because strongly 
+\begin_inset Formula $\tau$
+\end_inset
+
+-connected states are coupled similar (Corollary
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "cor:tau-loop-cs"
+
+\end_inset
+
+).
+ This is accomplished by 
+\noun on
+Tarjan's
+\noun default
+ 
+\begin_inset Formula $\bigo(\relSize{\step{\tau}})$
+\end_inset
+
+-algorithm for strongly connected components in directed graphs 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "tarjan72stronglyconnected"
+
+\end_inset
+
+.
+ An implementation can be found in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+coderef[class]{shared/src/main/scala-2.11/}{de.bbisping.coupledsim.algo.transform.TauL
+oopCompression}
+\end_layout
+
+\end_inset
+
+.
+ Second, because 
+\begin_inset Formula $\tau$
+\end_inset
+
+-loops are invisible to coupled simulation by Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:tau-loops"
+
+\end_inset
+
+, we can remove or ignore the remaining 
+\begin_inset Formula $\tau$
+\end_inset
+
+-loops.
+\end_layout
+
+\begin_layout Standard
+(Sub-)systems like the cyclic 
+\begin_inset Formula $\system_{C}$
+\end_inset
+
+ from Example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:tau-systems"
+
+\end_inset
+
+ then collapse to single states and thus lose their space complexity.
+ If the system has no 
+\begin_inset Formula $\tau$
+\end_inset
+
+-cycles, for example, as it is di\SpecialChar softhyphen
+ver\SpecialChar softhyphen
+gen\SpecialChar softhyphen
+ce-free like the linear 
+\begin_inset Formula $\system_{L}$
+\end_inset
+
+, the compression will have no effect.
+ Either way, after the compression, we can be sure that the 
+\begin_inset Formula $\tau$
+\end_inset
+
+-edges
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+ that are no self-loops
+\end_layout
+
+\end_inset
+
+ form a directed acyclic graph (DAG), which algorithms can handle more efficient
+ly.
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Coupled simulation is defined in terms of the 
+\emph on
+weak transition relation
+\emph default
+ 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+, which is no direct input of the algorithm.
+ As we will repeatedly need 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+, on first thought, it seems natural to compute 
+\begin_inset Formula $\weakStep{\cdot}$
+\end_inset
+
+ before starting any coupled simulation algorithm.
+ We will not go into detail on how to compute this closure—there are lots
+ of algorithms and implementations for transitive closure available.
+ In Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:weak-costs"
+
+\end_inset
+
+, we already discussed that it might not be a good idea, to always go for
+ the expensive computation of the full-blown weak transition relation.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+At this point, it even is questionable whether to explicitly build the 
+\begin_inset Formula $\tau$
+\end_inset
+
+-closure 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+, which would otherwise seem a reasonable preparation for weak equivalence
+ algorithms.
+ But the 
+\begin_inset Formula $\tau$
+\end_inset
+
+-DAG already is a good data structure to walk for the equivalence algorithms
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+ tend to walk the whole 
+\begin_inset Formula $\tau$
+\end_inset
+
+-successor set of a node anyways; and the transition system is a good data
+ structure for this already
+\end_layout
+
+\end_inset
+
+.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+One might argue that loop compression somewhat is a part of the transitive
+ closure problem.
+ For example, it also is the first step of Boost's widely used transitive
+ closure implementation.
+ 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+http://www.boost.org/doc/libs/1_66_0/libs/graph/doc/transitive_closure.html
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ Indeed, sub-cubic time complexities for weak bisimulation 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rt2008generalizingPT,li2009weakbisim,brr2016"
+
+\end_inset
+
+, branching bisimulation 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gjkw2017branching"
+
+\end_inset
+
+, and other weak equivalences can be achieved by abstaining from the computation
+ of the transitive closure.
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+ So let us follow this trend of recent years.
+\end_layout
+
+\end_inset
+
+
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+For our purposes, we can reduce the transition graph size by conflating
+ 
+\begin_inset Formula $\tau$
+\end_inset
+
+-cycles to single states with 
+\begin_inset Formula $\tau$
+\end_inset
+
+-loops.
+\end_layout
+
+\end_inset
+
+ The developers of the CSP refinement checker 
+\emph on
+FDR4
+\emph default
+ present a few more thoughts on this in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "brr2016"
+
+\end_inset
+
+, and we will run into the question again in Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:gamifying-tau"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Minimization
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Formula $\tau$
+\end_inset
+
+-cycle compression actually is only an instance of a more general approach
+ in equivalence algorithms, namely to minimize the input system with finer
+ notions of equivalence.
+ Minimization means that one uses an equivalence relation 
+\begin_inset Formula $\equiv_{X}$
+\end_inset
+
+ and builds the quotient system:
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Quotient system
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:quotient-system"
+
+\end_inset
+
+Given an equivalence relation 
+\begin_inset Formula $\equiv_{X}$
+\end_inset
+
+ and a transition system 
+\begin_inset Formula $\system=(S,\actions,\step{})$
+\end_inset
+
+, the 
+\emph on
+quotient system
+\emph default
+ is defined as 
+\begin_inset Formula $\system_{/\equiv_{X}}\defEq\,(S_{/\equiv_{X}},\actions,\step{}_{/\equiv_{X}})$
+\end_inset
+
+ where 
+\begin_inset Formula $S_{/\equiv_{X}}$
+\end_inset
+
+ is the set of equivalence classes, and 
+\begin_inset Formula 
+\[
+p\step{\alpha}_{/\equiv_{X}}q\text{ for }p,q\in S_{/\equiv_{X}}\text{ iff there are }p_{0}\in p,q_{0}\in q\text{ such that }p_{0}\step{\alpha}q_{0}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Instead of 
+\begin_inset Formula $S_{/\equiv_{X}}$
+\end_inset
+
+, it might often be more convenient to take the set of equivalence class
+ representatives.
+  A straight-forward algorithm for this transformation is implemented in
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+coderef[class]{shared/src/main/scala-2.11/}{de.bbisping.coupledsim.algo.transform.Buil
+dQuotientSystem}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Our last—in a way: meta—assumption is that our algorithms run in the context
+ of such minimizations:
+\end_layout
+
+\begin_layout Assumption
+The result of our 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+-algorithms should be usable to minimize systems and to tell whether two
+ certain states are equivalent.
+\end_layout
+
+\begin_layout Standard
+Minimized systems are more manageable for proofs and presentations.
+ For example, 
+\noun on
+van Glabbeek
+\noun default
+ and 
+\noun on
+Weijland
+\noun default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gw1996branchingBisim"
+
+\end_inset
+
+ report that 
+\noun on
+Peterson's
+\noun default
+ mutual exclusion algorithm minimized by coupled similarity has only nine
+ states as opposed to fourteen states in weak bisimulation semantics.
+ The quotient systems have the nice property that within them their equivalences
+ equal the identity relation.
+ Together with some normalization procedure, this can be used to generate
+ unique-up-to-isomorphism representatives for equivalent transition systems.
+ A lot of details have to be taken care of if one pursues fully minimal
+ unique representatives 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ehstz2013quotients"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Moreover, minimizations can be used to speed up algorithms.
+ For instance, if two states are strongly bisimilar, then they also are
+ coupled similar.
+ So, no coupled simulation algorithm will tell them apart.
+ Consequently, they can be represented by a single state right from the
+ beginning.
+ As finer equivalence algorithms tend to have better space and time complexities
+, this can significantly push the boundary of what system sizes can be tackled
+ by an implementation.
+\end_layout
+
+\begin_layout Section
+The Bisimulation Approach
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:algo-bisim-approach"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A common approach for notions of equivalence, is to construct algorithms
+ that solve the equivalence problem by 
+\emph on
+reducing it to strong bisimilarity
+\emph default
+.
+ Bisimilarity, then, can be decided by tried and tested algorithms.
+ For instance, the 
+\noun on
+Paige
+\noun default
+–
+\noun on
+Tarjan
+\noun default
+ algorithm 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "paigetarjan1987partitionrefinement"
+
+\end_inset
+
+ computes bisimilarity relations in 
+\begin_inset Formula $\bigo(\relSize S\log\relSize{\step{}})$
+\end_inset
+
+ time and with little space overhead.
+\end_layout
+
+\begin_layout Standard
+Such a reduction also is possible for coupled similarity building on 
+\noun on
+Parrow
+\noun default
+ and 
+\noun on
+Sjödin's
+\noun default
+ axiomatization from Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:axiomatization-cs"
+
+\end_inset
+
+.
+ But, things might get messy.
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+ This section sketches the reduction and then moves on quickly as the solution
+ is wildly inefficent.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The normalization algorithm quickly turns out to be intractable, which is
+ why this section remains sketchy around the fine points of implementation
+ and correctness of the algorithm.
+\end_layout
+
+\begin_layout Subsection
+The Reduction
+\end_layout
+
+\begin_layout Standard
+
+\noun on
+Parrow 
+\noun default
+and
+\noun on
+ Sjödin's
+\noun default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+ completeness proof for their axiomatization of 
+\begin_inset Formula $\csEq$
+\end_inset
+
+ relies on normalizing process terms.
+ As they point out, this normalization induces a bi\SpecialChar softhyphen
+sim\SpecialChar softhyphen
+u\SpecialChar softhyphen
+la\SpecialChar softhyphen
+tion-reduction-based
+ coupled similarity algorithm.
+ Their normalization can 
+\begin_inset Formula $\csEq$
+\end_inset
+
+-soundly rewrite finite (recursion-free) 
+\begin_inset Formula $\ccs$
+\end_inset
+
+ process terms such that 
+\begin_inset Formula $\csEq$
+\end_inset
+
+ and 
+\begin_inset Formula $\weakBisim$
+\end_inset
+
+ coincide.
+\end_layout
+
+\begin_layout Standard
+There are three gaps that are to be filled for our setting: The normal forms
+ must be lifted to transition systems; the normalization must be described
+ algorithmitically; and the problem of divergent 
+\begin_inset Formula $\tau$
+\end_inset
+
+-cycles must be addressed.
+\end_layout
+
+\begin_layout Standard
+
+\noun on
+L
+\noun default
+ifting Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:cs-normal-form"
+
+\end_inset
+
+ of 
+\begin_inset Formula $\mathit{CS}$
+\end_inset
+
+-normal forms from 
+\begin_inset Formula $\ccs$
+\end_inset
+
+ processes to transition systems, we get:
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+CS-normal TS
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:cs-normal-form-ts"
+
+\end_inset
+
+
+\begin_inset Float figure
+placement t
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tabular}{ccc}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+subf{
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+begin{tikzpicture}[->,auto,node distance=2cm]
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P0) {$p_0$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P1) [below of=P0] {$p_1$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P2) [below of=P1] {$p_2$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P3) [below left of=P2] {$p_3$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P4) [below right of=P2] {$p_4$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P5) [below right of=P3] {$p_5$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[circle] (PP4) [below of=P5, node distance=1.5cm] {$
+\backslash
+phantom{p_1/p_2}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge node {$
+\backslash
+action a$} (P1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P1) edge node {$
+\backslash
+tau$} (P2)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P2) edge node[swap] {$
+\backslash
+tau$} (P3)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P2) edge node {$
+\backslash
+tau$} (P4)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P3) edge node[swap] {$
+\backslash
+action b$} (P5)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P4) edge node {$
+\backslash
+action c
+\backslash
+vphantom{
+\backslash
+action b}$} (P5);
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+end{tikzpicture}
+\end_layout
+
+\begin_layout Plain Layout
+
+}      {
+\end_layout
+
+\begin_layout Plain Layout
+
+	Original system.
+\end_layout
+
+\begin_layout Plain Layout
+
+} & 
+\backslash
+subf{
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+begin{tikzpicture}[->,auto,node distance=2cm]
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P0) {$p_0$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P1) [below of=P0] {$p_1$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P2) [below of=P1] {$p_2$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P3) [below left of=P2] {$p_3$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P4) [below right of=P2] {$p_4$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P5) [below right of=P3] {$p_5$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[circle] (PP4) [below of=P5, node distance=1.5cm] {$
+\backslash
+phantom{p_1/p_2}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge node {$
+\backslash
+action a$} (P1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge[bend left=30] node {$
+\backslash
+action a$} (P2)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge[bend right=20] node[swap] {$
+\backslash
+action a$} (P3)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge[bend left=20] node {$
+\backslash
+action a$} (P4)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P1) edge[red] node {$
+\backslash
+tau$} (P2)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P1) edge node[swap] {$
+\backslash
+tau$} (P3)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P1) edge node {$
+\backslash
+tau$} (P4)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P1) edge[bend right=19] node[pos=0.75,swap] {$
+\backslash
+action b,
+\backslash
+action c$} (P5)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P2) edge node[swap] {$
+\backslash
+tau$} (P3)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P2) edge node {$
+\backslash
+tau$} (P4)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P2) edge node {$
+\backslash
+action b,
+\backslash
+action c$} (P5)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P3) edge node[swap] {$
+\backslash
+action b$} (P5)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P4) edge node {$
+\backslash
+action c
+\backslash
+vphantom{
+\backslash
+action b}$} (P5);
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+end{tikzpicture}
+\end_layout
+
+\begin_layout Plain Layout
+
+}      {
+\end_layout
+
+\begin_layout Plain Layout
+
+	$
+\backslash
+weakStep{
+\backslash
+cdot}$-closed system.
+\end_layout
+
+\begin_layout Plain Layout
+
+} & 
+\backslash
+subf{
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+begin{tikzpicture}[->,auto,node distance=2cm, close/.style={thick, dotted,font=
+\backslash
+it,red}]
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P0) {$p_0$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (P2) [below of=P0, node distance=4cm] {};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P3) [below left of=P2] {$p_3$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P4) [below right of=P2] {$p_4$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P5) [below right of=P3] {$p_5$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[draw, red, circle] (PP0) [above left of=P2, node distance=1cm] {};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[draw, red, circle] (PP1) [above right of=P2, node distance=1cm] {};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[draw, red, circle] (PP2) [above left of=P3, node distance=1.5cm] {};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[draw, red, circle] (PP3) [above right of=P4, node distance=1.5cm] {};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[draw, red, circle] (PP4) [below of=P5, node distance=1.5cm] {$p_1/p_2$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P3) edge node[swap] {$
+\backslash
+action b$} (P5)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P4) edge node {$
+\backslash
+action c
+\backslash
+vphantom{
+\backslash
+action b}$} (P5)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge node[swap] {$
+\backslash
+action a$} (PP0)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge node {$
+\backslash
+action a$} (PP1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge[bend right=20] node[swap] {$
+\backslash
+action a$} (PP2)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge[bend left=20] node {$
+\backslash
+action a$} (PP3)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge[bend right=20] node[swap] {$
+\backslash
+action a$} (P3)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge[bend left=20] node {$
+\backslash
+action a$} (P4)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge[bend left=90] node {$
+\backslash
+action a$} (PP4)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(PP0) edge node[swap] {$
+\backslash
+tau$} (P3)
+\end_layout
+
+\begin_layout Plain Layout
+
+	%(PP0) edge[bend left=10] node[swap] {$
+\backslash
+tau$} (P4)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(PP0) edge node[swap] {$
+\backslash
+action b, 
+\backslash
+action c$} (P5)
+\end_layout
+
+\begin_layout Plain Layout
+
+	%(PP1) edge[bend right=10] node {$
+\backslash
+tau$} (P3)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(PP1) edge node {$
+\backslash
+tau$} (P4)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(PP1) edge node {$
+\backslash
+action b, 
+\backslash
+action c$} (P5)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(PP2) edge node[swap] {$
+\backslash
+tau$} (P3)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(PP2) edge[bend right=40] node[swap] {$
+\backslash
+action b$} (P5)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(PP3) edge node {$
+\backslash
+tau$} (P4)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(PP3) edge[bend left=40] node {$
+\backslash
+action c
+\backslash
+vphantom{
+\backslash
+action b}$} (P5)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(PP4) edge[bend left=30] node {$
+\backslash
+tau$} (P3)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(PP4) edge[bend right=30] node[swap] {$
+\backslash
+tau$} (P4)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(PP4) edge node {$
+\backslash
+action b,
+\backslash
+action c$} (P5);
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+end{tikzpicture}
+\end_layout
+
+\begin_layout Plain Layout
+
+}      {
+\end_layout
+
+\begin_layout Plain Layout
+
+	CS-normal form.
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tabular}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:cs-normalization"
+
+\end_inset
+
+CS-normalization from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ A transition system 
+\begin_inset Formula $\system=(S,\step{},\actions)$
+\end_inset
+
+ is in 
+\emph on
+CS-normal form
+\emph default
+ iff
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\begin_inset Formula $p\weakStep{\alpha}p^{\prime}$
+\end_inset
+
+ implies 
+\begin_inset Formula $p\step{\alpha}p^{\prime}$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $p\step{\tau}p^{\prime}$
+\end_inset
+
+ implies 
+\begin_inset Formula $p^{\prime}$
+\end_inset
+
+ stable, and
+\end_layout
+
+\begin_layout Enumerate
+if 
+\begin_inset Formula $p\step{\alpha}p^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $p^{\prime}$
+\end_inset
+
+ instable, then for every subset of 
+\begin_inset Formula $p^{\prime}$
+\end_inset
+
+-transitions, 
+\begin_inset Formula $\hat{P}\subseteq\{(\beta,p^{\prime\prime})\mid p^{\prime}\step{\beta}p^{\prime\prime}\}$
+\end_inset
+
+, containing at least one 
+\begin_inset Formula $\tau$
+\end_inset
+
+-transition, there exists 
+\begin_inset Formula $\hat{p}$
+\end_inset
+
+ such that 
+\begin_inset Formula $p\,\step{\alpha}\!\csCongruent^{\system^{\prime}}\hat{p}$
+\end_inset
+
+, where 
+\begin_inset Formula $\system^{\prime}\defEq\:\left(S\cup\{\hat{p}\},\:\actions,\:\step{}\cup(\{\hat{p}\}\!\times\!\hat{P})\right)$
+\end_inset
+
+
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+for all 
+\begin_inset Formula $\hat{p}^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $\beta$
+\end_inset
+
+, 
+\begin_inset Formula $\hat{p}\step{\beta}\hat{p}^{\prime}$
+\end_inset
+
+ iff 
+\begin_inset Formula $(\beta,\hat{p}^{\prime})\in P$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Conditions 1, 2, and 3 correspond to clauses 3, 4, and 5 from Definition
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:cs-normal-form"
+
+\end_inset
+
+.
+ There, we already observed that the last condition ensures saturation of
+ the system with all partial commits that could be hidden in the trailing
+ 
+\begin_inset Formula $\weakStep{}$
+\end_inset
+
+-part of a weak visible transition.
+ In order to see what this means, let us consider the following example
+ from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Example
+\begin_inset CommandInset label
+LatexCommand label
+name "exa:cs-normal-form"
+
+\end_inset
+
+Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:cs-normalization"
+
+\end_inset
+
+ gives a system, its 
+\begin_inset Formula $\weakStep{\cdot}$
+\end_inset
+
+-closed version, and its minimal CS-normal form with respect to Definition
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:cs-normal-form-ts"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Example
+The 
+\begin_inset Formula $\weakStep{\cdot}$
+\end_inset
+
+-closed system already suffers from the blow-up in transitions discussed
+ in Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:weak-costs"
+
+\end_inset
+
+.
+ To make it obey condition 2 from Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:cs-normal-form-ts"
+
+\end_inset
+
+, it suffices to remove the 
+\begin_inset Formula $\tau$
+\end_inset
+
+-step between the two instable states 
+\begin_inset Formula $p_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $p_{2}$
+\end_inset
+
+ (highlighted in red).
+\end_layout
+
+\begin_layout Example
+However, condition 3 then demands all partial choices that could have been
+ skipped between 
+\begin_inset Formula $p_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\{p_{3},p_{4}\}$
+\end_inset
+
+ by 
+\begin_inset Formula $p_{0}\weakStep{\action a}$
+\end_inset
+
+-steps to be present.
+ So, 
+\begin_inset Formula $p_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $p_{2}$
+\end_inset
+
+ are shuffled into the five red states in the right-hand side system.
+ For instance, the left-most red state expresses the partial commit that
+ the 
+\begin_inset Formula $\action a$
+\end_inset
+
+-step has already committed not to perform 
+\begin_inset Formula $\action c$
+\end_inset
+
+ but still can prepend the 
+\begin_inset Formula $\action b$
+\end_inset
+
+-step with 
+\begin_inset Formula $\tau$
+\end_inset
+
+.
+ The result would be even bigger if it did not exploit the fact that 
+\begin_inset Formula $p_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $p_{2}$
+\end_inset
+
+ are bisimilar after the computation of the 
+\begin_inset Formula $\weakStep{\cdot}$
+\end_inset
+
+-closure and the removal of instable 
+\begin_inset Formula $\tau$
+\end_inset
+
+-steps.
+\end_layout
+
+\begin_layout Standard
+Such normal forms can actually be computed.
+ Lemma 18 of 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+ gives an existence proof, which motivates the algorithm of this section
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+is not directly transformable into a neat algorithm
+\end_layout
+
+\end_inset
+
+.
+ Lifting their lemma to transition systems, we get:
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:cs-wb-reduction"
+
+\end_inset
+
+(
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+) For every finite 
+\begin_inset Formula $\system=(S,\actions,\step{})$
+\end_inset
+
+ with acyclic 
+\begin_inset Formula $\step{}$
+\end_inset
+
+, there is a finite 
+\begin_inset Formula $\system^{\prime}$
+\end_inset
+
+ in CS-normal form such that, for each 
+\begin_inset Formula $p,q\in S$
+\end_inset
+
+, 
+\begin_inset Formula $p\csEq^{\system}q$
+\end_inset
+
+ precisely if 
+\begin_inset Formula $p\csEq^{\system^{\prime}}q$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Lemma
+For 
+\begin_inset Formula $\system^{\prime}$
+\end_inset
+
+ in normal form, 
+\begin_inset Formula $p\csEq^{\system^{\prime}}q$
+\end_inset
+
+ precisely if 
+\begin_inset Formula $p\weakBisim^{\system^{\prime}}q$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Like 
+\noun on
+Parrow
+\noun default
+ and 
+\noun on
+Sjödin
+\noun default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+, we assume that this carries over to general finite transition systems.
+ This assumption is based on the impression that the main trouble arises
+ from 
+\begin_inset Formula $\tau$
+\end_inset
+
+-cycles.
+ But by Assumption 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "assu:no-tau-loops"
+
+\end_inset
+
+, these have been erased as described in Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:tau-loops"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Subsection
+The Algorithm
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+placement t
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Fn{
+\backslash
+upshape $
+\backslash
+varname{construct
+\backslash
+_cs
+\backslash
+_normalization}(
+\backslash
+system=(S,
+\backslash
+actions,
+\backslash
+step{})$)}{%
+\end_layout
+
+\begin_layout Plain Layout
+
+$
+\backslash
+rightsquigarrow
+\backslash
+,
+\backslash
+coloneqq
+\backslash
+{(p,
+\backslash
+alpha,p^{
+\backslash
+prime})
+\backslash
+mid p
+\backslash
+weakStep{
+\backslash
+alpha}p^{
+\backslash
+prime}
+\backslash
+land(
+\backslash
+alpha=
+\backslash
+tau
+\backslash
+longrightarrow p^{
+\backslash
+prime}
+\backslash
+noStep{
+\backslash
+tau})
+\backslash
+}$
+\backslash
+label{alg:csclose1}
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+$
+\backslash
+twoheadrightarrow
+\backslash
+,
+\backslash
+coloneqq
+\backslash
+{(p,
+\backslash
+alpha,P)
+\backslash
+mid$
+\backslash
+label{alg:cspartial}
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+$
+\backslash
+qquad
+\backslash
+exists p^{
+\backslash
+prime}
+\backslash
+ldotp p
+\backslash
+overset{
+\backslash
+alpha}{
+\backslash
+rightsquigarrow}p^{
+\backslash
+prime}
+\backslash
+land 
+\backslash
+neg p^{
+\backslash
+prime}
+\backslash
+noStep{
+\backslash
+tau}$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+$
+\backslash
+qquad
+\backslash
+land 
+\backslash
+, P
+\backslash
+subseteq
+\backslash
+{(
+\backslash
+beta,p^{
+\backslash
+prime
+\backslash
+prime})
+\backslash
+mid p^{
+\backslash
+prime}
+\backslash
+overset{
+\backslash
+beta}{
+\backslash
+rightsquigarrow}p^{
+\backslash
+prime
+\backslash
+prime}
+\backslash
+}$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+$
+\backslash
+qquad
+\backslash
+land 
+\backslash
+, 
+\backslash
+exists p^{
+\backslash
+prime
+\backslash
+prime}
+\backslash
+ldotp(
+\backslash
+tau,p^{
+\backslash
+prime
+\backslash
+prime})
+\backslash
+in P
+\backslash
+}$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+$S_P
+\backslash
+coloneqq 
+\backslash
+{P
+\backslash
+mid
+\backslash
+cdot
+\backslash
+overset{
+\backslash
+cdot}{
+\backslash
+twoheadrightarrow}P 
+\backslash
+neq 
+\backslash
+emptyset
+\backslash
+}$
+\backslash
+label{alg:cspartialstates}
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+$
+\backslash
+step{}^{
+\backslash
+prime}
+\backslash
+coloneqq
+\backslash
+quad
+\backslash
+rightsquigarrow
+\backslash
+quad
+\backslash
+cup
+\backslash
+quad
+\backslash
+twoheadrightarrow
+\backslash
+quad
+\backslash
+cup
+\backslash
+quad
+\backslash
+{(P,
+\backslash
+beta,p^{
+\backslash
+prime
+\backslash
+prime})
+\backslash
+mid P 
+\backslash
+in S_P 
+\backslash
+land(
+\backslash
+beta,p^{
+\backslash
+prime
+\backslash
+prime})
+\backslash
+in P
+\backslash
+}$
+\backslash
+label{alg:cspowerset}
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+KwRet{
+\backslash
+upshape $(S
+\backslash
+cup S_P,
+\backslash
+actions,
+\backslash
+step{}^{
+\backslash
+prime})$}
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+BlankLine
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Fn{
+\backslash
+upshape $
+\backslash
+varname{compute
+\backslash
+_cs
+\backslash
+_by
+\backslash
+_normalization}(
+\backslash
+system=(S,
+\backslash
+actions,
+\backslash
+step{})$)}{%
+\end_layout
+
+\begin_layout Plain Layout
+
+	$
+\backslash
+system_
+\backslash
+mathrm{old} 
+\backslash
+coloneqq 
+\backslash
+bot$ 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+While{
+\backslash
+label{alg:csnormfp} 
+\backslash
+upshape $
+\backslash
+system_
+\backslash
+mathrm{old}  
+\backslash
+neq 
+\backslash
+system$} {
+\end_layout
+
+\begin_layout Plain Layout
+
+		$
+\backslash
+system_
+\backslash
+mathrm{old}  
+\backslash
+coloneqq 
+\backslash
+system$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+		$
+\backslash
+system 
+\backslash
+coloneqq 
+\backslash
+varname{construct
+\backslash
+_cs
+\backslash
+_normalization}(
+\backslash
+system)$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	$
+\backslash
+rel{R} 
+\backslash
+coloneqq 
+\backslash
+varname{strong
+\backslash
+_bisim}(
+\backslash
+varname{tau
+\backslash
+_refl}(
+\backslash
+system))$
+\backslash
+label{alg:cssb}
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+KwRet{
+\backslash
+upshape $
+\backslash
+rel R 
+\backslash
+cap (S 
+\backslash
+times S)$}
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Fn{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+construct_cs_normalization(
+\begin_inset Formula $\system=(S,\step{},\actions)$
+\end_inset
+
+)
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}{%
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $\rightsquigarrow\,\coloneqq\{(p,\alpha,p^{\prime})\mid p\weakStep{\alpha}p^{\prime}\land(\alpha=\tau\longrightarrow p^{\prime}\stepMax{\tau})\}$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $\twoheadrightarrow\,\coloneqq\{(p,\alpha,P)\mid$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $\qquad(\exists p^{\prime}\ldotp p\overset{\alpha}{\rightsquigarrow}p^{\prime}\land p^{\prime}\stepMax{\tau})$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $\qquad\land P\subseteq\{(\beta,p^{\prime\prime})\mid p^{\prime}\overset{\beta}{\rightsquigarrow}p^{\prime\prime}\}\land\exists p^{\prime\prime}\ldotp(\tau,p^{\prime\prime})\in P\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $S^{\prime}\coloneqq S\cup\{P\mid\cdot\overset{\cdot}{\twoheadrightarrow}P\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $\step{}^{\prime}\coloneqq\quad\rightsquigarrow\quad\cup\quad\twoheadrightarrow\quad\cup\quad\{(P,\beta,p^{\prime\prime})\mid\cdot\overset{\cdot}{\twoheadrightarrow}P\land(\beta,p^{\prime\prime})\in P\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+KwRet{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $(S^{\prime},\step{}^{\prime},\actions)$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+BlankLine
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Fn{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+compute_cs()
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}{
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $\rel R:=S\times S$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+While{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+fp_step
+\begin_inset Formula $(\rel R)\neq\rel R$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}{
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $\rel R$
+\end_inset
+
+ 
+\begin_inset Formula $:=$
+\end_inset
+
+ fp_step
+\begin_inset Formula $(\rel R)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\backslash
+KwRet{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $\rel R$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:reduction-algo"
+
+\end_inset
+
+Bisimulation-reduction-based algorithm for coupled similarity 
+\begin_inset Formula $\csEq$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The core of the reduction approach outlined in Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:reduction-algo"
+
+\end_inset
+
+ is the normalization procedure in 
+\begin_inset Formula $\varname{construct\_cs\_normalization}$
+\end_inset
+
+, the implementation of which can be found in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+coderef[class]{shared/src/main/scala-2.11/}{de.bbisping.coupledsim.algo.transform.PS94
+CSNormalForms}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:csclose1"
+
+\end_inset
+
+ builds the weak transition closure with the restriction that 
+\begin_inset Formula $\tau$
+\end_inset
+
+-steps may only reach stable states.
+ This corresponds to the first two requirements of Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:cs-normal-form-ts"
+
+\end_inset
+
+
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+ with the slight generalization of stable states to 
+\begin_inset Formula $\tau$
+\end_inset
+
+-maximal states
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Lines 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:cspartial"
+
+\end_inset
+
+ to 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:cspartialstates"
+
+\end_inset
+
+ cover the third requirement: the presence of partial commits.
+ The new partial commit states are represented by the sets of their outgoing
+ edges because two partial commits that lead to the same set of remaining
+ moves can be considered equivalent\SpecialChar endofsentence
+ 
+\begin_inset Formula $\tau$
+\end_inset
+
+-loops might cause trouble here, but we do not bother with them in line
+ with Assumption 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "assu:no-tau-loops"
+
+\end_inset
+
+.
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Flex Fixme Note
+status open
+
+\begin_layout Plain Layout
+Remove the 
+\begin_inset Formula $\setminus\{(\tau,p)\}$
+\end_inset
+
+ from algo? (Or add explanation.) (Rather explicitly add 
+\begin_inset Formula $\tau$
+\end_inset
+
+-cycle removal.)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The newly added partial commit states do not necessarily fulfill requirement
+ 1 and 3.
+ Some of the implied steps could be missing for them and they might not
+ be closed under partial commits.
+ However, this can be dealt with by repeating 
+\begin_inset Formula $\varname{construct\_cs\_normalization}$
+\end_inset
+
+ until a fixed point
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+A fixed point 
+\begin_inset Formula $x$
+\end_inset
+
+ of a function 
+\begin_inset Formula $f\colon A\rightarrow A$
+\end_inset
+
+ is a value where 
+\begin_inset Formula $x=f(x)$
+\end_inset
+
+.
+ The next pages repeatedly draw on this concept.
+ An introduction to fixed points can be found in 
+\noun on
+Nielson, Nielson, 
+\noun default
+and
+\noun on
+ Hankin's
+\noun default
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Principles of Program Analysis
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "nnh2015popa"
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ is reached.
+ This is what is happening in lines 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:csnormfp"
+
+\end_inset
+
+ff.
+\begin_inset space \space{}
+\end_inset
+
+of 
+\begin_inset Formula $\varname{compute\_cs\_by\_normalization}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+On the resulting 
+\begin_inset Formula $\system$
+\end_inset
+
+, 
+\begin_inset Formula $p\csEq^{\system}q$
+\end_inset
+
+ if and only if 
+\begin_inset Formula $p\weakBisim^{\system}q$
+\end_inset
+
+ by Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:cs-wb-reduction"
+
+\end_inset
+
+.
+ The clauses it fulfills are a superset of the demands of the normalization
+ for weak bisimilarity from Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:axiom-wb"
+
+\end_inset
+
+.
+ So, everything one needs to complete the reduction to strong bisimilarity
+ is the reflexive closure on 
+\begin_inset Formula $\tau$
+\end_inset
+
+-steps of the transition relation.
+ This is done in line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:cssb"
+
+\end_inset
+
+.
+ Afterwards, the equivalences determined for the initial states carry over
+ to the original system, which is why 
+\begin_inset Formula $\rel R\cap(S\times S)$
+\end_inset
+
+ is returned.
+ Note that this rests on the fact that no on-the-fly merging (as in Example
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:cs-normal-form"
+
+\end_inset
+
+) of states is happening.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+The full proof of the correctness for the algorithm in Isabelle/HOL would
+ require a lot of work.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Complexity
+\end_layout
+
+\begin_layout Standard
+The reduction Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:reduction-algo"
+
+\end_inset
+
+ is exponential in time and space.
+ The target states of 
+\begin_inset Formula $\twoheadrightarrow$
+\end_inset
+
+ are constructed from an only slightly filtered power set of outgoing weak
+ transitions (line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:cspowerset"
+
+\end_inset
+
+), the size of which is exponential in the original outgoing transition
+ count.
+\end_layout
+
+\begin_layout Standard
+The complexity is bounded by the branching degree of the special weak transition
+ relation 
+\begin_inset Formula $\rightsquigarrow$
+\end_inset
+
+.
+ In practice, bounds like this one often mean that the exponentiality of
+ an algorithm remains of limited impact.
+ For instance, the reduction of weak trace equivalence to strong bisimilarity
+ from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ch1993"
+
+\end_inset
+
+ is exponential in theory but usable in practice.
+ For the present algorithm however, the complexity indeed makes it practically
+ intractable because 
+\begin_inset Formula $\rightsquigarrow$
+\end_inset
+
+ inherits the boosted branching degree of 
+\begin_inset Formula $\weakStep{\cdot}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Even if one combined the algorithm with some on-the-fly minimization techniques,
+ an exponential amount of additional states and transitions would still
+ be necessary.
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+ARGUMENT why the explosion is necessary?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Its intractability is the reason why we do not focus on refining the algorithm
+ and proving its correctness.
+ Instead, we continue with other algorithms right away.
+\end_layout
+
+\begin_layout Standard
+This section has illustrated that the reduction of coupled similarity to
+ weak/strong bisimilarity as hinted at by 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+ is possible, but indeed much more expensive than the polynomial 
+\begin_inset Formula $\tau$
+\end_inset
+
+-closure-based reductions of notions in between weak and strong bisimilarity.
+ Luckily, there are less expensive approaches.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+The reduction for notions in between strong and weak bisimulation (including
+ the latter) boils down to computing some form of the 
+\begin_inset Formula $\tau$
+\end_inset
+
+-closure as discussed in Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:weak-costs"
+
+\end_inset
+
+.
+ Usually, this means adding a polynomial amount of edges
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+—sometimes also a little more than a few
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+The Fixed-Point Approach
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:algo-cs-fixed-point"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The coinductive characterization of 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ in Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:cs-gfp"
+
+\end_inset
+
+ induces an extremely simple polynomial-time algorithm to compute the coupled
+ simulation preorder as a 
+\emph on
+greatest fixed point
+\emph default
+.
+ This section introduces the algorithm and proves its correctness.
+\end_layout
+
+\begin_layout Subsection
+The Algorithm
+\end_layout
+
+\begin_layout Standard
+Roughly speaking, the algorithm first considers the universal relation between
+ states, 
+\begin_inset Formula $S\times S$
+\end_inset
+
+, and then proceeds by removing every pair of states from the relation that
+ would contradict the coupling or the simulation property.
+ Its pseudo code is depicted in Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:Fixed-point-algorithm"
+
+\end_inset
+
+.
+ An implementation can be found in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+coderef[class]{shared/src/main/scala-2.11/}{de.bbisping.coupledsim.algo.cs.FixedPointC
+oupledSimilarity}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+placement t
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Fn{
+\backslash
+upshape $
+\backslash
+varname{fp
+\backslash
+_step}_{(S,
+\backslash
+actions,
+\backslash
+step{})}(
+\backslash
+rel R$)}{
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+KwRet{
+\end_layout
+
+\begin_layout Plain Layout
+
+		$
+\backslash
+{(p,q)
+\backslash
+in
+\backslash
+rel R
+\backslash
+mid$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+		$
+\backslash
+qquad(
+\backslash
+forall p^{
+\backslash
+prime}
+\backslash
+!,
+\backslash
+alpha
+\backslash
+ldotp
+\backslash
+; p
+\backslash
+step 
+\backslash
+alpha p^{
+\backslash
+prime}
+\backslash
+longrightarrow
+\backslash
+exists q^{
+\backslash
+prime}
+\backslash
+ldotp(p^{
+\backslash
+prime},q^{
+\backslash
+prime})
+\backslash
+in
+\backslash
+rel R
+\backslash
+land q
+\backslash
+weakStepTau 
+\backslash
+alpha q^{
+\backslash
+prime})$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+		$
+\backslash
+qquad
+\backslash
+land
+\backslash
+;(
+\backslash
+exists q^{
+\backslash
+prime}
+\backslash
+ldotp q
+\backslash
+weakStep{}q^{
+\backslash
+prime}
+\backslash
+land(q^{
+\backslash
+prime},p)
+\backslash
+in
+\backslash
+rel R)
+\backslash
+}$
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+BlankLine
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Fn{
+\backslash
+upshape $
+\backslash
+varname{fp
+\backslash
+_compute
+\backslash
+_cs}(
+\backslash
+system=(S,
+\backslash
+actions,
+\backslash
+step{}))$}{
+\end_layout
+
+\begin_layout Plain Layout
+
+	$
+\backslash
+rel R:=S
+\backslash
+times S$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+While{
+\backslash
+upshape $
+\backslash
+varname{fp
+\backslash
+_step}_
+\backslash
+system(
+\backslash
+rel R)
+\backslash
+neq
+\backslash
+rel R$}{
+\end_layout
+
+\begin_layout Plain Layout
+
+		$
+\backslash
+rel R$ $:= 
+\backslash
+varname{fp
+\backslash
+_step}_
+\backslash
+system(
+\backslash
+rel R)$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+KwRet{
+\backslash
+upshape $
+\backslash
+rel R$}
+\end_layout
+
+\begin_layout Plain Layout
+
+} 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Fixed-point algorithm for the coupled simulation preorder 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+.
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:Fixed-point-algorithm"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\varname{fp\_step}$
+\end_inset
+
+ plays the role of removing the tuples that would immediately violate the
+ simulation or coupling property from the relation.
+ Of course, such a pruning might invalidate tuples that were not rejected
+ before.
+ Therefore, 
+\begin_inset Formula $\varname{fp\_compute\_cs}$
+\end_inset
+
+ repeats the process until 
+\begin_inset Formula $\varname{fp\_step}_{\system}(\rel R)=\rel R$
+\end_inset
+
+, that is, until 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is a fixed point of 
+\begin_inset Formula $\varname{fp\_step}_{\system}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Correctness
+\end_layout
+
+\begin_layout Standard
+It is quite straight-forward to show that Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:Fixed-point-algorithm"
+
+\end_inset
+
+ indeed computes 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ because of the resemblance between 
+\begin_inset Formula $\varname{fp\_step}$
+\end_inset
+
+ and the coupled simulation property itself, and because of the monotonicity
+ of 
+\begin_inset Formula $\varname{fp\_step}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Lemma
+If 
+\begin_inset Formula $\varname{fp\_step}_{\system}(\rel R)=\rel R$
+\end_inset
+
+, then 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is a coupled simulation.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{CS
+\backslash
+_Fixpoint
+\backslash
+_Algo}{fp
+\backslash
+_fp
+\backslash
+_step}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+So, we can be sure that our algorithm, if it terminates, finds some coupled
+ simulation.
+ But is it the 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+-relation—which is to say the 
+\emph on
+greatest
+\emph default
+ one? First, let us note that 
+\begin_inset Formula $\varname{fp\_step}$
+\end_inset
+
+ is monotone on the subset lattice over 
+\begin_inset Formula $2^{S\times S}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula $\mathrm{fp\_step}$
+\end_inset
+
+ monotone
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $\rel R_{1}\subseteq\rel R_{2}$
+\end_inset
+
+ implies 
+\begin_inset Formula $\varname{fp\_step}_{\system}(\rel R_{1})\subseteq\varname{fp\_step}_{\system}(\rel R_{2})$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{CS
+\backslash
+_Fixpoint
+\backslash
+_Algo}{mono
+\backslash
+_fp
+\backslash
+_step}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This guarantees the existence of a greatest fixed point by the 
+\noun on
+Knaster
+\noun default
+–
+\noun on
+Tarski
+\noun default
+ theorem.
+ This greatest fixed point coincides with 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Lemma
+If 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is the greatest fixed point of 
+\begin_inset Formula $\varname{fp\_step}$
+\end_inset
+
+, then 
+\begin_inset Formula $\rel R=\,\csSimBy$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{CS
+\backslash
+_Fixpoint
+\backslash
+_Algo}{gfp
+\backslash
+_fp
+\backslash
+_step
+\backslash
+_gcs}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+On finite labeled transition systems, that is, with finite 
+\begin_inset Formula $S$
+\end_inset
+
+ and 
+\begin_inset Formula $\step{}$
+\end_inset
+
+, the while loop of 
+\begin_inset Formula $\varname{fp\_compute\_cs}$
+\end_inset
+
+ is guaranteed to terminate at the greatest fixed point of 
+\begin_inset Formula $\varname{fp\_step}$
+\end_inset
+
+ (by a dual variant of the 
+\noun on
+Kleene
+\noun default
+ fixed-point theorem).
+\end_layout
+
+\begin_layout Lemma
+For finite transition systems 
+\begin_inset Formula $\system$
+\end_inset
+
+, 
+\begin_inset Formula $\varname{fp\_compute\_cs}(\system)$
+\end_inset
+
+ computes the greatest fixed point of 
+\begin_inset Formula $\varname{fp\_step}_{\system}$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{CS
+\backslash
+_Fixpoint
+\backslash
+_Algo}{gfp
+\backslash
+_fp
+\backslash
+_step
+\backslash
+_while}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+The Isabelle proof of this lemma is a one-liner thanks to While_Combinator.gfp_wh
+ile_lattice.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Wrapping up the previous two lemmas, we receive that 
+\begin_inset Formula $\varname{fp\_compute\_cs}$
+\end_inset
+
+ is correct.
+\end_layout
+
+\begin_layout Theorem
+\begin_inset CommandInset label
+LatexCommand label
+name "thm:correctness-compute-fp"
+
+\end_inset
+
+For finite transition systems 
+\begin_inset Formula $\system$
+\end_inset
+
+, 
+\begin_inset Formula $\varname{fp\_compute\_cs}(\system)$
+\end_inset
+
+ returns 
+\begin_inset Formula $\csSimBy^{\system}$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{CS
+\backslash
+_Fixpoint
+\backslash
+_Algo}{coupled
+\backslash
+_sim
+\backslash
+_fp
+\backslash
+_step
+\backslash
+_while}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The proof is intuitively and machine-verifiably correct.
+ Because of its simplicity, we can trust implementations of Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:Fixed-point-algorithm"
+
+\end_inset
+
+ to faithfully return sound and complete 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+-relations.
+ Therefore, we can use this algorithm to generate reliable results within
+ test suites for the behavior of other 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+-implementations.
+\end_layout
+
+\begin_layout Subsection
+Complexity
+\end_layout
+
+\begin_layout Standard
+The space complexity, given by the maximal size of 
+\begin_inset Formula $\rel R$
+\end_inset
+
+, clearly is in 
+\begin_inset Formula $\bigo(\relSize S^{2})$
+\end_inset
+
+.
+ Time complexity takes some inspection of the algorithm.
+ For our considerations, we assume that 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+ has been pre-computed, which can slightly increase the space complexity
+ to 
+\begin_inset Formula $\bigo(\relSize{\visibleActions}\,\relSize S^{2})$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:runtime-compute-fp"
+
+\end_inset
+
+The running time of 
+\begin_inset Formula $\varname{fp\_compute\_cs}$
+\end_inset
+
+ is in 
+\begin_inset Formula $\bigo(\relSize{\visibleActions}\,\relSize S^{6})$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Checking the simulation property for a tuple 
+\begin_inset Formula $(p,q)\in\rel R$
+\end_inset
+
+ means that for all 
+\begin_inset Formula $\bigo(\relSize{\visibleActions}\,\relSize S)$
+\end_inset
+
+ outgoing 
+\begin_inset Formula $p\step{}$
+\end_inset
+
+-transitions, each has to be matched by a 
+\begin_inset Formula $q\weakStepTau{\cdot}$
+\end_inset
+
+-transition with identical action, of which there are at most 
+\begin_inset Formula $\relSize S$
+\end_inset
+
+.
+ So, simulation checking costs 
+\begin_inset Formula $\bigo(\relSize{\visibleActions}\,\relSize S^{2})$
+\end_inset
+
+ time per tuple.
+ Checking the coupling can be approximated by 
+\begin_inset Formula $\bigo(\relSize S)$
+\end_inset
+
+ per tuple.
+ Simulation dominates coupling.
+ The amount of tuples that have to be checked is in 
+\begin_inset Formula $\bigo(\relSize S^{2})$
+\end_inset
+
+.
+ Thus, the overall complexity of one invocation of 
+\begin_inset Formula $\varname{fp\_step}$
+\end_inset
+
+ is in 
+\begin_inset Formula $\bigo(\relSize{\visibleActions}\,\relSize S^{4})$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Because every invocation of 
+\begin_inset Formula $\varname{fp\_step}$
+\end_inset
+
+ decreases the size of 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ or leads to termination, there can be at most 
+\begin_inset Formula $\bigo(\relSize S^{2})$
+\end_inset
+
+ invocations of 
+\begin_inset Formula $\varname{fp\_step}$
+\end_inset
+
+ in 
+\begin_inset Formula $\varname{fp\_compute\_cs}$
+\end_inset
+
+.
+ Checking whether 
+\begin_inset Formula $\varname{fp\_step}$
+\end_inset
+
+ changes 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ can be done without notable overhead.
+ In conclusion, we arrive at an overall time complexity of 
+\begin_inset Formula $\bigo(\relSize{\visibleActions}\,\relSize S^{6})$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+This runtime coincides with previous results for simulation (doesnt it?)
+ (Laut RT2010 haben Doron Bustan and Orna Grumberg auch sowas wie n⁶.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:weak-sim-coupled-sim"
+
+\end_inset
+
+, we already noticed that computing 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ is at least as complex as computing 
+\begin_inset Formula $\weakSimBy$
+\end_inset
+
+.
+ The observation now, that ensuring the coupling condition costs less than
+ ensuring simulation, increases hope that computing 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ is not more complex than computing 
+\begin_inset Formula $\weakSimBy$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:runtime-compute-fp"
+
+\end_inset
+
+ seems not to be extra-ordinarily noteworthy.
+ Still, in combination with Theorem 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "thm:correctness-compute-fp"
+
+\end_inset
+
+, it already proves that computing coupled similarity is in 
+\begin_inset Formula $\complexityClass P$
+\end_inset
+
+ and thus less complex than computing trace equivalence, which is 
+\begin_inset Formula $\complexityClass{PSPACE}$
+\end_inset
+
+-complete 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ch1993"
+
+\end_inset
+
+.
+ 
+\noun on
+Parrow
+\noun default
+ and 
+\noun on
+Sjödin
+\noun default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+ while hinting at the exponential algorithm from Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:algo-bisim-approach"
+
+\end_inset
+
+ formulated as an open research question whether 
+\begin_inset Formula $\csEq$
+\end_inset
+
+ can be decided in 
+\begin_inset Formula $\complexityClass P$
+\end_inset
+
+, and—to the author's knowledge—we are hereby explicitly answering the question
+ for the first time.
+ Given that deciding the equivalences surrounding 
+\begin_inset Formula $\csEq$
+\end_inset
+
+ in the linear-time branching-time spectrum is in 
+\begin_inset Formula $\complexityClass P$
+\end_inset
+
+, a different result for 
+\begin_inset Formula $\csEq$
+\end_inset
+
+ would have been extremely surprising.
+\end_layout
+
+\begin_layout Standard
+Now, it does not take much energy to spot that applying the filtering in
+ 
+\begin_inset Formula $\varname{fp\_step}$
+\end_inset
+
+ to each and every tuple in 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ in every step, would not be necessary.
+ Only after a tuple 
+\begin_inset Formula $(p,q)$
+\end_inset
+
+ has been removed from 
+\begin_inset Formula $\rel R$
+\end_inset
+
+, the algorithm does really need to find out whether this was the last witness
+ for the 
+\begin_inset Formula $\exists$
+\end_inset
+
+-quantification in the clause of another tuple.
+ While this observation could inspire various improvements, let us fast-forward
+ to the game-theoretic approach in the next section, which elegantly explicates
+ the witness structure of a coupled similarity problem.
+\end_layout
+
+\begin_layout Section
+The Game-Theoretic Approach
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:The-Game-Theoretic-Approach"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Game-Characterization"
+
+\end_inset
+
+ introduced a simple two-player game characterization of the coupled simulation
+ preorder and proved its correctness.
+ Deciding winning regions of finite simple games is in linear running time.
+ Going down this route, the game approach induces a nice and reliable way
+ of computing the coupled simulation preorder 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ with running time cubic in the count of transition system states.
+\end_layout
+
+\begin_layout Subsection
+Deciding the Coupled Simulation Game
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:deciding-cs-game"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+placement t
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Fn{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $\varname{compute\_winning\_region}$
+\end_inset
+
+
+\begin_inset Formula $(\game=(G,G_{a},\gameMove))$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}{%
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing onehalf
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\lang english
+\begin_inset Formula $\varname{predecessors}\,:=[g\mapsto(\cdot\gameMove g)\mid g\in G]$
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:game-predecessors"
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula $\varname{num}\,:=[g\mapsto n\mid g\in G\land n=\|\{p\mid g\gameMove p\}\|]$
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:game-num"
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula $\varname{win}\,:=[g\mapsto\text{\mathtt{d}}\mid g\in G]$
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:game-win"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Fn{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $\varname{propagate\_attacker\_win}(g)$
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:game-propagate"
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}{%
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+uIf{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $\varname{win}[g]=\text{\mathtt{d}}$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}{%
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula $\varname{win}[g]:=\text{\mathtt{a}}$
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+For{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $g_{p}\in\text{\varname{predecessors}}(g)$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}{%
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula $\varname{num}[g_{p}]:=\varname{num}[g_{p}]-1$
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+uIf{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $g_{p}\in G_{a}\lor\varname{num}[g_{p}]=0$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}{%
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula $\varname{propagate\_attacker\_win}(g_{p})$
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:game-recursion"
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}}}}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+For{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $g\in G_{d}$
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:game-for-defender"
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}{%
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+uIf{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $\varname{num}[g]=0$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}{%
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula $\varname{propagate\_attacker\_win}(g)$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}}
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+KwRet{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $\varname{win}$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:game-algorithm"
+
+\end_inset
+
+Algorithm for deciding simple games.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It is well-known that the winning regions of finite simple games can be
+ computed in linear time.
+ Variants of the standard algorithm for this task can be found in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "graedel2007finite"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "kreutzer2016"
+
+\end_inset
+
+.
+ A slightly simplified
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+The difference is that 
+\noun on
+Grädel's
+\noun default
+ formulation is for well-founded games and might consider situations with
+ cycles undecided.
+ Interestingly, matters actually become 
+\emph on
+simpler
+\emph default
+ if infinite plays are considered wins for the defender: We can just unfold
+ the winning region of the attacker and consider every other position a
+ win for the defender due to the determinacy property from Proposition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "prop:simple-games-determined"
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ version of it is given in Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:game-algorithm"
+
+\end_inset
+
+ and implemented in the Scala trait 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+coderef[class]{shared/src/main/scala-2.11/}{de.bbisping.coupledsim.game.WinningRegion
+Computation}
+\end_layout
+
+\end_inset
+
+.
+ Intuitively, the algorithm first assumes that the defender wins everywhere
+ and then sets off a chain reaction beginning in defender deadlock nodes,
+ which 
+\begin_inset Quotes eld
+\end_inset
+
+turns
+\begin_inset Quotes erd
+\end_inset
+
+ all the nodes won by the attacker.
+\end_layout
+
+\begin_layout Standard
+The algorithm 
+\begin_inset Formula $\varname{compute\_winning\_region}$
+\end_inset
+
+ proceeds as follows: Initially, it determines the 
+\begin_inset Formula $\varname{predecessors}$
+\end_inset
+
+ (line
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:game-predecessors"
+
+\end_inset
+
+) and the number of successors (line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:game-num"
+
+\end_inset
+
+, 
+\begin_inset Formula $\varname{num}$
+\end_inset
+
+) for each node.
+ It first assumes that every node is won by the defender 
+\begin_inset Formula $\text{\mathtt{d}}$
+\end_inset
+
+ (line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:game-win"
+
+\end_inset
+
+, 
+\begin_inset Formula $\varname{win}$
+\end_inset
+
+).
+ Consequently, 
+\begin_inset Formula $\varname{num}$
+\end_inset
+
+ also equals the number of assumed winning defender moves and this will
+ be the core invariant.
+ The defender loses nodes where they have no move to a winning node.
+ So, the recursion starts at defender nodes without winning moves (line
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:game-for-defender"
+
+\end_inset
+
+).
+ 
+\begin_inset Formula $\varname{propagate\_attacker\_win}$
+\end_inset
+
+ (line
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:game-propagate"
+
+\end_inset
+
+) is called every time when it is discovered that a node is actually won
+ by the attacker.
+ Then the attacker also wins the predecessors of the node they own and 
+\begin_inset Formula $\varname{propagate\_attacker\_win}$
+\end_inset
+
+ is recursively called on these nodes in line
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:game-recursion"
+
+\end_inset
+
+.
+ For each predecessor, 
+\begin_inset Formula $\varname{num}$
+\end_inset
+
+ is decreased by one because it loses the current node as a winning defender
+ move.
+ If this was their last move, predecessors owned by the defender are also
+ won by the attacker, which is propagated in line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:game-recursion"
+
+\end_inset
+
+ as well.
+\end_layout
+
+\begin_layout Standard
+The algorithm runs in linear time of the game moves because every node can
+ only turn once.
+ It can be used to decide arbitrary finite simple games and, consequently,
+ also to decide our coupled simulation game 
+\begin_inset Formula $\game_{\mathit{CS}}$
+\end_inset
+
+ from Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:cs-game"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+placement t
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Fn{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $\varname{game\_compute\_cs}$
+\end_inset
+
+(
+\begin_inset Formula $\system$
+\end_inset
+
+)
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}{
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing onehalf
+\begin_inset Formula $\game_{\mathit{CS}}^{\system}=(G,G_{a},\gameMove)$
+\end_inset
+
+ 
+\begin_inset Formula $:=$
+\end_inset
+
+ 
+\begin_inset Formula $\varname{obtain\_cs\_game}$
+\end_inset
+
+
+\begin_inset Formula $(\system)$
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:game-obtaingame"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing onehalf
+\begin_inset Formula $\varname{win}:=\varname{compute\_winning\_region}(\game_{\mathit{CS}}^{\system})$
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:game-winningregions"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing onehalf
+\begin_inset Formula $\rel R$
+\end_inset
+
+ 
+\begin_inset Formula $:=\{(p,q)\mid(p,q)_{\mathtt{a}}\in G_{a}\land\varname{win}[(p,q)_{\mathtt{a}}]=\text{\mathtt{d}}\}$
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:game-compute"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+KwRet{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $\rel R$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:cs-game"
+
+\end_inset
+
+Game algorithm for the coupled simulation preorder 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Using 
+\begin_inset Formula $\varname{compute\_winning\_region}$
+\end_inset
+
+, it is only a matter of a few lines to determine the coupled simulation
+ preorder for a system 
+\begin_inset Formula $\system$
+\end_inset
+
+ as shown in 
+\begin_inset Formula $\varname{game\_compute\_cs}$
+\end_inset
+
+ in Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:cs-game"
+
+\end_inset
+
+.
+ One starts by constructing the corresponding game 
+\begin_inset Formula $\game_{\mathit{CS}}^{\system}$
+\end_inset
+
+ using a function 
+\begin_inset Formula $\varname{obtain\_cs\_game}$
+\end_inset
+
+, we consider given by Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:cs-game"
+
+\end_inset
+
+.
+ Then, one calls 
+\begin_inset Formula $\varname{compute\_winning\_region}$
+\end_inset
+
+ and collects the attacker nodes won by the defender for the result.
+ The implementation, including the construction of the game, can be found
+ in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+coderef[class]{shared/src/main/scala-2.11/}{de.bbisping.coupledsim.algo.cs.GameCoupled
+SimilarityPlain}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Correctness
+\end_layout
+
+\begin_layout Standard
+The correctness of 
+\begin_inset Formula $\varname{game\_compute\_cs}$
+\end_inset
+
+ in Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:cs-game"
+
+\end_inset
+
+ is mostly guaranteed by the proofs conducted in Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Correctness-Game"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Theorem
+For a finite labeled transition systems 
+\begin_inset Formula $\system$
+\end_inset
+
+, 
+\begin_inset Formula $\varname{game\_compute\_cs}(\system)$
+\end_inset
+
+ from Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:cs-game"
+
+\end_inset
+
+ returns 
+\begin_inset Formula $\csSimBy^{\system}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Theorem 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "thm:game-cs-iff"
+
+\end_inset
+
+ states that the defender wins 
+\begin_inset Formula $\game_{\mathit{CS}}^{\system}[(p,q)_{\mathtt{a}}]$
+\end_inset
+
+ exactly if 
+\begin_inset Formula $p\csSimBy^{\system}q$
+\end_inset
+
+.
+ As 
+\begin_inset Formula $\varname{compute\_winning\_region}(\game_{\mathit{CS}}^{\system})$
+\end_inset
+
+, according to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "graedel2007finite,kreutzer2016"
+
+\end_inset
+
+, returns where the defender wins, line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:game-compute"
+
+\end_inset
+
+ of Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:cs-game"
+
+\end_inset
+
+ precisely assigns 
+\begin_inset Formula $\rel R=\,\csSimBy^{\system}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Complexity
+\end_layout
+
+\begin_layout Standard
+The complexity arguments from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "graedel2007finite"
+
+\end_inset
+
+ yield linear complexity for deciding the game by Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:game-algorithm"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proposition
+\begin_inset CommandInset label
+LatexCommand label
+name "prop:game-algo-complexity"
+
+\end_inset
+
+ For a game 
+\begin_inset Formula $\game=(G,G_{a},\gameMove)$
+\end_inset
+
+, 
+\begin_inset Formula $\varname{compute\_winning\_region}$
+\end_inset
+
+ (Algorithm
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:game-algorithm"
+
+\end_inset
+
+) runs in 
+\begin_inset Formula $\bigo(\relSize G+\relSize{\gameMove})$
+\end_inset
+
+ time and space.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In order to tell the overall complexity of the resulting algorithm, we have
+ to look at the size of 
+\begin_inset Formula $\game_{\mathit{CS}}^{\system}$
+\end_inset
+
+ depending on the size of 
+\begin_inset Formula $\system$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:cs-game-size"
+
+\end_inset
+
+Consider the coupled simulation game 
+\begin_inset Formula $\game_{\mathit{CS}}^{\system}=(G,G_{a},\gameMove)$
+\end_inset
+
+ for varying 
+\begin_inset Formula $\system=(S,\actions,\step{})$
+\end_inset
+
+.
+ The growth of the game size 
+\begin_inset Formula $\relSize G+\relSize{\gameMove}$
+\end_inset
+
+ is in 
+\begin_inset Formula $\bigo(\relSize{\weakStepTau{\cdot}}\,|S|)$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Let us reexamine Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:cs-game"
+
+\end_inset
+
+.
+ There are 
+\begin_inset Formula $\relSize S^{2}$
+\end_inset
+
+ attacker nodes.
+ Collectively, they can formulate 
+\begin_inset Formula $\bigo(\relSize{\step{\cdot}}\,\relSize S)$
+\end_inset
+
+ simulation challenges and 
+\begin_inset Formula $\relSize S^{2}$
+\end_inset
+
+ coupling challenges.
+ There are 
+\begin_inset Formula $\bigo(\relSize{\weakStepTau{\cdot}}\,\relSize S)$
+\end_inset
+
+ simulation answers and 
+\begin_inset Formula $\bigo(\relSize{\weakStep{}}\,\relSize S)$
+\end_inset
+
+ coupling answers.
+ Of these, 
+\begin_inset Formula $\bigo(\relSize{\weakStepTau{\cdot}}\,\relSize S)$
+\end_inset
+
+ dominates the others.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset Formula $\varname{game\_compute\_cs}$
+\end_inset
+
+ (Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:cs-game"
+
+\end_inset
+
+) runs in 
+\begin_inset Formula $\bigo(\relSize{\weakStepTau{\cdot}}\,\relSize S)$
+\end_inset
+
+ time and space.
+\end_layout
+
+\begin_layout Proof
+Proposition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "prop:game-algo-complexity"
+
+\end_inset
+
+ and Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:cs-game-size"
+
+\end_inset
+
+ already yield that line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:game-winningregions"
+
+\end_inset
+
+ is in 
+\begin_inset Formula $\bigo(\relSize{\weakStepTau{\cdot}}\,\relSize S)$
+\end_inset
+
+ time and space.
+ Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:cs-game"
+
+\end_inset
+
+ is completely straight-forward, so the complexity of building 
+\begin_inset Formula $\game_{\mathit{CS}}^{\system}$
+\end_inset
+
+ in line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:game-obtaingame"
+
+\end_inset
+
+ equals its output size 
+\begin_inset Formula $\bigo(\relSize{\weakStepTau{\cdot}}\,\relSize S)$
+\end_inset
+
+, which coincides with the complexity of computing 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+.
+ The filtering in line 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:game-compute"
+
+\end_inset
+
+ is in 
+\begin_inset Formula $\bigo(\relSize S^{2})$
+\end_inset
+
+ (upper bound for attacker nodes) and thus does not influence the overall
+ complexity.
+\end_layout
+
+\begin_layout Standard
+With the estimate that 
+\begin_inset Formula $\bigo(\relSize{\weakStepTau{\cdot}})=\bigo(\relSize{\visibleActions}\,\relSize S^{2})$
+\end_inset
+
+, this would amount to 
+\begin_inset Formula $\bigo(\relSize{\visibleActions}\,\relSize S^{3})$
+\end_inset
+
+.
+ The game algorithm thus has cubic complexity with respect to the state
+ space.
+ Recalling that Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:cs-hardness"
+
+\end_inset
+
+ already predicted cubic complexity due to the simulation nature of coupled
+ simulation, the presented game algorithm should be decent enough as a basis
+ for further work.
+ Therefore, the remainder of the chapter focuses on improving it.
+\end_layout
+
+\begin_layout Section
+Optimizing the Game Algorithm
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:optimizing-game-algo"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A huge advantage of the game-theoretical approach is that it adds an intuitive
+ and manageable layer of abstraction.
+ In many situations, we can use additional knowledge we have about 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ to reduce the game size.
+\end_layout
+
+\begin_layout Subsection
+Discovering What Matters
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:game-discovery"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\begin_inset Formula $\game_{\mathit{CS}}$
+\end_inset
+
+-game from Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Game-Characterization"
+
+\end_inset
+
+ can directly be used to answer the question: 
+\begin_inset Quotes eld
+\end_inset
+
+For every 
+\begin_inset Formula $p$
+\end_inset
+
+, 
+\begin_inset Formula $q$
+\end_inset
+
+ in 
+\begin_inset Formula $S$
+\end_inset
+
+, is 
+\begin_inset Formula $p\csSimBy q$
+\end_inset
+
+?
+\begin_inset Quotes erd
+\end_inset
+
+ But usually we are not interested in 
+\emph on
+every
+\emph default
+ 
+\begin_inset Formula $p$
+\end_inset
+
+ and 
+\begin_inset Formula $q$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+One common case is to ask the question only for two initial states 
+\begin_inset Formula $p_{0}$
+\end_inset
+
+ and 
+\begin_inset Formula $q_{0}$
+\end_inset
+
+, for example, because the relationship of two program fragments starting
+ in these states is of interest.
+ To determine 
+\begin_inset Formula $p_{0}\csSimBy q_{0}$
+\end_inset
+
+, only some part of 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ must be decided
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+, although not necessarily for every pair of states
+\end_layout
+
+\end_inset
+
+.
+ As a consequence, we would not need the full-blown game graph.
+ For some examples, this might even render the 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+-problem on infinite transition systems decidable.
+\end_layout
+
+\begin_layout Standard
+Another instance where we wonder whether 
+\begin_inset Formula $p\csSimBy q$
+\end_inset
+
+ just for a subset of 
+\begin_inset Formula $S\times S$
+\end_inset
+
+ is if we already know that 
+\begin_inset Formula $p\not\csSimBy q$
+\end_inset
+
+ for some 
+\begin_inset Formula $p,q$
+\end_inset
+
+.
+ For example, if 
+\begin_inset Formula $p$
+\end_inset
+
+ has more weakly enabled actions than 
+\begin_inset Formula $q$
+\end_inset
+
+, we know that 
+\begin_inset Formula $p\not\csSimBy q$
+\end_inset
+
+ without invoking the algorithm.
+\end_layout
+
+\begin_layout Standard
+For these instances, it is reasonable not to build the whole game graph
+ but only 
+\emph on
+the portion that matters
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float algorithm
+placement t
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\paragraph_spacing onehalf
+\begin_inset Preview
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Fn{
+\backslash
+upshape $
+\backslash
+varname{discover
+\backslash
+_game}(G_0, 
+\backslash
+mathit{successors})$}{%
+\end_layout
+
+\begin_layout Plain Layout
+
+	$
+\backslash
+varname{predecessors} := [] $ with default $
+\backslash
+emptyset$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+	$
+\backslash
+varname{num} := []$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+	$
+\backslash
+varname{todo} := G_0$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+	$
+\backslash
+varname{discovered} := G_0$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+While{
+\backslash
+upshape $
+\backslash
+varname{todo} 
+\backslash
+neq 
+\backslash
+emptyset$}{
+\end_layout
+
+\begin_layout Plain Layout
+
+		$
+\backslash
+textbf{choose } g_c 
+\backslash
+in 
+\backslash
+varname{todo}$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+		$
+\backslash
+varname{todo} := 
+\backslash
+varname{todo} 
+\backslash
+setminus 
+\backslash
+{g_c
+\backslash
+}$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+		$
+\backslash
+varname{num}[g_c] := 
+\backslash
+relSize{
+\backslash
+mathit{successors}(g_c)}$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\backslash
+For{
+\backslash
+upshape $g_n 
+\backslash
+in 
+\backslash
+mathit{successors}(g_c)$ } {
+\end_layout
+
+\begin_layout Plain Layout
+
+			$
+\backslash
+varname{predecessors}[g_n] := 
+\backslash
+varname{predecessors}[g_n] 
+\backslash
+cup 
+\backslash
+{g_c
+\backslash
+}$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			
+\backslash
+uIf{
+\backslash
+upshape $g_n 
+\backslash
+notin 
+\backslash
+varname{discovered}$} {
+\end_layout
+
+\begin_layout Plain Layout
+
+				$
+\backslash
+varname{discovered} := 
+\backslash
+varname{discovered} 
+\backslash
+cup 
+\backslash
+{g_n
+\backslash
+}$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+				$
+\backslash
+varname{todo} := 
+\backslash
+varname{todo} 
+\backslash
+cup 
+\backslash
+{g_n
+\backslash
+}$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+KwRet{
+\backslash
+upshape $(
+\backslash
+varname{discovered}, 
+\backslash
+varname{predecessors},
+\backslash
+varname{num})$}
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Fn{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+construct_cs_normalization(
+\begin_inset Formula $\system=(S,\step{},\actions)$
+\end_inset
+
+)
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}{%
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $\rightsquigarrow\,\coloneqq\{(p,\alpha,p^{\prime})\mid p\weakStep{\alpha}p^{\prime}\land(\alpha=\tau\longrightarrow p^{\prime}\stepMax{\tau})\}$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $\twoheadrightarrow\,\coloneqq\{(p,\alpha,P)\mid$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $\qquad(\exists p^{\prime}\ldotp p\overset{\alpha}{\rightsquigarrow}p^{\prime}\land p^{\prime}\stepMax{\tau})$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $\qquad\land P\subseteq\{(\beta,p^{\prime\prime})\mid p^{\prime}\overset{\beta}{\rightsquigarrow}p^{\prime\prime}\}\land\exists p^{\prime\prime}\ldotp(\tau,p^{\prime\prime})\in P\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $S^{\prime}\coloneqq S\cup\{P\mid\cdot\overset{\cdot}{\twoheadrightarrow}P\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $\step{}^{\prime}\coloneqq\quad\rightsquigarrow\quad\cup\quad\twoheadrightarrow\quad\cup\quad\{(P,\beta,p^{\prime\prime})\mid\cdot\overset{\cdot}{\twoheadrightarrow}P\land(\beta,p^{\prime\prime})\in P\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+KwRet{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $(S^{\prime},\step{}^{\prime},\actions)$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+BlankLine
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Fn{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+compute_cs()
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}{
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $\rel R:=S\times S$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+While{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+fp_step
+\begin_inset Formula $(\rel R)\neq\rel R$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}{
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $\rel R$
+\end_inset
+
+ 
+\begin_inset Formula $:=$
+\end_inset
+
+ fp_step
+\begin_inset Formula $(\rel R)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\backslash
+KwRet{
+\backslash
+upshape 
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula $\rel R$
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "alg:game-discovery"
+
+\end_inset
+
+Game discovery.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\varname{discover\_game}$
+\end_inset
+
+ of Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:game-discovery"
+
+\end_inset
+
+ constructs only the fragment of a game that is reachable from some relevant
+ game positions 
+\begin_inset Formula $G_{0}$
+\end_inset
+
+ via moves specified by a function 
+\begin_inset Formula $\mathit{successors}\colon G\rightarrow2^{G}$
+\end_inset
+
+.
+ It returns precisely the information that is needed in the initialization
+ of the winning region algorithm from Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:deciding-cs-game"
+
+\end_inset
+
+.
+ It is an ordinary graph search algorithm, so it runs in linear time of
+ the discovered edges and linear space of the reached vertices.
+ The implementation can be found in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+coderef[trait]{shared/src/main/scala-2.11/}{de.bbisping.coupledsim.game.GameDiscovery
+}
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Over- and Under-Approximations
+\end_layout
+
+\begin_layout Standard
+The game can be downsized tremendously once we take additional over- and
+ under-approximation information into account.
+\end_layout
+
+\begin_layout Definition
+An 
+\emph on
+over-approximation
+\emph default
+ of 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ is a relation 
+\begin_inset Formula $\rel R_{O}$
+\end_inset
+
+ of that we know that 
+\begin_inset Formula $\csSimBy\,\subseteq\rel R_{O}$
+\end_inset
+
+.
+ Conversely, an 
+\emph on
+under-approximation
+\emph default
+ of 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ is a relation 
+\begin_inset Formula $\rel R_{U}$
+\end_inset
+
+ where 
+\begin_inset Formula $\rel R_{U}\subseteq\,\csSimBy$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+For instance, an obvious under-approximation would be the identity function
+ 
+\begin_inset Formula $\diagonal_{S}$
+\end_inset
+
+ as we do not have to ask whether 
+\begin_inset Formula $p\csSimBy p$
+\end_inset
+
+.
+ It is true no matter the structure of 
+\begin_inset Formula $\system$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Over-approximations can be combined to acquire higher precision: If 
+\begin_inset Formula $\rel R_{O1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\rel R_{O2}$
+\end_inset
+
+ are over-approximations then so is 
+\begin_inset Formula $\rel R_{O1}\cap\rel R_{O2}$
+\end_inset
+
+.
+ The dual holds for under-approximations (
+\begin_inset Formula $\rel R_{U1}\cup\rel R_{U2}$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+Regarding the game, over-approximations tell us where the defender 
+\emph on
+can
+\emph default
+ win, and under-approximations tell us where the attacker is doomed to lose.
+ They can be used to eliminate 
+\begin_inset Quotes eld
+\end_inset
+
+boring
+\begin_inset Quotes erd
+\end_inset
+
+ parts of the game.
+\end_layout
+
+\begin_layout Standard
+Given an over-approximation 
+\begin_inset Formula $\rel R_{O}$
+\end_inset
+
+, when discovering the game, it only makes sense to add moves from defender
+ nodes to attacker nodes 
+\begin_inset Formula $(p,q)_{\mathtt{a}}$
+\end_inset
+
+ if 
+\begin_inset Formula $(p,q)\in\rel R_{O}$
+\end_inset
+
+.
+ There just is no need to allow the defender moves we already know cannot
+ be winning for them.
+ So, the discovery can skip outgoing game moves from defender nodes to attacker
+ nodes if they leave the over-approximation.
+ Likewise, only subsets of 
+\begin_inset Formula $\rel R_{O}$
+\end_inset
+
+ should be used as starting point for the discovery from Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:game-discovery"
+
+\end_inset
+
+—the other attacker nodes do not matter because they would be won by the
+ attacker anyways.
+\end_layout
+
+\begin_layout Standard
+Given an under-approximation 
+\begin_inset Formula $\rel R_{U}$
+\end_inset
+
+, we can ignore all the outgoing moves of 
+\begin_inset Formula $(p,q)_{\mathtt{a}}$
+\end_inset
+
+ if 
+\begin_inset Formula $(p,q)\in\rel R_{U}$
+\end_inset
+
+.
+ Without moves, 
+\begin_inset Formula $(p,q)_{\mathtt{a}}$
+\end_inset
+
+ is sure to be won by the defender, which is in line with the claim of the
+ approximation.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+coderef[class]{shared/src/main/scala-2.11/}{de.bbisping.coupledsim.algo.cs.GameCoupled
+Similarity}
+\end_layout
+
+\end_inset
+
+ implements a va\SpecialChar softhyphen
+ri\SpecialChar softhyphen
+ant of the coupled simulation game where the game graph
+ can be kept small using approximations.
+ 
+\end_layout
+
+\begin_layout Standard
+Two examples for approximations that are easily supplyable once the 
+\begin_inset Formula $\tau$
+\end_inset
+
+-closure has been computed are:
+\end_layout
+
+\begin_layout Corollary
+\begin_inset Formula $\weakStep{}^{-1}$
+\end_inset
+
+ is an under-approximation of 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+.
+ (Cf.
+\begin_inset space ~
+\end_inset
+
+Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:coupledsim_step"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:weak-enabledness-overapprox"
+
+\end_inset
+
+
+\begin_inset Formula $\rel R=\{(p,q)\mid\text{all actions weakly enabled in }p\text{ are weakly enabled in }q\}$
+\end_inset
+
+ is an over-approximation of 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[corollary]{Coupled
+\backslash
+_Simulation}{coupledsim
+\backslash
+_enabled
+\backslash
+_subs}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The trouble with over-approximations is that, as we already discussed, coarser
+ notions of equivalence tend to have more expensive algorithms than finer
+ ones.
+ The question thus is which helpful coarser notions of equivalence are easily
+ computable in the context of our coupled simulation preorder algorithm.
+\end_layout
+
+\begin_layout Subsection
+Over-Approximation by Maximal Weak Steps
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:over-approx-max-weak-step"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+That coupled simulation is 
+\begin_inset Quotes eld
+\end_inset
+
+almost bisimulation
+\begin_inset Quotes erd
+\end_inset
+
+ on steps to stable states in finite systems (Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:cs-eventual-symm"
+
+\end_inset
+
+) can be used for a comparably cheap and precise over-approximation.
+\begin_inset FormulaMacro
+\newcommand{\maxBS}[1]{\mathbin{\weakStep{#1}\hspace{-4pt}\mid}}
+{\weakStep{#1}\mid}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\maxBSi}{\weakStep{}\!\mid}
+{\weakStep{}\mid}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The idea is to compute the strong bisimulation on the system 
+\begin_inset Formula $\system_{\maxBSi}=(S,\actions,\text{\maxBS{}})$
+\end_inset
+
+, where 
+\emph on
+maximal weak steps
+\emph default
+, 
+\begin_inset Formula $p\maxBS{\alpha}p^{\prime}$
+\end_inset
+
+, exist iff 
+\begin_inset Formula $p\weakStepTau{\alpha}p^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $p^{\prime}$
+\end_inset
+
+ is stable, that is, 
+\begin_inset Formula $p^{\prime}\noStep{\tau}$
+\end_inset
+
+.
+ Let 
+\begin_inset Formula $\equiv_{\maxBSi}$
+\end_inset
+
+ be the biggest symmetric relation where
+\begin_inset Formula 
+\[
+p\equiv_{\maxBSi}q\text{ and }p\maxBS{\alpha}p^{\prime}\text{ \,implies there is \ensuremath{q^{\prime}} such that }p^{\prime}\equiv_{\maxBSi}q^{\prime}\text{ and }q\maxBS{\alpha}q^{\prime}.
+\]
+
+\end_inset
+
+By Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:cs-eventual-symm"
+
+\end_inset
+
+, 
+\begin_inset Formula $\csEq\,\subseteq\,\equiv_{\maxBSi}$
+\end_inset
+
+.
+ Using this and exploiting that the existential quantification can be hidden
+ in the relation concatenation of 
+\begin_inset Formula $\maxBS{\alpha}$
+\end_inset
+
+ and 
+\begin_inset Formula $\equiv_{\maxBSi}$
+\end_inset
+
+, Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:cs-eventual-symm"
+
+\end_inset
+
+ can be rewritten to:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+p\csSimBy q\text{ and }p\maxBS{\alpha}p^{\prime}\text{ \,implies\, }q\,\maxBS{\alpha}\!\equiv_{\maxBSi}p^{\prime}.
+\]
+
+\end_inset
+
+This yields that the subset relationship on the 
+\begin_inset Formula $\maxBS{\alpha}\!\equiv_{\maxBSi}$
+\end_inset
+
+-signatures makes for a neat over-approximation:
+\end_layout
+
+\begin_layout Lemma
+\begin_inset Formula $\text{\rel R}_{\maxBSi}=\{(p,q)\mid(p\maxBS{\alpha}\cdot)\subseteq(q\,\maxBS{\alpha}\!\equiv_{\maxBSi}\,\cdot)\}$
+\end_inset
+
+ is an over-approximation of 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ on finite systems.
+\end_layout
+
+\begin_layout Standard
+Computing 
+\begin_inset Formula $\equiv_{\maxBSi}$
+\end_inset
+
+ can be expected to be cheaper than computing 
+\begin_inset Formula $\weakBisim$
+\end_inset
+
+.
+ After all, 
+\begin_inset Formula $\maxBS{\cdot}$
+\end_inset
+
+ is just a subset of 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+.
+ However, filtering 
+\begin_inset Formula $S\times S$
+\end_inset
+
+ using subset checks to create 
+\begin_inset Formula $\text{\rel R}_{\maxBSi}$
+\end_inset
+
+ might well be 
+\emph on
+quartic,
+\emph default
+ 
+\begin_inset Formula $\bigo(\relSize S^{4})$
+\end_inset
+
+, or worse.
+ Nevertheless, one can argue that with a reasonable algorithm design and
+ for many real-world examples, 
+\begin_inset Formula $\maxBS{\alpha}\!\!\equiv_{\maxBSi}$
+\end_inset
+
+ will be sufficiently bounded in branching degree, in order for the over-approxi
+mation to do more good than harm.
+\end_layout
+
+\begin_layout Standard
+For everyday system designs, 
+\begin_inset Formula $\text{\rel R}_{\maxBSi}$
+\end_inset
+
+ is a tight approximation of 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+.
+ On the philosopher system 
+\begin_inset Formula $\system_{P}$
+\end_inset
+
+ from Example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:philosophers-one-step"
+
+\end_inset
+
+f., they even coincide.
+ In some situations, 
+\begin_inset Formula $\text{\rel R}_{\maxBSi}$
+\end_inset
+
+ degenerates to the shared enabledness relation (Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:weak-enabledness-overapprox"
+
+\end_inset
+
+), which is to say it becomes comparably useless.
+ One example for this are the systems created by the reduction from weak
+ simulation to coupled simulation in Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:weak-sim-coupled-sim"
+
+\end_inset
+
+ after 
+\begin_inset Formula $\tau$
+\end_inset
+
+-cycle removal.
+ There, all 
+\begin_inset Formula $\maxBS{}$
+\end_inset
+
+-steps are bound to end in the same one 
+\begin_inset Formula $\tau$
+\end_inset
+
+-sink state 
+\begin_inset Formula $\bot$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset space ~
+\end_inset
+
+Sigref 
+\end_layout
+
+\begin_layout Plain Layout
+degenerates precisely in situations resembling the weak-sim-reduction 
+\end_layout
+
+\begin_layout Plain Layout
+experimental results
+\end_layout
+
+\end_inset
+
+
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Section
+Signature Refinement
+\end_layout
+
+\begin_layout Plain Layout
+Sigref
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $\tau.(\tau.P+Q)=\tau.P+Q$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+\mathrm{sig}(p) & =\{(a,B)\mid B\in P\land a\neq\tau\land\exists p^{\prime}\in B\ldotp p\step ap^{\prime}\}\\
+ & \cup\{(\alpha,B)\mid B\in P\land\exists p^{\prime},p^{\prime\prime}\ldotp\exists p^{\prime\prime\prime}\in B\ldotp p\weakStep{}p^{\prime}\step{\alpha}p^{\prime\prime}\weakStep{}p^{\prime\prime\prime}\\
+ & \qquad\land(\alpha\neq\tau\lor(p,p^{\prime\prime\prime})\notin P\land(\mathrm{stable}(p^{\prime\prime\prime})\lor\mathrm{div}(p^{\prime\prime\prime}))\}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+Signature
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Our implementation computes 
+\begin_inset Formula $\equiv_{\maxBSi}$
+\end_inset
+
+ using a 
+\emph on
+signature refinement algorithm
+\emph default
+ in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+coderef[class]{shared/src/main/scala-2.11/}{de.bbisping.coupledsim.algo.sigref.BigStep
+Equivalence}
+\end_layout
+
+\end_inset
+
+.
+ Signature refinement 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "whhsb2006sigref,wimmer2011dissertation"
+
+\end_inset
+
+ describes a class of iterative algorithms for coarsest partitions where
+ algorithms for bisimulation-like equivalences can be expressed concisely
+ by specifying a 
+\begin_inset Quotes eld
+\end_inset
+
+signature.
+\begin_inset Quotes erd
+\end_inset
+
+ The signature describes for every state which information about the current
+ partitions of successor states can distinguish it from other states.
+ The advantage of this class of algorithms is their maintainability and
+ their distributability 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "bo2003distBranchingSigref"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Gamifying the 
+\begin_inset Formula $\tau$
+\end_inset
+
+-Closure
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:gamifying-tau"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The inherently transitive nature of games gives us the opportunity to avoid
+ the computation of the 
+\begin_inset Formula $\tau$
+\end_inset
+
+-closure.
+ The exploration of the 
+\begin_inset Formula $\tau$
+\end_inset
+
+-closure necessary to find a tuple from 
+\begin_inset Formula $\weakStepTau{\alpha}$
+\end_inset
+
+ as simulation answer or a tuple from 
+\begin_inset Formula $\weakStep{}$
+\end_inset
+
+ as coupling answer can also be accomplished using steps between defender
+ nodes.
+\end_layout
+
+\begin_layout Definition
+\begin_inset CommandInset label
+LatexCommand label
+name "def:cs-game-tau"
+
+\end_inset
+
+The 
+\emph on
+
+\begin_inset Formula $\tau$
+\end_inset
+
+-closure-free coupled simulation game
+\emph default
+ 
+\begin_inset Formula $\game_{\mathit{CS}}^{\tau}[p_{0}]=(G,G_{a},\gameMove,p_{0})$
+\end_inset
+
+ has the same kinds of nodes as 
+\begin_inset Formula $\game_{\mathit{CS}}[p_{0}]$
+\end_inset
+
+ from Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:cs-game"
+
+\end_inset
+
+ and the following kinds of moves:
+\begin_inset VSpace 0.2cm
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Itemize
+
+\emph on
+simulation challenges
+\emph default
+ 
+\begin_inset Formula $(p,q)_{\mathtt{a}}\gameMove(\alpha,p^{\prime},q)_{\mathtt{d}}$
+\end_inset
+
+ if 
+\begin_inset Formula $p\step{\alpha}p^{\prime}$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+new: 
+\series default
+\emph on
+simulation answer
+\emph default
+ 
+\emph on
+postponements
+\emph default
+ 
+\begin_inset Formula $(\alpha,p^{\prime},q)_{\mathtt{d}}\gameMove(\alpha,p^{\prime},q^{\prime})_{\mathtt{d}}$
+\end_inset
+
+ 
+\begin_inset space ~
+\end_inset
+
+if 
+\begin_inset Formula $q\step{\tau}q^{\prime}$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+new: 
+\series default
+\emph on
+simulation answer steps
+\emph default
+ 
+\begin_inset Formula $(\alpha,p^{\prime},q)_{\mathtt{d}}\gameMove(\tau,p^{\prime},q^{\prime})_{\mathtt{d}}$
+\end_inset
+
+ 
+\begin_inset space ~
+\end_inset
+
+if 
+\begin_inset Formula $q\step{\alpha}q^{\prime}$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+new: 
+\series default
+\emph on
+simulation answer resolutions
+\emph default
+ 
+\begin_inset Formula $(\tau,p,q)_{\mathtt{d}}\gameMove(p,q)_{\mathtt{a}}$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+coupling challenges
+\emph default
+ 
+\begin_inset Formula $(p,q)_{\mathtt{a}}\gameMove(\mathtt{Cpl},p,q)_{\mathtt{d}}$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+new:
+\series default
+\emph on
+ coupling steps
+\emph default
+ 
+\begin_inset Formula $(\mathtt{Cpl},p,q)_{\mathtt{d}}\gameMove(\mathtt{Cpl},p,q^{\prime})_{\mathtt{d}}$
+\end_inset
+
+ 
+\begin_inset space ~
+\end_inset
+
+if 
+\begin_inset Formula $q\step{\tau}q^{\prime}$
+\end_inset
+
+, and
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+modified:
+\series default
+\emph on
+ coupling resolutions
+\emph default
+ 
+\begin_inset Formula $(\mathtt{Cpl},p,q)_{\mathtt{d}}\gameMove(q,p)_{\mathtt{a}}$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This reformulation relies on the 
+\begin_inset Formula $\tau$
+\end_inset
+
+-cycle removal from Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:tau-loops"
+
+\end_inset
+
+.
+ If they had not been removed, such 
+\begin_inset Formula $\tau$
+\end_inset
+
+-cycles would break the game as they would introduce spurious infinite winning
+ runs for the defender.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+So, if one only works with the side-condition that 
+\begin_inset Formula $\tau$
+\end_inset
+
+-cycles have been compressed to loops, the 
+\begin_inset Formula $q\step{\tau}q^{\prime}$
+\end_inset
+
+ side-conditions must be extended with the requirement that 
+\begin_inset Formula $q\neq q^{\prime}$
+\end_inset
+
+.
+ Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:tau-loops"
+
+\end_inset
+
+ gives a justification to add it without doing damage.
+ [This detail only makes sense when also pointing to the implementation...]
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Following Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:cs-game-tau"
+
+\end_inset
+
+, the game can be constructed without the costly computation of the 
+\begin_inset Formula $\tau$
+\end_inset
+
+-closure.
+ Interestingly, this modification at the same time reduces the amount of
+ moves in the game.
+ We are saving twice.
+\end_layout
+
+\begin_layout Standard
+Now, the old dominating amount of simulation answers in 
+\begin_inset Formula $\bigo(\relSize{\weakStepTau{\cdot}}\,\relSize S)$
+\end_inset
+
+ is superseded by the amounts of simulation answer postponements 
+\begin_inset Formula $\bigo(\relSize{\actions}\,\relSize{\step{\tau}}\,\relSize S)$
+\end_inset
+
+ and simulation answer steps 
+\begin_inset Formula $\bigo(\relSize{\step{\cdot}}\,\relSize S)$
+\end_inset
+
+.
+ 
+\begin_inset Formula $\bigo(\relSize{\weakStep{}}\,\relSize S)$
+\end_inset
+
+ coupling answers are replaced by 
+\begin_inset Formula $\bigo(\relSize{\step{\tau}}\,\relSize S)$
+\end_inset
+
+ coupling steps (and 
+\begin_inset Formula $\bigo(\relSize S^{2})$
+\end_inset
+
+ resolutions).
+ So, for sensible transition systems 
+\begin_inset Formula $\bigo(\relSize{\actions}\,\relSize{\step{\tau}}\,\relSize S)$
+\end_inset
+
+ becomes the new size bound.
+ Although this bound is effectively smaller than 
+\begin_inset Formula $\bigo(\relSize{\weakStepTau{\cdot}}\,\relSize S)$
+\end_inset
+
+, it still is cubic in the state space.
+\end_layout
+
+\begin_layout Section
+Discussion
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:algorithms-discussion"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Of the algorithms presented, clearly the game-theoretic one is the most
+ attractive.
+ Its cubic 
+\begin_inset Formula $\bigo(\relSize{\weakStepTau{\cdot}}\,\relSize S)$
+\end_inset
+
+ complexity and its flexibility make it a good choice for many applications.
+ However, the game graph of cubic size uses a lot of space.
+\end_layout
+
+\begin_layout Standard
+The fixed-point algorithm has the advantage of a tendentially lower memory
+ usage, its simplicity, and verified dependability.
+ Its 
+\begin_inset Formula $\bigo(\relSize S^{6})$
+\end_inset
+
+ time complexity is daunting.
+ It might however be a good basis for improvements in the spirit of the
+ simulation algorithms in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "hhk1995simulations"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The bisimulation reduction algorithm is neither simple nor efficient.
+ This comes from the peculiar normalization procedure in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+.
+ Unless a trick is devised to get around the partial commit closure, it
+ is not really fit for application.
+\end_layout
+
+\begin_layout Standard
+Further improvements of the algorithms could be possible by 
+\begin_inset Quotes eld
+\end_inset
+
+symbolic refinements.
+\begin_inset Quotes erd
+\end_inset
+
+ A classical approach in simulation algorithms 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "hhk1995simulations,gpp2003,gp2008,rt2010efficientSimulation"
+
+\end_inset
+
+ is to represent 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ by a partition relation pair 
+\begin_inset Formula $(P,R)$
+\end_inset
+
+, where the relation 
+\begin_inset Formula $R$
+\end_inset
+
+ is only defined on partitions of 
+\begin_inset Formula $S$
+\end_inset
+
+ instead of the whole graph.
+ Partitions of graphs (aka.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Quotes eld
+\end_inset
+
+colorings
+\begin_inset Quotes erd
+\end_inset
+
+) can be stored very efficiently and a lot of tuples of 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ can be saved this way.
+ This might bring down some of the 
+\begin_inset Formula $\relSize S$
+\end_inset
+
+ components of the complexity terms to 
+\begin_inset Formula $\relSize{S_{/\csEq}}$
+\end_inset
+
+.
+ Once we assume that the transition system has been minimized with respect
+ to 
+\begin_inset Formula $\weakBisim$
+\end_inset
+
+ before our computations, so that 
+\begin_inset Formula $\relSize S=\relSize{S_{/\weakBisim}}$
+\end_inset
+
+, the partition relation pair trick would not save a lot.
+ 
+\begin_inset Formula $\relSize{S_{/\weakBisim}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\relSize{S_{/\csEq}}$
+\end_inset
+
+ will be almost equal for many systems.
+\end_layout
+
+\begin_layout Standard
+The other route of symbolic refinements are binary decision diagrams (BDDs),
+ where 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ and 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+ can be stored and modified in a kind of on-the-fly zip format 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "wimmer2011dissertation,whhsb2006sigref,bulychev2011gameSimulation"
+
+\end_inset
+
+.
+ This would be connected with some technicalities and would hamper distributabil
+ity.
+ But it can lead to significant complexity savings as long as one disregards
+ the complexity of the conversions from and to the BDD representation.
+\end_layout
+
+\end_body
+\end_document

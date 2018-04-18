@@ -1,0 +1,505 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass report
+\begin_preamble
+\input{preamble}
+\end_preamble
+\use_default_options true
+\master ../../../Dokumente/coupledsim/thesis/main.lyx
+\begin_modules
+logicalmkup
+fixltx2e
+fixme
+\end_modules
+\maintain_unincluded_children false
+\language american
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 1
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle plain
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Chapter
+Conclusion
+\begin_inset CommandInset label
+LatexCommand label
+name "chap:Conclusion"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+They say that all good things come to an end.
+ So, 
+\begin_inset Formula $\omega$
+\end_inset
+
+-traces and defender-winning plays presumably are no good things.
+ This thesis has the chance of being good, given that it has an end—even
+ more than one if one also counts the ends intentionally left loose.
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+Let us wrap up what we have discussed and what loose ends remain.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The core of this thesis has been to introduce a game algorithm to decide
+ the coupled simulation preorder and thereby coupled similarity.
+ This algorithm runs in cubic time with respect to the state space size
+ of the input transition system.
+ Since we have shown that weak simulation reduces to coupled simulation,
+ the theoretical time bounds presumably cannot get much better.
+\end_layout
+
+\begin_layout Standard
+Nevertheless, it would be interesting whether our algorithms can be modified
+ to require 
+\emph on
+sub-cubic space
+\emph default
+.
+ A few pointers on how this could be possible can be found in the discussion
+ of symbolic refinements (Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:algorithms-discussion"
+
+\end_inset
+
+).
+ Related to this is the question how to turn the 
+\emph on
+modal-logical characterization
+\emph default
+ of coupled similarity into an algorithm.
+ 
+\noun on
+Van Glabbeek
+\noun default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glabbeek1993ltbt"
+
+\end_inset
+
+ presents a characterization that basically is 
+\noun on
+Hennesy–Milner
+\noun default
+ modal logic (HML) with a 
+\emph on
+weakened negation
+\emph default
+ operator 
+\begin_inset Formula $\nneg$
+\end_inset
+
+, where 
+\begin_inset Formula $\nneg\varphi$
+\end_inset
+
+ is true in a state iff it can reach a state where not 
+\begin_inset Formula $\varphi$
+\end_inset
+
+ by 
+\begin_inset Formula $\weakStep{}$
+\end_inset
+
+-steps.
+ Some similarity algorithms, including 
+\noun on
+Ranzato
+\noun default
+ and 
+\noun on
+Tapparo's
+\noun default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rt2010efficientSimulation"
+
+\end_inset
+
+, iteratively split partitions along the question which states can be distinguis
+hed by modal-logic formulas in light of the distinctions determined so far.
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+not discussed is to iteratively split a partition-relation pair.
+  and in the modal logical characterization of coupled similarity
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+(Appendix 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chap:modal-logics"
+
+\end_inset
+
+)
+\end_layout
+
+\end_inset
+
+.
+\begin_inset Flex Fixme Warning
+status open
+
+\begin_layout Plain Layout
+Pointer to modal logics!
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ Such algorithms can certainly be amended with the additional separating
+ power of 
+\begin_inset Formula $\nneg$
+\end_inset
+
+.
+ However, we suspect that many algorithmic tricks stop being an option as
+ 
+\begin_inset Formula $\nneg$
+\end_inset
+
+ is not distributive.
+\end_layout
+
+\begin_layout Standard
+We have not touched on the question how the
+\emph on
+ maximal weak step bisimilarity
+\emph default
+ we used for over-approximations relates to the standard notions of equivalence.
+ Also, the closeness of coupled similarity and delay similarity, which usually
+ is neglected in the literature, could be researched further.
+ We were able to show that there are open questions concerning the relationship
+ of coupled similarity and contrasimilarity.
+ Addressing these questions could pave the way to 
+\emph on
+employing our algorithms to decide contrasimilarity
+\emph default
+, for which there also seems to be no tool support.
+\end_layout
+
+\begin_layout Standard
+Our scalable implementation of the coupled simulation game algorithm has
+ shown that the game approach 
+\emph on
+can cope with similar system sizes when compared to the available simulation
+ algorithms
+\emph default
+.
+ The implementation could be a basis for further experiments with notions
+ of equivalence in Apache Flink or a blueprint for a GPU version of the
+ algorithm.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/coupledsimtool.png
+	width 100col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:cs-fiddle"
+
+\end_inset
+
+CoupledSim Fiddle web tool at 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset href
+LatexCommand href
+name "coupledsim.bbisping.de"
+target "https://coupledsim.bbisping.de"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ showing the philosopher system 
+\begin_inset Formula $\system_{\ccsIdentifier P}$
+\end_inset
+
+ (gray) and 
+\begin_inset Formula $\csSimBy^{\system_{\ccsIdentifier P}}$
+\end_inset
+
+ (blue).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Moreover, we have 
+\emph on
+verified a simple coupled simulation algorithm
+\emph default
+ and 
+\emph on
+continued work on a normalization-based reduction
+\emph default
+ of coupled similarity to bisimilarity.
+ Development, testing, and presentation of new algorithms for notions of
+ equivalence is made simple by our web tool on 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://coupledsim.bbisping.de
+\end_layout
+
+\end_inset
+
+ (for a screenshot, see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:cs-fiddle"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+By benchmarking our Flink-implementation with the VLTS suite, we have establishe
+d that 
+\emph on
+coupled similarity and weak bisimilarity coincide for the considered systems
+\emph default
+.
+ This points back to a line of thought by 
+\noun on
+van Glabbeek
+\noun default
+ and 
+\noun on
+Weijland
+\noun default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gw1996branchingBisim"
+
+\end_inset
+
+ that, for many applications, branching, delay and weak bisimilarity will
+ coincide with coupled similarity.
+ Where they do not, usually coupled similarity or a coarser notion of equivalenc
+e is called for.
+ Apparently, the designers of the case studies behind the VLTS systems (unintent
+ionally?) took care to stay in the realm where various branching-time equivalenc
+es resemble coupled similarity.
+ The higher semantic precision of weak bisimilarity and the like is uncalled
+ for, and coupled similarity probably does right to dispense with it.
+ However, real case studies—and maybe an embedding into existing tool landscapes
+ like FDR 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "grabr2014fdr"
+
+\end_inset
+
+, CADP 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "garavel2013cadp"
+
+\end_inset
+
+, or LTSmin 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "kant2015ltsmin"
+
+\end_inset
+
+—would be necessary to gain deeper insights here.
+\end_layout
+
+\begin_layout Standard
+It would be interesting to have a better way of telling ex ante 
+\emph on
+whether coupled similarity and finer notions of equivalence coincide
+\emph default
+ for a given transition system.
+ The normality property of Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:algo-bisim-approach"
+
+\end_inset
+
+, for example, describes a class of transition systems where the hierarchy
+ between coupled simulation and strong bisimulation collapses.
+ Can one abstract this property further, or narrow it down to a property
+ where only the hierarchy between branching bisimulation and coupled simulation
+ is bridged? Such a result could help turn the normalization-based reduction
+ into a reliable and tractable algorithm
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+, where more work concerning the axiomatization of coupled similarity would
+ be necessary
+\end_layout
+
+\end_inset
+
+.
+ This—and many other interesting research approaches—would be facilitated
+ by our Isabelle/HOL formalization for various notions of coupled simulation
+ and their properties.
+ 
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+We have accompanied our isabelle/hol formalization; hopefully increased
+ overview; could be basis to prove more stuff, eg.
+ about the axiomatization
+\end_layout
+
+\begin_layout Plain Layout
+what notion of equivalence does maximal weak steps coincide with?
+\end_layout
+
+\begin_layout Plain Layout
+webtool implementation
+\end_layout
+
+\begin_layout Plain Layout
+parallel implementation as basis for more algorithms or blue print for GPU-algor
+tihms
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

@@ -1,0 +1,12 @@
+{\bf system};$S$;{\pgfutilensuremath{\step{\cdot}}};{\pgfutilensuremath{\weakStepDelay{\cdot}}\textsuperscript{\ref{fn:delayws-size}}};{\pgfutilensuremath{S_{/\equiv_\mathit{DB}}}};gamemoves;{\pgfutilensuremath{S_{/\csEq}}};{\pgfutilensuremath{\csSimBy^{\system_{/\csEq}}}};{\bf time/s}
+{$\texttt{phil}$};10;14;86;6;201;5;11;7.9
+{$\texttt{ltbts}$};88;98;2,599;27;252;25;38;8.2
+{$\texttt{vasy\_0\_1}$};289;1,224;52,641;9;67;9;9;10.0
+{$\texttt{vasy\_1\_4}$};1,183;4,464;637,585;4;30;4;4;9.6
+{$\texttt{vasy\_5\_9}$};5,486;9,676;1,335,325;112;808;112;112;10.6
+{$\texttt{cwi\_1\_2}$};1,952;2,387;593,734;67;1,559;67;137;12.9
+{$\texttt{cwi\_3\_14}$};3,996;14,552;15,964,021;2;10;2;2;18.8
+{$\texttt{vasy\_8\_24}$};8,879;24,411;2,615,500;170;3,199;169;232;13.1
+{$\texttt{vasy\_8\_38}$};8,921;38,424;46,232,423;193;2,163;193;193;9.4
+{$\texttt{vasy\_10\_56}$};10,849;56,156;842,087;2,112;74,269;2,112;3,932;29.8
+{$\texttt{vasy\_25\_25}$};25,217;25,216;50,433;25,217;126,083;25,217;25,217;243.1

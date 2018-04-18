@@ -1,0 +1,7395 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass report
+\begin_preamble
+\input{preamble}
+\end_preamble
+\use_default_options true
+\master ../../../Dokumente/coupledsim/thesis/main.lyx
+\begin_modules
+logicalmkup
+fixltx2e
+theorems-ams
+theorems-ams-extended
+theorems-chap
+fixme
+\end_modules
+\maintain_unincluded_children false
+\language american
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 1
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle plain
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Chapter
+Coupled Simulation
+\begin_inset CommandInset label
+LatexCommand label
+name "chap:coupled-simulation"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Coupled similarity strikes a deal between a lot of nice properties of weak
+ similarity, contrasimilarity, and weak bisimilarity.
+ As visualized in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:weak-relations"
+
+\end_inset
+
+, it sits right in the middle between them.
+\end_layout
+
+\begin_layout Standard
+We here introduce relational, axiomatic and game-theoretic characterizations
+ of coupled similarity and its preorder, which turn into algorithms in the
+ next chapter.
+ We moreover prove properties of the coupled simulation preorder that justify
+ tricks in the algorithms of the next chapter.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+The practical motivation for the use of coupled similarity is that for some
+ models and formalisms weak bisimilarity is too strong while one wants to
+ retain as many of the temporal and symmetry-like properties of bisimilarity.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+For example, consider three processes 
+\begin_inset listings
+inline true
+status open
+
+\begin_layout Plain Layout
+
+write("file.txt", "hello")
+\end_layout
+
+\end_inset
+
+, 
+\begin_inset listings
+inline true
+status open
+
+\begin_layout Plain Layout
+
+print(firstLineOf("file.txt"))
+\end_layout
+
+\end_inset
+
+, and 
+\begin_inset listings
+inline true
+status open
+
+\begin_layout Plain Layout
+
+print(lastLineOf("file.txt"))
+\end_layout
+
+\end_inset
+
+, where the specification says that only one of them is allowed to start.
+ The implementation might involve two processes coordinated by a lock for
+ the file access (f) and a branch that is resolved by some internal check.
+ 
+\begin_inset listings
+inline true
+status open
+
+\begin_layout Plain Layout
+
+lock f; write("file.txt", "hello")
+\end_layout
+
+\end_inset
+
+, 
+\begin_inset listings
+inline true
+status open
+
+\begin_layout Plain Layout
+
+lock f; if (getSomeBool()) print(firstLineOf("file.txt")) else print("aborted"))
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Definitions of Coupled Simulation
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:defs-cs"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A multitude of definitions for coupled simulation and coupled similarity
+ have been proposed.
+ Our thesis uses the coupled simulation presented by Rob 
+\noun on
+van Glabbeek
+\noun default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glabbeek2017"
+
+\end_inset
+
+.
+ This section introduces the definition from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glabbeek2017"
+
+\end_inset
+
+ and compares it to other pre-existing notions of coupled simulation.
+ Such a survey seems advisable because, over the years, there have been
+ varying formulations of coupled simulation, which, to some extend, also
+ differ in range.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tikzpicture}[->,auto,node distance=2cm, rel/.style={dashed,font=
+\backslash
+it}]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (A1){$p_1$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (A2) [below right of=A1] {$p_2$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (A3) [below of=A1, node distance=3cm] {$p_3$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (A4) [below left of=A1, node distance=2.9cm] {$p_4$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge node {$
+\backslash
+tau$} (A2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge node {$
+\backslash
+tau$} (A3)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge node {$
+\backslash
+tau$} (A4)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A2) edge [loop below] node {$a$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(A3) edge [loop below] node {$b$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(A4) edge [loop below] node {$c$} ();
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B1) [right of=A1, node distance=5cm] {$q_1$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B2) [below left of=B1] {$q_2$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B34) [below right of=B1] {$q_{34}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B3) [below left of=B34] {$q_3$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B4) [below right of=B34] {$q_4$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(B1) edge node {$
+\backslash
+tau$} (B2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B1) edge node {$
+\backslash
+tau$} (B34)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B34) edge node {$
+\backslash
+tau$} (B3)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B34) edge node {$
+\backslash
+tau$} (B4)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B2) edge [loop below] node {$a$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(B3) edge [loop below] node {$b$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(B4) edge [loop below] node {$c$} ();
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge [<->, rel, bend left=20] node {$
+\backslash
+rel{R}$} (B1)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A2) edge [<->, rel, bend right=10] node {} (B2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A3) edge [<->, rel, bend right=10] node {} (B3)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A4) edge [<->, rel, bend right=60] node {} (B4)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A3) edge [rel, red, bend right=10] node {} (B34)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A4) edge [rel, red, bend right=10] node {} (B34)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B34) edge [rel, red, bend right=70] node {} (A1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tikzpicture}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+A coupled simulation on a transition system with gradual choice.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:s-coupled-simulation"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Coupled Simulation 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glabbeek2017"
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Coupled-Simulation-Preorder"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\noun on
+Van Glabbeek
+\noun default
+'s definition just merges the properties weak simulation and coupling familiar
+ from Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Illustration-weak-relations"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+[Coupled simulation]
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:coupled_simulation"
+
+\end_inset
+
+ A 
+\emph on
+coupled simulation
+\emph default
+ is a relation 
+\begin_inset Formula $\rel R\subseteq S\times S$
+\end_inset
+
+ such that, for all 
+\begin_inset Formula $(p,q)\in\rel R$
+\end_inset
+
+,
+\begin_inset Separator latexpar
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $p\step{\alpha}p^{\prime}$
+\end_inset
+
+ implies there is a 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\weakStepTau{\alpha}q^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $(p^{\prime},q^{\prime})\in\rel R$
+\end_inset
+
+ (
+\emph on
+simulation
+\emph default
+), and 
+\end_layout
+
+\begin_layout Itemize
+there exists a 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\weakStep{}q^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $(q^{\prime},p)\in\rel R$
+\end_inset
+
+ (
+\emph on
+coupling
+\emph default
+).
+\end_layout
+
+\end_deeper
+\begin_layout Definition
+The 
+\emph on
+coupled simulation preorder
+\emph default
+ relates two processes, 
+\begin_inset Formula $p\csSimBy q$
+\end_inset
+
+, iff there is a coupled simulation 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ such that 
+\begin_inset Formula $(p,q)\in\rel R$
+\end_inset
+
+.
+ 
+\emph on
+Coupled similarity 
+\emph default
+relates two processes, 
+\begin_inset Formula $p\csEq q$
+\end_inset
+
+, iff 
+\begin_inset Formula $p\csSimBy q$
+\end_inset
+
+ and 
+\begin_inset Formula $q\csSimBy p$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[definition]{Coupled
+\backslash
+_Simulation}{coupled_simulation}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glabbeek2017"
+
+\end_inset
+
+ writes 
+\begin_inset Formula $\sqsupseteq_{\mathit{CS}}$
+\end_inset
+
+ where we write 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+.
+ This seems to be motivated by the role coupled simulation plays in the
+ presence of CSP's internal choice operator 
+\begin_inset Formula $\sqcap$
+\end_inset
+
+.
+ However, we use 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+, which is more in line with the bulk of the literature where simulation
+ preorders are referred to with symbols such as 
+\begin_inset Formula $\preceq$
+\end_inset
+
+, 
+\begin_inset Formula $\leq$
+\end_inset
+
+, and 
+\begin_inset Formula $\sqsubseteq$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Chapter 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chap:preliminaries"
+
+\end_inset
+
+ examples
+\end_layout
+
+\end_inset
+
+ As the relation 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ on the philosopher system 
+\begin_inset Formula $\system_{\ccsIdentifier P}$
+\end_inset
+
+ from Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:c-cs-philosophers"
+
+\end_inset
+
+ is a weak simulation, it fulfills the first condition of Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:coupled_simulation"
+
+\end_inset
+
+.
+ Because it also is a contrasimulation, and thus a coupling by Proposition
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "prop:contrasim-coupling"
+
+\end_inset
+
+, it lives up to the second condition.
+ Consequently, 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is a coupled simulation, and 
+\begin_inset Formula $\ccsIdentifier P_{g}\csEq\ccsIdentifier P_{o}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Example
+The formulation of coupled simulation implying weak simulation directly
+ yields that there cannot be a coupled simulation where there cannot be
+ a weak simulation.
+ This, for example, implies that choice drifting from Example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:philosophers-religious"
+
+\end_inset
+
+ is distinguished, and 
+\begin_inset Formula $\ccsIdentifier P_{r}\not\csEq\ccsIdentifier P_{r}^{\prime}$
+\end_inset
+
+ for the variants of the religious philosophers.
+\end_layout
+
+\begin_layout Example
+The demand for coupling, on the other hand, detects the troll from Example
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:philosophers-trolled"
+
+\end_inset
+
+.
+ The 
+\begin_inset Formula $\trollface$
+\end_inset
+
+-state does not simulate any other state and has no 
+\begin_inset Formula $\tau$
+\end_inset
+
+-successors and therefore cannot be 
+\emph on
+coupled.
+
+\emph default
+ So, the 
+\begin_inset Formula $\ccsIdentifier P_{t}\step{\tau}\trollface$
+\end_inset
+
+-transition cannot be simulated by 
+\begin_inset Formula $\ccsIdentifier P_{o}$
+\end_inset
+
+, which warrants 
+\begin_inset Formula $\ccsIdentifier P_{o}\not\csEq\ccsIdentifier P_{t}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The example demonstrates right away that the coupled simulation preorder
+ and coupled similarity fit our bill outlined in the previous chapter.
+ We shall dive deeper into their properties in Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Properties-of-Coupled"
+
+\end_inset
+
+.
+ Let us first continue our survey of definitions for coupled simulation
+ from the literature.
+\end_layout
+
+\begin_layout Subsection
+Stability-Coupled Simulation 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "parrow1992,ps1994"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The historically first definition of coupled simulation is due to 
+\noun on
+Parrow
+\noun default
+ and 
+\noun on
+Sjödin
+\noun default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "parrow1992,ps1994"
+
+\end_inset
+
+.
+ It works with 
+\emph on
+two
+\emph default
+ simulations that are coupled 
+\emph on
+at the stable states
+\emph default
+.
+ It is nowadays referred to as 
+\begin_inset Quotes eld
+\end_inset
+
+S-coupled simulation
+\begin_inset Quotes erd
+\end_inset
+
+ (for example in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sangiorgi2012"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+S-coupled simulation
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:s_coupled_simulation"
+
+\end_inset
+
+ An 
+\emph on
+S-coupled simulation
+\emph default
+ is a pair of weak simulations 
+\begin_inset Formula $\rel R_{1},\rel R_{2}^{-1}\subseteq S\times S$
+\end_inset
+
+, which are mutually 
+\begin_inset Quotes eld
+\end_inset
+
+S-coupled
+\begin_inset Quotes erd
+\end_inset
+
+ (not in the sense of the previous sections!) at the stable states, that
+ is:
+\begin_inset Separator latexpar
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $(p,q)\in\rel R_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $p$
+\end_inset
+
+ stable implies 
+\begin_inset Formula $(p,q)\in\rel R_{2}$
+\end_inset
+
+, and 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $(p,q)\in\rel R_{2}$
+\end_inset
+
+ and 
+\begin_inset Formula $q$
+\end_inset
+
+ stable implies 
+\begin_inset Formula $(p,q)\in\rel R_{1}$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Definition
+S
+\emph on
+-coupled similarity 
+\emph default
+relates two processes, 
+\begin_inset Formula $p\scsEq q$
+\end_inset
+
+, iff there is an S-coupled simulation 
+\begin_inset Formula $(\rel R_{1},\rel R_{2})$
+\end_inset
+
+ such that 
+\begin_inset Formula $(p,q)\in\rel R_{1}\cap\rel R_{2}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+S-coupled similarity on states of divergence-free systems is an equivalence
+ relation.
+ However, S-coupled similarity is no fit notion of equivalence for general
+ systems, that may contain divergences.
+\end_layout
+
+\begin_layout Example
+\begin_inset Argument 1
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Formula $\scsEq$
+\end_inset
+
+ lack of transitivity
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "exa:s-cs-not-transitive"
+
+\end_inset
+
+ Consider the transition system given in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:s-cs-not-transitive"
+
+\end_inset
+
+ (example from 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "p.~567"
+key "ps1994"
+
+\end_inset
+
+).
+ We have 
+\begin_inset Formula $p_{1}\scsEq q_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $q_{1}\scsEq r_{1}$
+\end_inset
+
+ but 
+\begin_inset Formula $p_{1}\not\scsEq r_{1}$
+\end_inset
+
+.
+ So, 
+\begin_inset Formula $\scsEq$
+\end_inset
+
+ is not transitive and thus not an equivalence relation.
+\end_layout
+
+\begin_layout Example
+Note that coupled similarity, as we defined it in Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Coupled-Simulation-Preorder"
+
+\end_inset
+
+, does not suffer from this shortcoming.
+ It maintains that 
+\begin_inset Formula $q_{1}\not\not\csEq r_{1}$
+\end_inset
+
+ because it also demands coupling on 
+\begin_inset Formula $q_{4}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Example
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tikzpicture}[->,auto,node distance=2cm]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (p1){$p_1$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (p2) [below of=p1] {$p_2$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (p3) [below of=p2] {$p_3$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (p4) [below right of=p1] {$p_4$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(p1) edge node {$
+\backslash
+action a$} (p2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(p2) edge node {$
+\backslash
+action b$} (p3)
+\end_layout
+
+\begin_layout Plain Layout
+
+(p1) edge node {$
+\backslash
+action a$} (p4);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (q1) [node distance=4cm, right of=p1] {$q_1$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (q2) [below of=q1] {$q_2$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (q3) [below of=q2] {$q_3$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (q4) [below right of=q1] {$q_4$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(q1) edge node {$
+\backslash
+action a$} (q2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(q2) edge node {$
+\backslash
+action b$} (q3)
+\end_layout
+
+\begin_layout Plain Layout
+
+(q1) edge node {$
+\backslash
+action a$} (q4)
+\end_layout
+
+\begin_layout Plain Layout
+
+(q4) edge [loop below] node {$
+\backslash
+tau$} ();
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (r1) [node distance=4cm, right of=q1] {$r_1$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (r2) [below of=r1] {$r_2$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (r3) [below of=r2] {$r_3$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(r1) edge node {$
+\backslash
+action a$} (r2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(r2) edge node {$
+\backslash
+action b$} (r3);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tikzpicture}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Processes for Example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:s-cs-not-transitive"
+
+\end_inset
+
+.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:s-cs-not-transitive"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The example shows that 
+\begin_inset Formula $\scsEq$
+\end_inset
+
+ and 
+\begin_inset Formula $\csEq$
+\end_inset
+
+ actually are different notions.
+ Still, for many systems, they match.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sangiorgi2012"
+
+\end_inset
+
+ claim a variant of this to hold without the assumption of shared stability.
+ Following the construction from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sangiorgi2012"
+
+\end_inset
+
+, our Isabelle proof still needs this extra assumption and it is not obvious
+ how to dispose of it.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:cs-scs"
+
+\end_inset
+
+
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status collapsed
+
+\begin_layout Plain Layout
+Coincidence of 
+\begin_inset Formula $\scsEq$
+\end_inset
+
+ and 
+\begin_inset Formula $\text{\csEq}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ If 
+\begin_inset Formula $\system$
+\end_inset
+
+ is a divergence-free system, then, provided that 
+\begin_inset Formula $p$
+\end_inset
+
+ and 
+\begin_inset Formula $q$
+\end_inset
+
+ are equally stable (
+\begin_inset Quotes eld
+\end_inset
+
+stability-rooted
+\begin_inset Quotes erd
+\end_inset
+
+), 
+\begin_inset Formula $p\csEq^{\system}q$
+\end_inset
+
+ if and only if 
+\begin_inset Formula $p\scsEq^{\system}q$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[theorem]{Coupled
+\backslash
+_Simulation}{divergence
+\backslash
+_free
+\backslash
+_coupledsims
+\backslash
+_coincidence}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+So, in the absence of divergence, stability-rooted S-coupled similarity
+ has the nice properties of coupled similarity we shall discuss in Section
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Properties-of-Coupled"
+
+\end_inset
+
+.
+ The literature suggests that these are precisely the cases where S-coupled
+ similarity is useful.
+ Consequently, it seems wise to consider S-coupled similarity just as an
+ alternative characterization of coupled simulation for these special cases.
+ But even then, it usually is not as handy as 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glabbeek2017"
+
+\end_inset
+
+-coupled simulation, which motivates our choice of the latter over the first.
+\end_layout
+
+\begin_layout Subsection
+Coupled Simulation Using Pairs
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:cs-using-pairs"
+
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994,sangiorgi2012"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The conclusion section of 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+ already discusses the problems of S-coupled similarity in the face of divergenc
+es and proposes 
+\begin_inset Quotes eld
+\end_inset
+
+weakly coupled simulation
+\begin_inset Quotes erd
+\end_inset
+
+ as a remedy.
+ This proposal is what usually is meant with the name 
+\begin_inset Quotes eld
+\end_inset
+
+coupled simulation
+\begin_inset Quotes erd
+\end_inset
+
+ since 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+, for example in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sangiorgi2012,nestmann1996decoding,rensink2000actionContraction"
+
+\end_inset
+
+.
+ To avoid confusion with Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:coupled_simulation"
+
+\end_inset
+
+, let us call this definition 
+\emph on
+pair-based coupled simulation.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Pair-based coupled simulation
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:coupled_simulation_2"
+
+\end_inset
+
+ A 
+\emph on
+pair-based coupled simulation
+\emph default
+ is a pair of weak
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994,sangiorgi2012"
+
+\end_inset
+
+ here just speak of 
+\begin_inset Quotes eld
+\end_inset
+
+simulation
+\begin_inset Quotes erd
+\end_inset
+
+, not 
+\begin_inset Quotes eld
+\end_inset
+
+weak simulation.
+\begin_inset Quotes erd
+\end_inset
+
+ But, from their examples and lemmas, it seems reasonable to read a 
+\begin_inset Quotes eld
+\end_inset
+
+weak
+\begin_inset Quotes erd
+\end_inset
+
+ into their definitions.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "nestmann1996decoding"
+
+\end_inset
+
+ explicitly requires weak simulations.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rensink2000actionContraction"
+
+\end_inset
+
+ points out that actually requiring finer 
+\emph on
+delay simulations
+\emph default
+ is enough.
+ Delay simulations are like weak simulations with 
+\begin_inset Formula $\weakStep{}\step a$
+\end_inset
+
+ instead of 
+\begin_inset Formula $\weakStep{}\!\step a\!\weakStep{}$
+\end_inset
+
+ in the visible simulation answer.
+ More on this in Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:strengthening-cs"
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ simulations 
+\begin_inset Formula $\rel R_{1},\rel R_{2}^{-1}\subseteq S\times S$
+\end_inset
+
+ that are mutually coupled, that is:
+\begin_inset Separator latexpar
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $(p,q)\in\rel R_{1}$
+\end_inset
+
+ implies there is 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ with 
+\begin_inset Formula $q\weakStep{}q^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $(p,q^{\prime})\in\rel R_{2}$
+\end_inset
+
+, and 
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $(p,q)\in\rel R_{2}$
+\end_inset
+
+ implies there is 
+\begin_inset Formula $p^{\prime}$
+\end_inset
+
+ with 
+\begin_inset Formula $p\weakStep{}p^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $(p^{\prime},q)\in\rel R_{1}$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+The difference to Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:s_coupled_simulation"
+
+\end_inset
+
+ is that coupling now is phrased like in Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:coupled_simulation"
+
+\end_inset
+
+ and required not only on the stable states.
+\end_layout
+
+\begin_layout Standard
+It turns out that this concept of coupled simulation has some inherent redundanc
+y and coincides with single-relation 
+\emph on
+coupled simulation
+\emph default
+ as presented in Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:coupled_simulation"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Lemma
+The pair-based definition and 
+\noun on
+van Glabbeek
+\noun default
+'s definition of coupled similarity coincide.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+If 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is a 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glabbeek2017"
+
+\end_inset
+
+-coupled simulation, then 
+\begin_inset Formula $(\rel R,\rel R^{-1})$
+\end_inset
+
+ is a pair-based 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sangiorgi2012"
+
+\end_inset
+
+-coupled simulation.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupledsim
+\backslash
+_gla17
+\backslash
+_resembles
+\backslash
+_sangiorgi12}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+If 
+\begin_inset Formula $(\rel R_{1},\rel R_{2})$
+\end_inset
+
+ is a pair-based 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sangiorgi2012"
+
+\end_inset
+
+-coupled simulation, then 
+\begin_inset Formula $\rel R_{1}\cup\rel R_{2}^{-1}$
+\end_inset
+
+ is a 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glabbeek2017"
+
+\end_inset
+
+-coupled simulation.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupledsim
+\backslash
+_sangiorgi12
+\backslash
+_impl
+\backslash
+_gla17}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+In this light, the label 
+\begin_inset Quotes eld
+\end_inset
+
+weakly coupled
+\begin_inset Quotes erd
+\end_inset
+
+ from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+ has to be considered extremely misleading.
+ In Example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:s-cs-not-transitive"
+
+\end_inset
+
+, we already encountered a situation where the allegedly 
+\begin_inset Quotes eld
+\end_inset
+
+weakly coupled
+\begin_inset Quotes erd
+\end_inset
+
+ simulation actually requires 
+\emph on
+more coupling
+\emph default
+ than S-coupled simulation.
+\end_layout
+
+\begin_layout Standard
+Coupled simulations with two relations are considered more tedious for proofs
+ than ordinary simulations and bisimulations 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "p.~179"
+key "sangiorgi2012"
+
+\end_inset
+
+.
+ This might be one of the reasons why coupled simulations have not been
+ widely used up to now.
+ Fortunately, 
+\noun on
+van
+\noun default
+ 
+\noun on
+Glabbeek's
+\noun default
+ definition 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glabbeek2017"
+
+\end_inset
+
+ is more convenient.
+\end_layout
+
+\begin_layout Subsection
+Barbed and Reduction Coupled Simulation 
+\noun on
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gp15"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\noun on
+Fournet
+\noun default
+ and 
+\noun on
+Gonthier
+\noun default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Fournet2005"
+
+\end_inset
+
+ as well as 
+\noun on
+Peters 
+\noun default
+and 
+\noun on
+van Glabbeek 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gp15"
+
+\end_inset
+
+
+\noun default
+ present a variation of coupled simulation for reduction semantics, that
+ is, for systems where all transitions are 
+\begin_inset Formula $\tau$
+\end_inset
+
+-labeled, and other properties of reachable states matter.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Reduction coupled simulation
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:reduction_coupled_simulation"
+
+\end_inset
+
+ A 
+\emph on
+reduction coupled simulation
+\emph default
+ is a relation 
+\begin_inset Formula $\rel R\subseteq S\times S$
+\end_inset
+
+ such that, for all 
+\begin_inset Formula $(p,q)\in\rel R$
+\end_inset
+
+ and 
+\begin_inset Formula $p^{\prime}$
+\end_inset
+
+ with 
+\begin_inset Formula $p\weakStep{}p^{\prime}$
+\end_inset
+
+,
+\begin_inset Separator latexpar
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+there exists a 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\weakStep{}q^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $(p^{\prime},q^{\prime})\in\rel R$
+\end_inset
+
+, and 
+\end_layout
+
+\begin_layout Itemize
+there exists a 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\weakStep{}q^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $(q^{\prime},p^{\prime})\in\rel R$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Definition
+This property of 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is meant to be accompanied by some further constraints, for instance to
+ respect 
+\emph on
+barbs
+\emph default
+.
+ Then, it can be used to generate notions of reduction coupled similarity.
+\end_layout
+
+\begin_layout Definition
+As one would hope, given that 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gp15"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glabbeek2017"
+
+\end_inset
+
+ share an author, reduction coupled simulation indeed is a special case
+ of the coupled simulation definition we are using in this thesis.
+\end_layout
+
+\begin_layout Lemma
+For reduction-semantical transition systems, Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:reduction_coupled_simulation"
+
+\end_inset
+
+ and Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:coupled_simulation"
+
+\end_inset
+
+ have the same extension.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Every 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glabbeek2017"
+
+\end_inset
+
+-coupled simulation also is a 
+\noun on
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gp15"
+
+\end_inset
+
+
+\noun default
+-reduction-coupled simulation.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupledsim
+\backslash
+_gla17
+\backslash
+_implies
+\backslash
+_gp15}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+If a system only has 
+\begin_inset Formula $\tau$
+\end_inset
+
+-transitions, then every 
+\noun on
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gp15"
+
+\end_inset
+
+
+\noun default
+-reduction-coupled simulation also is a 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glabbeek2017"
+
+\end_inset
+
+-coupled simulation.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupledsim
+\backslash
+_gp15
+\backslash
+_implies
+\backslash
+_gla17
+\backslash
+_on
+\backslash
+_tau
+\backslash
+_systems}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+\noindent
+Interestingly, Theorem 4 of 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Fournet2005"
+
+\end_inset
+
+ shows that barbed reduction coupled similarity and 
+\emph on
+fair testing equivalence
+\emph default
+ coincide for the local 
+\begin_inset Formula $\pi$
+\end_inset
+
+-calculus.
+ The 
+\emph on
+local 
+\begin_inset Formula $\pi$
+\end_inset
+
+-calculus
+\emph default
+ is a distributable variant of the 
+\begin_inset Formula $\pi$
+\end_inset
+
+-calculus where processes may not receive on free or received names.
+ Two processes 
+\begin_inset Formula $p,q$
+\end_inset
+
+ are 
+\emph on
+fair testing equivalent
+\emph default
+ iff, for every context and barb, all successors of 
+\begin_inset Formula $p$
+\end_inset
+
+ may reach the barb precisely if all reachable successors of 
+\begin_inset Formula $q$
+\end_inset
+
+ may.
+ We note this because it points to the fact that coupled similarity may
+ come close to or even touch the—usually coarser—world of testing equivalences.
+\end_layout
+
+\begin_layout Subsection
+Coupled Simulation as Special Contrasimulation?
+\end_layout
+
+\begin_layout Standard
+The standard definitions of coupled simulation introduce it as a special
+ brand of simulations.
+ But coupled simulation also is a special case of contrasimulation.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupledsim
+\backslash
+_implies
+\backslash
+_contrasim}
+\end_layout
+
+\end_inset
+
+ Indeed, coupled simulation (as defined in Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:coupled_simulation"
+
+\end_inset
+
+) is 
+\emph on
+precisely
+\emph default
+ the intersection of the two concepts.
+ (So, Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:weak-relations"
+
+\end_inset
+
+ from the introduction does not only relate equivalences, 
+\begin_inset Quotes eld
+\end_inset
+
+similarities
+\begin_inset Quotes erd
+\end_inset
+
+, but already simulation relations.) The 
+\begin_inset Quotes eld
+\end_inset
+
+surprising
+\begin_inset Quotes erd
+\end_inset
+
+ direction of this, actually is quite obvious in the light of the coupling
+ property (Proposition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "prop:contrasim-coupling"
+
+\end_inset
+
+) of contrasimulation.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+WS
+\begin_inset Formula $\cap$
+\end_inset
+
+C
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is a coupled simulation 
+\emph on
+precisely if
+\emph default
+ 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is a weak simulation and a contrasimulation.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled_Simulation}{coupled_simulation_iff_weak_sim_and_contrasim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now, it suggests itself to look for a concise characterization of coupled
+ simulation in terms of contrasimulation.
+ In the literature, there seems to be only one instance where this has been
+ tried.
+ 
+\noun on
+Voorhoeve
+\noun default
+ and 
+\noun on
+Mauw's
+\noun default
+ tech report on contrasimilarity 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "vm2000impossibleReport"
+
+\end_inset
+
+ defines coupled simulation as a special case of contrasimulation (notation
+ adapted):
+\end_layout
+
+\begin_layout Quote
+\begin_inset Quotes eld
+\end_inset
+
+A coupled simulation is a contrasimulation 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ satisfying
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Formula $\{x\mid\exists y.(x,y)\in\rel R\}=\{y\mid\exists x.(x,y)\in\rel R\}$
+\end_inset
+
+.
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Unfortunately, this characterization is too weak.
+ For instance, consider the contrasimulation 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ on the religious philosopher system from Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:contra-simulation"
+
+\end_inset
+
+.
+ Its reflexive closure 
+\begin_inset Formula $\text{\rel R}\cup\diagonal_{S}$
+\end_inset
+
+ still is a contrasimulation
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Weak
+\backslash
+_Relations}{contrasim
+\backslash
+_union,contrasim
+\backslash
+_reflexive}
+\end_layout
+
+\end_inset
+
+ and matches the definition.
+ But it is no weak simulation and thus no coupled simulation by the arguments
+ from Example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:philosophers-religious"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+So, whatever it is 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "vm2000impossibleReport"
+
+\end_inset
+
+ is defining, it is not compatible with the common notions of coupled simulation
+, which all require coupled simulations to be weak simulations.
+ In the journal version 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "vm2001impossible"
+
+\end_inset
+
+, the definition of coupled simulation has been dropped.
+\end_layout
+
+\begin_layout Standard
+The previous reasoning also disproves 
+\noun on
+Kučera
+\noun default
+ and 
+\noun on
+Schnoebelen's
+\noun default
+ Remark 6 of 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ks2006"
+
+\end_inset
+
+ that contrasimulation and coupled simulation would coincide on divergence-free
+ processes—the transition system in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:contra-simulation"
+
+\end_inset
+
+ is divergence-free.
+\end_layout
+
+\begin_layout Standard
+In summary, there appears to exist some confusion concerning the exact relations
+hip of coupled simulation and contrasimulation.
+ It would be interesting to look deeper into this, but that is beside the
+ point of this thesis.
+\end_layout
+
+\begin_layout Section
+Properties of Coupled Similarity
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Properties-of-Coupled"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The coupled simulation preorder has a few characteristics that render it
+ quite suited for proofs and models.
+ Some of them are particularly relevant for our algorithms in the following
+ chapter.
+ From now on, we stick to coupled simulation as specified in Definition
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:coupled_simulation"
+
+\end_inset
+
+.
+ Results nonetheless carry over to the other definitions according to the
+ established coincidences.
+\end_layout
+
+\begin_layout Subsection
+Order Properties and Coinduction
+\end_layout
+
+\begin_layout Standard
+The coupled simulation preorder 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ has the properties everyone expects from a decent notion of equivalence.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ forms a preorder, that is, it is reflexive
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupledsim
+\backslash
+_refl}
+\end_layout
+
+\end_inset
+
+ and transitive.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupledsim
+\backslash
+_trans}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+Reflexivity follows immediately from Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:coupledsim_step"
+
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupledsim
+\backslash
+_refl}
+\end_layout
+
+\end_inset
+
+ Transitivity relies on the idea that Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:coupled_simulation_weak_premise"
+
+\end_inset
+
+ enables the construction of a coupled simulation 
+\begin_inset Formula $\rel R_{1}\rel R_{2}\cup\rel R_{2}\rel R_{1}$
+\end_inset
+
+ from two coupled simulations 
+\begin_inset Formula $\rel R_{1},\rel R_{2}$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupledsim
+\backslash
+_trans}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Itemize
+\begin_inset Formula $p\csSimBy p$
+\end_inset
+
+ for arbitrary 
+\begin_inset Formula $p$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ is transitive:
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupledsim
+\backslash
+_trans}
+\end_layout
+
+\end_inset
+
+ If 
+\begin_inset Formula $p\csSimBy\mathit{pq}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathit{pq}\csSimBy q$
+\end_inset
+
+, then 
+\begin_inset Formula $p\csSimBy q$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ As a consequence, coupled similarity 
+\begin_inset Formula $\csEq$
+\end_inset
+
+ is an equivalence relation.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupled
+\backslash
+_similarity
+\backslash
+_equivalence}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Coupled simulation is closed under set union,
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupledsim
+\backslash
+_union}
+\end_layout
+
+\end_inset
+
+ and the coupled simulation preorder is itself a coupled simulation
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupled_sim_by_is_coupled_sim}
+\end_layout
+
+\end_inset
+
+ (and thus the greatest coupled simulation).
+\end_layout
+
+\begin_layout Lemma
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ greatest
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:cs-gfp"
+
+\end_inset
+
+The coupled simulation preorder can be characterized,
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+
+\emph on
+by the union
+\emph default
+:
+\begin_inset Formula 
+\[
+\csSimBy\:=\:\bigcup\{\rel R\mid\text{\rel R}\text{ is a coupled simulation}\}\text{, and}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+
+\emph on
+coinductively
+\emph default
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[coinductive]{Coupled
+\backslash
+_Simulation}{greatest
+\backslash
+_coupled
+\backslash
+_simulation}
+\end_layout
+
+\end_inset
+
+ by the rule:
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{gcs
+\backslash
+_eq
+\backslash
+_coupled
+\backslash
+_sim
+\backslash
+_by}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\cfrac{\forall p^{\prime},\alpha\ldotp\;p\step{\alpha}p^{\prime}\longrightarrow\:\exists q^{\prime}\ldotp\:q\weakStepTau{\alpha}q^{\prime}\;\land\;p^{\prime}\csSimBy q^{\prime}\qquad q\weakStep{}q^{\prime}\qquad q^{\prime}\csSimBy p}{p\csSimBy q}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Especially the coinductive characterization is important because it allows
+ to conduct proofs for 
+\begin_inset Formula $p\csSimBy q$
+\end_inset
+
+ between some states 
+\begin_inset Formula $p$
+\end_inset
+
+ and 
+\begin_inset Formula $q$
+\end_inset
+
+ coinductively.
+ For this thesis, it also plays an important role in motivating the following
+ game characterization (Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Game-Characterization"
+
+\end_inset
+
+) and algorithms (Sections
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:algo-cs-fixed-point"
+
+\end_inset
+
+ff.).
+\end_layout
+
+\begin_layout Subsection
+Strengthening Coupled Simulation
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:strengthening-cs"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Like weak similarity and bisimilarity, yet unlike contrasimilarity, coupled
+ similarity can be defined with a weaker formulation of the simulation challenge.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:coupled_simulation_weak_premise"
+
+\end_inset
+
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $p\step{\alpha}p^{\prime}$
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+ on the left-hand side of the simulation property from Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:coupled_simulation"
+
+\end_inset
+
+ may be replaced by 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $p\weakStepTau{\alpha}p^{\prime}$
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+ while the extension of the definition remains the same.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupled
+\backslash
+_simulation
+\backslash
+_weak
+\backslash
+_premise}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This is a logically stronger formulation of coupled simulation, which is
+ helpful when coupled simulation appears as a premise in a proof.
+\end_layout
+
+\begin_layout Standard
+Coupled similarity can also be defined employing an effectively stronger
+ concept than weak simulation, namely 
+\emph on
+delay simulation
+\emph default
+.
+ Delay simulations are defined in terms of a 
+\begin_inset Quotes eld
+\end_inset
+
+shortened
+\begin_inset Quotes erd
+\end_inset
+
+ weak step relation 
+\begin_inset Formula $\weakStepDelay{\alpha}$
+\end_inset
+
+ where 
+\begin_inset Formula $\weakStepDelay{\tau}\defEq\weakStep{}$
+\end_inset
+
+ and 
+\begin_inset Formula $\weakStepDelay a\defEq\weakStep{}\step a$
+\end_inset
+
+.
+ So the difference between 
+\begin_inset Formula $\weakStepDelay a$
+\end_inset
+
+ and 
+\begin_inset Formula $\weakStepTau a$
+\end_inset
+
+ lies in the fact that the latter can move on with 
+\begin_inset Formula $\tau$
+\end_inset
+
+-steps after the strong 
+\begin_inset Formula $\step a$
+\end_inset
+
+-step in its construction.
+\end_layout
+
+\begin_layout Definition
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+[Coupled delay simulation]
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:delay-coupled-simulation"
+
+\end_inset
+
+ A 
+\emph on
+coupled delay simulation
+\emph default
+ is a relation 
+\begin_inset Formula $\rel R\subseteq S\times S$
+\end_inset
+
+ such that, for all 
+\begin_inset Formula $(p,q)\in\rel R$
+\end_inset
+
+,
+\begin_inset Separator latexpar
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $p\step{\alpha}p^{\prime}$
+\end_inset
+
+ implies there is a 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\weakStepDelay{\alpha}q^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $(p^{\prime},q^{\prime})\in\rel R$
+\end_inset
+
+ (
+\emph on
+delay simulation
+\emph default
+), 
+\end_layout
+
+\begin_layout Itemize
+and there exists a 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\weakStep{}q^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $(q^{\prime},p)\in\rel R$
+\end_inset
+
+ (
+\emph on
+coupling
+\emph default
+).
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+The only difference to Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:coupled_simulation"
+
+\end_inset
+
+ is the use of 
+\begin_inset Formula $\weakStepDelay{\alpha}$
+\end_inset
+
+ instead of 
+\begin_inset Formula $\weakStepTau{\alpha}$
+\end_inset
+
+.
+ As 
+\begin_inset Formula $\weakStepDelay{\alpha}\,\subseteq\,\weakStepTau{\alpha}$
+\end_inset
+
+, every coupled delay simulation is a coupled simulation.
+ However, not every coupled simulation also is a delay (coupled) simulation.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Consider for example 
+\begin_inset Formula $\rel R=\{(\action a\ccsPrefix\tau,\action a\ccsPrefix\tau),(\tau,\ccsStop),(\ccsStop,\tau),(\ccsStop,\ccsStop)\}$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ So, Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:delay-coupled-simulation"
+
+\end_inset
+
+ is not simply a stricter formulation, but indeed extensionally smaller
+ than coupled simulation.
+ Still, the 
+\emph on
+greatest
+\emph default
+ coupled simulation 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ 
+\emph on
+is
+\emph default
+ a delay coupled simulation so that we can add the following characterization
+ of the coupled simulation preorder.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset Formula $p\csSimBy q$
+\end_inset
+
+ precisely if there is a coupled delay simulation 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ such that 
+\begin_inset Formula $(p,q)\in\rel R$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupled
+\backslash
+_sim
+\backslash
+_by
+\backslash
+_eq
+\backslash
+_delay
+\backslash
+_coupled
+\backslash
+_simulation}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\noun on
+Rensink
+\noun default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rensink2000actionContraction"
+
+\end_inset
+
+ uses a definition for pair-based coupled simulation that is based on delay
+ steps as well.
+ For action-labeled coupled simulation on a single relation, the delay simulatio
+n approach seems not to have been used up to now, which is why we refrain
+ from taking delay coupled simulations as canonical coupled simulations
+ here.
+\end_layout
+
+\begin_layout Standard
+By any account, it is a nice property because it means that algorithms (and
+ proofs) do not have to bother with the extra load of fuzziness caused by
+ the trailing 
+\begin_inset Formula $\tau$
+\end_inset
+
+-steps of 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+.
+ Once symmetry is demanded instead of coupling, delay simulation and weak
+ simulation lead to different notions of equivalence, namely delay bisimilarity
+ and weak bisimilarity.
+ Delay bisimilarity is strictly stronger and has important use cases, for
+ example, applicative bisimulation on the 
+\begin_inset Formula $\lambda$
+\end_inset
+
+-calculus 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "pitts2011howesMehtod"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Internal Steps and Choice
+\end_layout
+
+\begin_layout Standard
+The coupled simulation preorder is conceptionally linked to the internal
+ choice structure of a system.
+ One basis for this is that it contains the inverted 
+\begin_inset Formula $\tau$
+\end_inset
+
+-closure of the transition system.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:coupledsim_step"
+
+\end_inset
+
+If 
+\begin_inset Formula $q\weakStep{}p$
+\end_inset
+
+, then 
+\begin_inset Formula $p\csSimBy q$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupledsim
+\backslash
+_step}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Intuitively, this is logical from the weak simulation nature of coupled
+ similarity: 
+\begin_inset Formula $p$
+\end_inset
+
+ can obviously do at least as much as its 
+\begin_inset Formula $\tau$
+\end_inset
+
+-successor 
+\begin_inset Formula $q$
+\end_inset
+
+, because it can perform a 
+\begin_inset Formula $\tau$
+\end_inset
+
+-step and then steal the abilities from 
+\begin_inset Formula $q$
+\end_inset
+
+.
+ And due to the reflexive nature of 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+, 
+\begin_inset Formula $q$
+\end_inset
+
+ can answer its own coupling challenge.
+\end_layout
+
+\begin_layout Standard
+A direct implication is that strongly connected 
+\begin_inset Formula $\tau$
+\end_inset
+
+-components are coupled-similar:
+\end_layout
+
+\begin_layout Corollary
+\begin_inset CommandInset label
+LatexCommand label
+name "cor:tau-loop-cs"
+
+\end_inset
+
+If 
+\begin_inset Formula $p$
+\end_inset
+
+ and 
+\begin_inset Formula $q$
+\end_inset
+
+ are on a 
+\begin_inset Formula $\tau$
+\end_inset
+
+-cycle, that means 
+\begin_inset Formula $p\weakStep{}q$
+\end_inset
+
+ and 
+\begin_inset Formula $q\weakStep{}p$
+\end_inset
+
+, then 
+\begin_inset Formula $p\csEq q$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{strongly
+\backslash
+_tau
+\backslash
+_connected
+\backslash
+_coupled
+\backslash
+_similar}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This corollary is a commonplace property of equivalences in the linear-time
+ branch\SpecialChar softhyphen
+ing-time spectrum with silent actions.
+ Weak equivalences usually allow for internal steps before answering a challenge.
+ Therefore, if 
+\begin_inset Formula $p\weakStep{}q$
+\end_inset
+
+ and 
+\begin_inset Formula $q\weakStep{}p$
+\end_inset
+
+, then 
+\begin_inset Formula $p$
+\end_inset
+
+ and 
+\begin_inset Formula $q$
+\end_inset
+
+ can steal the transitions from each other when equivalence is questioned.
+\end_layout
+
+\begin_layout Standard
+What does it mean, if we know for an internal choice between 
+\begin_inset Formula $p$
+\end_inset
+
+ and 
+\begin_inset Formula $q$
+\end_inset
+
+ that 
+\begin_inset Formula $p\csSimBy q$
+\end_inset
+
+? Interestingly: that there is no real choice.
+\end_layout
+
+\begin_layout Lemma
+Let 
+\begin_inset Formula $\mathit{pq}_{\sqcap}\in S$
+\end_inset
+
+ such that 
+\begin_inset Formula $\mathit{pq}_{\sqcap}\step{\alpha}\mathit{pq}^{\prime}$
+\end_inset
+
+ if and only if 
+\begin_inset Formula $\alpha=\tau$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathit{pq}^{\prime}\in\{p,q\}$
+\end_inset
+
+.
+ Then, 
+\begin_inset Formula $p\csSimBy q$
+\end_inset
+
+ if and only if 
+\begin_inset Formula $\mathit{pq}_{\sqcap}\csEq q$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupledsim_choice_join}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We formulated the lemma for transition systems, borrowing the symbol 
+\begin_inset Formula $\sqcap$
+\end_inset
+
+ commonly used for internal choice in the process calculus Communicating
+ Sequential Processes (CSP).
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+This lemma points to the justification of van Glabbeek's use of 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $\sqsupseteq_{\mathit{CS}}$
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+ instead of 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+.
+ So, in the CSP-context, this lemma corresponds to a common property in
+ semi-lattices / complete partial orders: 
+\begin_inset Formula $q\sqsubseteq p\iff p\sqcap q=q$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ In 
+\begin_inset Formula $\ccs$
+\end_inset
+
+, the lemma would read 
+\begin_inset Formula 
+\[
+P\csSimBy Q\:\text{ if and only if }\:\tau\ccsPrefix P\ccsChoice\tau\ccsPrefix Q\csEq Q.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This is to say, internal choice acts as a least upper bound (join) in the
+ 
+\begin_inset Formula $(\ccs,\csSimBy)$
+\end_inset
+
+ semi-lattice with 
+\begin_inset Formula $\csEq$
+\end_inset
+
+ as equality.
+\end_layout
+
+\begin_layout Standard
+Ordinary coupled simulation is blind to divergence.
+ In particular, it cannot distinguish two states whose outgoing transitions
+ only differ in an additional 
+\begin_inset Formula $\tau$
+\end_inset
+
+-loop at the second state.
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:tau-loops"
+
+\end_inset
+
+
+\begin_inset Formula $p\csEq q$
+\end_inset
+
+ 
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+if
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+ 
+\begin_inset Formula $q\step{\cdot}\cdot\,=\,p\step{\cdot}\cdot\,\cup\,\{(\tau,q)\}$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupledsim
+\backslash
+_tau
+\backslash
+_loop
+\backslash
+_ignorance}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This lemma, together with the 
+\begin_inset Formula $\tau$
+\end_inset
+
+-cycle compression from Corollary 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "cor:tau-loop-cs"
+
+\end_inset
+
+, allows to convert finite systems with divergence into 
+\begin_inset Formula $\csEq$
+\end_inset
+
+-equivalent systems without divergence, thereby bridging the gap between
+ 
+\begin_inset Formula $\csEq$
+\end_inset
+
+ and 
+\begin_inset Formula $\scsEq$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The previous lemmas stem from the weak simulation nature of 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+.
+ However, adapting words from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glabbeek2017"
+
+\end_inset
+
+, 
+\begin_inset Formula $p\csSimBy q$
+\end_inset
+
+ does not only mean that 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $p$
+\end_inset
+
+ is 
+\emph on
+ahead
+\emph default
+ of 
+\begin_inset Formula $q$
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+ (weak simulation, Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:coupledsim_step"
+
+\end_inset
+
+ff.), but also that 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $q$
+\end_inset
+
+ can 
+\emph on
+catch up
+\emph default
+ to 
+\begin_inset Formula $p$
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+ (coupling).
+\end_layout
+
+\begin_layout Standard
+The important property of coupled similarity setting it apart from weak
+ similarity is that it enforces more symmetry:
+\end_layout
+
+\begin_layout Lemma
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:cs-eventual-symm"
+
+\end_inset
+
+Assume 
+\begin_inset Formula $\system$
+\end_inset
+
+ is finite and has no 
+\begin_inset Formula $\tau$
+\end_inset
+
+-cycles.
+ Then 
+\begin_inset Formula $p\csSimBy q$
+\end_inset
+
+ and 
+\begin_inset Formula $p\weakStepTau{\alpha}p^{\prime}$
+\end_inset
+
+ with stable 
+\begin_inset Formula $p^{\prime}$
+\end_inset
+
+ imply there is a stable 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\weakStepTau{\alpha}q^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $p^{\prime}\csEq q^{\prime}$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{coupledsim
+\backslash
+_eventual
+\backslash
+_symmetry}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In other words: If we ignore intermediate instable internal choice points
+ and only consider 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+-steps leading to 
+\begin_inset Formula $\tau$
+\end_inset
+
+-maximal states, coupled similarity virtually resembles weak bisimilarity
+ on finite divergence-free systems.
+ The next section looks at the connection of weak bisimilarity and coupled
+ similarity in more depth.
+\end_layout
+
+\begin_layout Section
+Axiomatization of Coupled Similarity
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:axiomatization-cs"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+One of the most important works on coupled similarity is 
+\noun on
+Parrow
+\noun default
+ and 
+\noun on
+Sjödin's
+\noun default
+ 
+\begin_inset Quotes eld
+\end_inset
+
+The complete axiomatization of Cs-congruence
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+.
+ They provide an axiomatization of 
+\begin_inset Formula $\scsEq$
+\end_inset
+
+-congruence for finite 
+\begin_inset Formula $\ccs$
+\end_inset
+
+ processes, which is based on 
+\noun on
+Milner's
+\noun default
+ axiomatization of 
+\begin_inset Formula $\weakBisim$
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "milner1989comcon"
+
+\end_inset
+
+, we reported in Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:axiomatizations"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Coupled Simulation Congruence
+\end_layout
+
+\begin_layout Standard
+Coupled similarity is no congruence with respect to the 
+\begin_inset Formula $\ccs$
+\end_inset
+
+ choice operator.
+ It suffers from the same shortcoming as weak bisimilarity in Example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:weak-bisim-no-congruence"
+
+\end_inset
+
+, namely that 
+\begin_inset Formula $\tau.\ccsStop\csEq\ccsStop$
+\end_inset
+
+ and 
+\begin_inset Formula $\action a\csEq\action a$
+\end_inset
+
+, but 
+\begin_inset Formula $\tau.\ccsStop+\action a\not\csEq\action a$
+\end_inset
+
+.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+On 
+\begin_inset Formula $\ccs$
+\end_inset
+
+ descendants without the expressive power of 
+\begin_inset Formula $\ccsChoice$
+\end_inset
+
+, 
+\begin_inset Formula $\csEq$
+\end_inset
+
+ usually is a congruence.
+ One important example is the asynchronous 
+\begin_inset Formula $\pi$
+\end_inset
+
+-calculus 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "Prop.\\ 2.4.4"
+key "nestmann1996decoding"
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ However, its largest 
+\begin_inset Formula $\ccs$
+\end_inset
+
+ congruence has a nicer characterization than the special treatment for
+ initial 
+\begin_inset Formula $\tau$
+\end_inset
+
+-steps of rooted weak bisimilarity in Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:rooted-weak-bisim"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition
+\begin_inset CommandInset label
+LatexCommand label
+name "def:rooted-cs"
+
+\end_inset
+
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Rooted coupled similarity
+\end_layout
+
+\end_inset
+
+ Two states are 
+\emph on
+rooted coupled similar
+\emph default
+, written 
+\begin_inset Formula $p\csCongruent q$
+\end_inset
+
+, iff 
+\begin_inset Formula $p\csEq q$
+\end_inset
+
+, and 
+\begin_inset Formula $p$
+\end_inset
+
+ stable precisely if 
+\begin_inset Formula $q$
+\end_inset
+
+ stable.
+\end_layout
+
+\begin_layout Standard
+Proofs that 
+\begin_inset Formula $\csCongruent$
+\end_inset
+
+ indeed is a congruence and that it is the largest one can be found in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sangiorgi2012"
+
+\end_inset
+
+.
+ Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:cs-scs"
+
+\end_inset
+
+ already yields that 
+\begin_inset Formula $\csCongruent$
+\end_inset
+
+ matches the congruence 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+ similarly derives from 
+\begin_inset Formula $\scsEq$
+\end_inset
+
+ on finite processes because their transition systems are cycle-free and
+ finite-state, and hence divergence-free.
+ Therefore, the axiomatization from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+ for 
+\begin_inset Formula $\scsEq$
+\end_inset
+
+-congruence is just as well an axiomatization for 
+\begin_inset Formula $\csCongruent$
+\end_inset
+
+.
+ Now, let us have a look at the axiomatization.
+\end_layout
+
+\begin_layout Subsection
+A New 
+\begin_inset Formula $\tau$
+\end_inset
+
+-Law
+\end_layout
+
+\begin_layout Standard
+Coupled similarity is coarser than weak bisimilarity.
+ In order to be complete, its axiomatization must declare 
+\emph on
+more
+\emph default
+ processes to be equal than the weak bisimilarity axiom system 
+\begin_inset Formula $\mathcal{A}_{\mathit{WB}}$
+\end_inset
+
+ (Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:wb-axioms"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula $\csCongruent$
+\end_inset
+
+ axioms
+\end_layout
+
+\end_inset
+
+ We define 
+\begin_inset Formula $\mathcal{A}_{\mathit{CS}}$
+\end_inset
+
+ as an extension of 
+\begin_inset Formula $\mathcal{A}_{\mathit{WB}}$
+\end_inset
+
+ from Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:wb-axioms"
+
+\end_inset
+
+ with the new law 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{center}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Tabular
+<lyxtabular version="3" rows="1" columns="4">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top">
+<column alignment="right" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="0pt">
+<row topspace="-0.2cm">
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+CS
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\tau\ccsPrefix(\tau\ccsPrefix P\ccsChoice Q)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $=$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\tau\ccsPrefix P\ccsChoice Q$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{center}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The axiom basically says that 
+\begin_inset Formula $\tau$
+\end_inset
+
+-steps to instable states 
+\emph on
+can be skipped
+\emph default
+.
+\end_layout
+
+\begin_layout Example
+If we encode the philosopher transition system 
+\begin_inset Formula $\ccsIdentifier P_{g}$
+\end_inset
+
+ from Example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:philosophers-gradual"
+
+\end_inset
+
+ as a finite-state process, we can rewrite it using
+\series bold
+ CS
+\series default
+ to match 
+\begin_inset Formula $\ccsIdentifier P_{o}$
+\end_inset
+
+.
+\begin_inset Formula 
+\begin{eqnarray*}
+\ccsIdentifier P_{g} & \overset{\text{(encode)}}{\strongBisim} & \tau\ccsPrefix\tau\ccsPrefix\ccsIdentifier A\ccsChoice\tau\ccsPrefix(\tau\ccsPrefix\ccsIdentifier B\ccsChoice\tau\ccsPrefix\ccsIdentifier C)\\
+ & \overset{\mathbf{CS}}{=} & \tau\ccsPrefix\tau\ccsPrefix\ccsIdentifier A\ccsChoice(\tau\ccsPrefix\ccsIdentifier B\ccsChoice\tau\ccsPrefix\ccsIdentifier C)\\
+ & \overset{\mathbf{AT1}}{=} & \tau\ccsPrefix\ccsIdentifier A\ccsChoice\tau\ccsPrefix\ccsIdentifier B\ccsChoice\tau\ccsPrefix\ccsIdentifier C\qquad\overset{\text{(encode)}}{\strongBisim}\ccsIdentifier P_{o}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The example shows that 
+\begin_inset Formula $\mathcal{A}_{\mathit{CS}}$
+\end_inset
+
+ is sufficiently complete to cover that 
+\begin_inset Formula $\ccsIdentifier P_{g}\csEq\ccsIdentifier P_{o}$
+\end_inset
+
+.
+ But is it completely complete?
+\end_layout
+
+\begin_layout Subsection
+CS-Normalization
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:cs-normalization"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To prove completeness for finite 
+\begin_inset Formula $\ccs$
+\end_inset
+
+ processes, 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+ adapts 
+\noun on
+Milner's
+\noun default
+ 
+\begin_inset Formula $\mathit{WB}$
+\end_inset
+
+-normal form (Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:wb-normal-form"
+
+\end_inset
+
+).
+ The crucial trick is to include a closure over the partial choices of instable
+ choice points.
+\end_layout
+
+\begin_layout Definition
+\begin_inset CommandInset label
+LatexCommand label
+name "def:cs-normal-form"
+
+\end_inset
+
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula $\mathit{CS}$
+\end_inset
+
+-normal form
+\end_layout
+
+\end_inset
+
+ A process term 
+\begin_inset Formula $P$
+\end_inset
+
+ is in 
+\begin_inset Formula $\mathit{CS}$
+\end_inset
+
+-
+\emph on
+normal form
+\emph default
+ iff
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+it has the structure 
+\begin_inset Formula $P=\alpha_{1}\ccsPrefix P_{1}\ccsChoice\dots\ccsChoice\alpha_{n}\ccsPrefix P_{n}$
+\end_inset
+
+ (or 
+\begin_inset Formula $P=\ccsStop$
+\end_inset
+
+),
+\end_layout
+
+\begin_layout Enumerate
+every 
+\begin_inset Formula $P_{i}$
+\end_inset
+
+ is in 
+\begin_inset Formula $\mathit{CS}$
+\end_inset
+
+-normal form,
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $P\weakStep{\alpha}P^{\prime}$
+\end_inset
+
+ implies there is an 
+\begin_inset Formula $i$
+\end_inset
+
+ such that 
+\begin_inset Formula $\alpha_{i}=\alpha$
+\end_inset
+
+ and 
+\begin_inset Formula $P_{i}=P^{\prime}$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+new:
+\series default
+ if 
+\begin_inset Formula $\alpha_{i}=\tau$
+\end_inset
+
+ for some 
+\begin_inset Formula $i$
+\end_inset
+
+, then 
+\begin_inset Formula $P_{i}$
+\end_inset
+
+ is stable, and
+\end_layout
+
+\begin_layout Enumerate
+
+\series bold
+new:
+\series default
+ whenever 
+\begin_inset Formula $P_{i}=\beta_{1}\ccsPrefix Q_{1}\ccsChoice\dots\ccsChoice\beta_{m}\ccsPrefix Q_{m}$
+\end_inset
+
+ for some 
+\begin_inset Formula $i$
+\end_inset
+
+ with 
+\begin_inset Formula $\beta_{j}=\tau$
+\end_inset
+
+ for some 
+\begin_inset Formula $j$
+\end_inset
+
+,
+\begin_inset Newline newline
+\end_inset
+
+then for every partial choice 
+\begin_inset Formula $\hat{P}=\hat{Q}_{1}+\dots+\tau.Q_{j}+\dots+\hat{Q}_{m}$
+\end_inset
+
+ of 
+\begin_inset Formula $P_{i}$
+\end_inset
+
+ 
+\begin_inset Newline newline
+\end_inset
+
+where 
+\begin_inset Formula $\hat{Q}_{k}\in\{\ccsStop,\beta_{k}\ccsPrefix Q_{k}\}$
+\end_inset
+
+ for all 
+\begin_inset Formula $k\neq j$
+\end_inset
+
+, there is some 
+\begin_inset Formula $l$
+\end_inset
+
+ such that the 
+\begin_inset Formula $l$
+\end_inset
+
+-th branch of 
+\begin_inset Formula $P$
+\end_inset
+
+ is 
+\begin_inset Formula $\mathit{CS}$
+\end_inset
+
+-congruent to the partial choice, that is, 
+\begin_inset Formula $P_{l}\csCongruent\hat{P}$
+\end_inset
+
+ with 
+\begin_inset Formula $\alpha_{l}=\alpha_{i}$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Conditions 1, 2, and 3 are identical to 
+\begin_inset Formula $\mathit{WB}$
+\end_inset
+
+-normal forms from Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:wb-normal-form"
+
+\end_inset
+
+.
+ Condition 4 is in line with the property of coupled similarity that 
+\begin_inset Formula $\tau$
+\end_inset
+
+-steps to instable states can be skipped.
+ Condition 5 then demands the presence of all partial commits that could
+ be hidden in the trailing 
+\begin_inset Formula $\weakStep{}$
+\end_inset
+
+-part of a weak visible transition.
+ We shall return to the properties of such normal forms in Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:cs-normal-form-ts"
+
+\end_inset
+
+, where there also is an illustration of how a transition system changes
+ with normalization in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:cs-normalization"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+On 
+\begin_inset Formula $\mathit{CS}$
+\end_inset
+
+-normal forms, coupled similarity and weak bisimilarity coincide.
+\end_layout
+
+\begin_layout Lemma
+If 
+\begin_inset Formula $P$
+\end_inset
+
+ and 
+\begin_inset Formula $Q$
+\end_inset
+
+ are 
+\begin_inset Formula $\mathit{CS}$
+\end_inset
+
+-normal forms, then 
+\begin_inset Formula $P\csEq Q$
+\end_inset
+
+ precisely if 
+\begin_inset Formula $P\weakBisim Q$
+\end_inset
+
+, (and 
+\begin_inset Formula $P\csCongruent Q$
+\end_inset
+
+ precisely if 
+\begin_inset Formula $P\weakBisimCongruence Q$
+\end_inset
+
+).
+ (Proof cf.
+\begin_inset space \space{}
+\end_inset
+
+Lemma
+\begin_inset space ~
+\end_inset
+
+20 in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+.)
+\end_layout
+
+\begin_layout Standard
+Moreover, every finite 
+\begin_inset Formula $\ccs$
+\end_inset
+
+ processes can be rewritten to a 
+\begin_inset Formula $\mathit{CS}$
+\end_inset
+
+-normal form (Lemma
+\begin_inset space ~
+\end_inset
+
+18 in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+).
+ As
+\noun on
+ Parrow
+\noun default
+ and 
+\noun on
+Sjödin's
+\noun default
+ induction proof for this makes use of the reference to 
+\begin_inset Formula $\csCongruent$
+\end_inset
+
+ for a structurally smaller term in clause 5 of the definition, the implied
+ normalization is recursive.
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+ This feature makes the term rewriting needed for normalization less syntactical
+ly obvious.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\noun on
+Parrow
+\noun default
+ and 
+\noun on
+Sjödin
+\noun default
+ conjecture that their normalization and the completeness proof can be extended
+ to finite-state processes by adding the recursion laws from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "milner1989comcon"
+
+\end_inset
+
+.
+ Because this would enable divergent processes, one would have to use the
+ variant of coupled similarity that remains an equivalence relation in this
+ case (Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:cs-using-pairs"
+
+\end_inset
+
+).
+ However, they do not elaborate on the question what consequences recursion
+ would have on the normal forms.
+ Due to condition 3, 
+\begin_inset Formula $\mathit{CS}$
+\end_inset
+
+-normal forms cannot be divergent processes.
+ We shall deal with this problem in Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:algo-bisim-approach"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Axiomatization in CSP
+\end_layout
+
+\begin_layout Standard
+As a side note, let us mention that coupled similarity in its divergence-sensiti
+ve flavor 
+\begin_inset Formula $\text{\equiv}_{\Delta\mathit{CS}}$
+\end_inset
+
+ (cf.
+\begin_inset space \space{}
+\end_inset
+
+final remark in Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:eqs-discussion"
+
+\end_inset
+
+) is a congruence for the wide-spread process calculus CSP.
+ In particular, 
+\noun on
+van Glabbeek
+\noun default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glabbeek2017"
+
+\end_inset
+
+ shows that 
+\begin_inset Formula $\sqsubseteq_{\Delta\mathit{CS}}$
+\end_inset
+
+ is a precongruence for 
+\begin_inset Quotes eld
+\end_inset
+
+all
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+This 
+\begin_inset Quotes eld
+\end_inset
+
+all
+\begin_inset Quotes erd
+\end_inset
+
+ has to be understood with some reservations, since there seemingly are
+ indefinitely many CSP operators out there.
+\end_layout
+
+\end_inset
+
+ CSP operators except for action prefixing and the related throw operator,
+ for which, nevertheless, 
+\begin_inset Formula $\equiv_{\Delta\mathit{CS}}$
+\end_inset
+
+ is a congruence.
+ He moreover gives a complete axiomatization of 
+\begin_inset Formula $\equiv_{\Delta\mathit{CS}}$
+\end_inset
+
+ within recursion-free CSP without interrupts.
+ Most relevant laws of the standard CSP axiom set are provable from 
+\noun on
+van
+\noun default
+ 
+\noun on
+Glabbeek's
+\noun default
+ axiom system.
+ This shows that many of the intuitions behind the interplay of synchronizations
+ and choices that lie behind the design of CSP correspond to the notions
+ implicit in coupled similarity.
+\end_layout
+
+\begin_layout Section
+Coupled Simulation as a Game
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Game-Characterization"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As introduced in Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Game-theoretic-Characterizations"
+
+\end_inset
+
+, checking preorders with coinductive characterizations like the one of
+ 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ in Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:cs-gfp"
+
+\end_inset
+
+ can be expressed by games between an 
+\emph on
+attacker
+\emph default
+, challenging that 
+\begin_inset Formula $p\csSimBy q$
+\end_inset
+
+, and a 
+\emph on
+defender
+\emph default
+, naming witnesses for the existential quantifications of the coinduction
+ premises.
+ Let us recall that the difference between the weak simulation game and
+ the weak bisimulation game consists in the opportunity of the attacker
+ to switch the direction of the game, which captures symmetry.
+ For the coupled simulation game, we introduce a game 
+\emph on
+in between
+\emph default
+ the two games.
+\end_layout
+
+\begin_layout Subsection
+The Coupled Simulation Game
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:cs-game"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tikzpicture}[>->,auto,node distance=4cm, rel/.style={dashed,font=
+\backslash
+it}]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[minimum size=1.3cm,draw] (Att){$(p,q)_{
+\backslash
+mathtt{a}}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state, inner sep=0pt, minimum size=1.7cm] (Def) [below right of=Att]
+ {$(
+\backslash
+alpha,p^
+\backslash
+prime,q)_{
+\backslash
+mathtt{d}}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[minimum size=1.3cm,draw, dashed] (Att2) [right of=Att] {$(p^
+\backslash
+prime,q^
+\backslash
+prime)_{
+\backslash
+mathtt{a}}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state, inner sep=0pt, minimum size=1.7cm] (DefCpl) [below left of=Att]
+ {$(
+\backslash
+mathtt{Cpl},p,q)_{
+\backslash
+mathtt{d}}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[minimum size=1.3cm,draw, dashed] (AttCpl) [left of=Att] {$(q^
+\backslash
+prime,p)_{
+\backslash
+mathtt{a}}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(Att) edge[bend right=30] node {[$p
+\backslash
+step{
+\backslash
+alpha}p^{
+\backslash
+prime}$]} (Def)
+\end_layout
+
+\begin_layout Plain Layout
+
+(Def) edge[bend right=30] node {[$q
+\backslash
+weakStepTau{
+\backslash
+alpha}q^{
+\backslash
+prime}$]} (Att2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(Att2) edge[bend right=20, dashed, -] node {} (Att)
+\end_layout
+
+\begin_layout Plain Layout
+
+(AttCpl) edge[bend left=20, dashed, -] node {} (Att)
+\end_layout
+
+\begin_layout Plain Layout
+
+(Att) edge[bend left=20] node {} (DefCpl)
+\end_layout
+
+\begin_layout Plain Layout
+
+(DefCpl) edge[bend left=20] node {[$q
+\backslash
+weakStep{}q^{
+\backslash
+prime}$]} (AttCpl);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tikzpicture}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Schematic coupled simulation game.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:game-cs"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The 
+\emph on
+coupled simulation game
+\emph default
+ proceeds as follows: For 
+\begin_inset Formula $p\csSimBy q$
+\end_inset
+
+, the attacker may question that simulation holds by selecting 
+\begin_inset Formula $p^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ with 
+\begin_inset Formula $p\step{\alpha}p^{\prime}$
+\end_inset
+
+.
+ The defender then has to name a 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ with 
+\begin_inset Formula $q\weakStepTau{\alpha}q^{\prime}$
+\end_inset
+
+, whereupon the attacker may go on to challenge 
+\begin_inset Formula $p^{\prime}\csSimBy q^{\prime}$
+\end_inset
+
+.
+ For coupled simulation, the attacker may moreover demand the defender to
+ name a coupling witness 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ with 
+\begin_inset Formula $q\weakStep{}q^{\prime}$
+\end_inset
+
+ whereafter 
+\begin_inset Formula $q^{\prime}\csSimBy p$
+\end_inset
+
+ stands to questions.
+ If the defender runs out of answers, they lose; if the game continues forever,
+ they win.
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+The attacker never runs out of options as they can always question coupling.
+\end_layout
+
+\end_inset
+
+ This can be modeled by a simple game, whose schema is given in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:game-cs"
+
+\end_inset
+
+, as follows.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ game
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:cs-game"
+
+\end_inset
+
+ The 
+\emph on
+coupled simulation game
+\emph default
+ 
+\begin_inset Formula $\game_{\mathit{CS}}^{\system}[p_{0}]=(G,G_{a},\gameMove,p_{0})$
+\end_inset
+
+ for a transition system 
+\begin_inset Formula $\system=(S,\actions,\step{})$
+\end_inset
+
+ consists of
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\emph on
+attacker nodes
+\emph default
+ 
+\begin_inset Formula $(p,q)_{\mathtt{a}}\in G_{a}$
+\end_inset
+
+ with 
+\begin_inset Formula $p,q\in S$
+\end_inset
+
+, 
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+simulation defender nodes
+\emph default
+ 
+\begin_inset Formula $(\alpha,p,q)_{\mathtt{d}}\in G_{d}$
+\end_inset
+
+ for situations where a simulation challenge has been formulated, and
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+new:
+\series default
+\emph on
+ coupling defender nodes
+\emph default
+ 
+\begin_inset Formula $(\mathtt{Cpl},p,q)_{\mathtt{d}}\in G_{d}$
+\end_inset
+
+ for situations where coupling is challenged,
+\end_layout
+
+\end_deeper
+\begin_layout Definition
+and four kinds of moves
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\emph on
+simulation challenges
+\emph default
+ 
+\begin_inset Formula $(p,q)_{\mathtt{a}}\gameMove(\alpha,p^{\prime},q)_{\mathtt{d}}$
+\end_inset
+
+ if 
+\begin_inset Formula $p\step{\alpha}p^{\prime}$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+simulation answers
+\emph default
+ 
+\begin_inset Formula $(\alpha,p^{\prime},q)_{\mathtt{d}}\gameMove(p^{\prime},q^{\prime})_{\mathtt{a}}$
+\end_inset
+
+ if 
+\begin_inset Formula $q\weakStepTau{\alpha}q^{\prime}$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+new:
+\series default
+ 
+\emph on
+coupling challenges
+\emph default
+ 
+\begin_inset Formula $(p,q)_{\mathtt{a}}\gameMove(\mathtt{Cpl},p,q)_{\mathtt{d}}$
+\end_inset
+
+, and
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+new:
+\series default
+\emph on
+ coupling answers
+\emph default
+ 
+\begin_inset Formula $(\mathtt{Cpl},p,q)_{\mathtt{d}}\gameMove(q^{\prime},p)_{\mathtt{a}}$
+\end_inset
+
+ if 
+\begin_inset Formula $q\weakStep{}q^{\prime}$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[locale]{CS
+\backslash
+_Game}{cs
+\backslash
+_game}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+The differences to the weak simulation game (Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:Weak-simulation-game"
+
+\end_inset
+
+) are marked as 
+\begin_inset Quotes eld
+\end_inset
+
+
+\series bold
+new
+\series default
+.
+\begin_inset Quotes erd
+\end_inset
+
+ They enable something quite similar to the symmetry swaps of Definition
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:Weak-bisimulation-game"
+
+\end_inset
+
+ with the innovation that the defender has a say in the direction change.
+ They may choose a 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ with 
+\begin_inset Formula $q\weakStep{}q^{\prime}$
+\end_inset
+
+ from where to continue after the swap (
+\begin_inset Quotes eld
+\end_inset
+
+coupling answers
+\begin_inset Quotes erd
+\end_inset
+
+).
+ If we were to restrict the coupling answers to 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ where 
+\begin_inset Formula $q=q^{\prime}$
+\end_inset
+
+ instead of 
+\begin_inset Formula $q\weakStep{}q^{\prime}$
+\end_inset
+
+, we would again end up with a game characterizing weak bisimilarity.
+\end_layout
+
+\begin_layout Standard
+Intuitively, it is clear, that this is a game 
+\emph on
+in between
+\emph default
+ the weak simulation game 
+\begin_inset Formula $\game_{\mathit{WS}}$
+\end_inset
+
+ and the weak bisimulation game 
+\begin_inset Formula $\game_{\mathit{WB}}$
+\end_inset
+
+.
+ The attacker can do more than in 
+\begin_inset Formula $\game_{\mathit{WS}}$
+\end_inset
+
+, namely challenge coupling, and the defender can do more than in 
+\begin_inset Formula $\game_{\mathit{WB}}$
+\end_inset
+
+, namely make a 
+\begin_inset Formula $\weakStep{}$
+\end_inset
+
+-step before a symmetry attack may proceed.
+ This is in line with our observation from Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Contrasimilarity-and-Contrasimul"
+
+\end_inset
+
+ that coupling is symmetry relaxed by 
+\begin_inset Formula $\weakStep{}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Correctness of the Game
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Correctness-Game"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Let us now see that the defender's winning region of 
+\begin_inset Formula $\game_{\mathit{CS}}$
+\end_inset
+
+ indeed corresponds to 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+.
+ To this end, we first show how to construct winning strategies for the
+ defender from a coupled simulation, and then establish the opposite direction.
+\end_layout
+
+\begin_layout Lemma
+Let 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ be a coupled simulation and 
+\begin_inset Formula $(p_{0},q_{0})\in\rel R$
+\end_inset
+
+.
+ Then the defender wins 
+\begin_inset Formula $\game_{\mathit{CS}}[(p_{0},q_{0})_{\mathtt{a}}]$
+\end_inset
+
+ with the following positional strategy:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+If the current play fragment ends in a simulation defender node 
+\begin_inset Formula $(\alpha,p^{\prime},q)_{\mathtt{d}}$
+\end_inset
+
+, move to some attacker node 
+\begin_inset Formula $(p^{\prime},q^{\prime})_{\mathtt{a}}$
+\end_inset
+
+ with 
+\begin_inset Formula $(p^{\prime},q^{\prime})\in\rel R$
+\end_inset
+
+ and 
+\begin_inset Formula $q\weakStepTau{\alpha}q^{\prime}$
+\end_inset
+
+;
+\end_layout
+
+\begin_layout Itemize
+if the current play fragment ends in a coupling defender node 
+\begin_inset Formula $(\mathtt{Cpl},p,q)_{\mathtt{d}}$
+\end_inset
+
+, move to some attacker node 
+\begin_inset Formula $(q^{\prime},p)_{\mathtt{a}}$
+\end_inset
+
+ with 
+\begin_inset Formula $(q^{\prime},p)\in\rel R$
+\end_inset
+
+ and 
+\begin_inset Formula $q\weakStep{}q^{\prime}$
+\end_inset
+
+.
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[definition]{CS
+\backslash
+_Game}{strategy
+\backslash
+_from
+\backslash
+_coupledsim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{CS
+\backslash
+_Game}{coupledsim
+\backslash
+_implies
+\backslash
+_winning
+\backslash
+_strategy}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Proof
+Following the specified strategy, the game can only reach attacker nodes
+ 
+\begin_inset Formula $(p,q)_{\mathtt{a}}$
+\end_inset
+
+ where 
+\begin_inset Formula $(p,q)\in\rel R$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{CS
+\backslash
+_Game}{strategy
+\backslash
+_from
+\backslash
+_coupledsim
+\backslash
+_retains
+\backslash
+_coupledsim}
+\end_layout
+
+\end_inset
+
+ Therefore, and because 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is a coupled simulation, the attacker can only lead the defender to positions
+ where the moves of the strategy are allowed
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{CS
+\backslash
+_Game}{strategy
+\backslash
+_from
+\backslash
+_coupledsim
+\backslash
+_sound}
+\end_layout
+
+\end_inset
+
+ and the 
+\begin_inset Quotes eld
+\end_inset
+
+some
+\begin_inset Quotes erd
+\end_inset
+
+-formulations really specify moves.
+ This can be used to name a next move for every play fragment ending in
+ a defender node.
+ Consequently, the defender does not get stuck and wins.
+\end_layout
+
+\begin_layout Lemma
+Let 
+\begin_inset Formula $f$
+\end_inset
+
+ be a winning strategy for the defender in 
+\begin_inset Formula $\game_{\mathit{CS}}[(p_{0},q_{0})_{\mathtt{a}}]$
+\end_inset
+
+.
+ Then
+\begin_inset Formula 
+\[
+\rel R=\{(p,q)\mid\text{some \game_{\mathit{CS}}\ensuremath{[(p_{0},q_{0})_{\mathtt{a}}]}-play fragment consistent with \ensuremath{f} ends in \ensuremath{(p,q)_{\mathtt{a}}}}\}
+\]
+
+\end_inset
+
+ is a coupled simulation.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{CS
+\backslash
+_Game}{winning
+\backslash
+_strategy
+\backslash
+_implies
+\backslash
+_coupledsim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+The proof relies on the fact, that only 
+\begin_inset Formula $\ensuremath{(p,q)_{\mathtt{a}}}$
+\end_inset
+
+ from where the defender knows how to win (using 
+\begin_inset Formula $f$
+\end_inset
+
+) can be considered when checking the coupled simulation property of 
+\begin_inset Formula $\rel R$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+If we challenge the simulation property, that is, demand a 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\weakStepTau{\alpha}q^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $(p^{\prime},q^{\prime})\in\text{\rel R}$
+\end_inset
+
+ given that 
+\begin_inset Formula $p\step{\alpha}p^{\prime}$
+\end_inset
+
+, then we know that there is a simulation challenge game move 
+\begin_inset Formula $(p,q)_{\mathtt{a}}\gameMove(\alpha,p^{\prime},q)_{\mathtt{d}}$
+\end_inset
+
+.
+ Because 
+\begin_inset Formula $f$
+\end_inset
+
+ is winning, it must know a simulation answer move 
+\begin_inset Formula $(\alpha,p^{\prime},q)_{\mathtt{d}}\gameMove(p^{\prime},q^{\prime})_{\mathtt{a}}$
+\end_inset
+
+ and this move gives us the 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ we are looking for due to the definitions of 
+\begin_inset Formula $\game_{\mathit{CS}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\rel R$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proof
+Analogously, if we challenge coupling, that is, look for a 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\weakStep{}q^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $(q^{\prime},p)\in\text{\rel R}$
+\end_inset
+
+, then we know there is a coupling challenge game move 
+\begin_inset Formula $(p,q)_{\mathtt{a}}\gameMove(\mathtt{Cpl},p,q)_{\mathtt{d}}$
+\end_inset
+
+.
+ Because 
+\begin_inset Formula $f$
+\end_inset
+
+ is winning, it must know a coupling answer move 
+\begin_inset Formula $(\mathtt{Cpl},p,q)_{\mathtt{d}}\gameMove(q^{\prime},p)_{\mathtt{a}}$
+\end_inset
+
+ and this move again gives us the desired 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+With minimal fiddling, this completes our game-theoretic characterization
+ of the coupled simulation preorder.
+\end_layout
+
+\begin_layout Theorem
+\begin_inset CommandInset label
+LatexCommand label
+name "thm:game-cs-iff"
+
+\end_inset
+
+The defender wins 
+\begin_inset Formula $\game_{\mathit{CS}}[(p,q)_{\mathtt{a}}]$
+\end_inset
+
+ precisely if 
+\begin_inset Formula $p\csSimBy q$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[theorem]{CS
+\backslash
+_Game}{winning
+\backslash
+_strategy
+\backslash
+_iff
+\backslash
+_coupledsim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The game theoretic characterization is the basis for our main algorithm
+ in Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-Game-Theoretic-Approach"
+
+\end_inset
+
+ and its parallel implementation in Chapter
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chap:flink-implementation"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+How Hard Can It Be?
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:cs-hardness"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We conclude this chapter with a few thoughts on how the properties of coupled
+ similarity make it compare to related notions of equivalence complexity-wise.
+ The general rule of thumb for notions of equivalence in between strong
+ bisimilarity and trace equivalence is that 
+\emph on
+deciding the coarser ones is harder than deciding the finer ones
+\emph default
+.
+ This holds true for coupled similarity.
+\end_layout
+
+\begin_layout Subsection
+Reduction of Weak Simulation to Coupled Simulation
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:weak-sim-coupled-sim"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It is well-established that deciding variants of similarity is at least
+ as hard as deciding corresponding variants of bisimilarity, and actually
+ tends to be harder 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "km2002"
+
+\end_inset
+
+.
+ So, as coupled similarity lies in between weak bisimilarity and weak similarity
+, the question suggests itself whether coupled similarity rather inherits
+ the complexity of weak similarity or bisimilarity.
+ The best known algorithms for weak similarity must also construct the weak
+ simulation preorder.
+ Their running time is cubic in the state space size, whereas sub-cubic
+ weak bisimilarity algorithms exist.
+\end_layout
+
+\begin_layout Standard
+Unfortunately, deciding the weak simulation preorder can be reduced to deciding
+ the coupled simulation preorder.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tikzpicture}[->,auto,node distance=2cm, rel/.style={dashed,font=
+\backslash
+it}]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state, inner sep=0pt, minimum size=0.2cm] (A) {};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state, inner sep=0pt, minimum size=0.2cm] (B) [below right of=A] {};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state, inner sep=0pt, minimum size=0.2cm] (C) [below left of=A] {};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state, inner sep=0pt, minimum size=0.2cm] (D) [left of=C] {};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state, red, minimum size=0.2cm] (Sink) [below right of=B] {$
+\backslash
+bot$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(A) edge[bend left=30] node {} (B)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B) edge[bend left=30] node {} (C)
+\end_layout
+
+\begin_layout Plain Layout
+
+(C) edge[bend right=30] node {} (D)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A) edge[bend left=30] node {} (C)
+\end_layout
+
+\begin_layout Plain Layout
+
+(C) edge[bend left=30] node {} (A);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(A) edge[bend left=30, red] node {$
+\backslash
+tau$} (Sink)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B) edge[bend right=10, red] node {$
+\backslash
+tau$} (Sink)
+\end_layout
+
+\begin_layout Plain Layout
+
+(C) edge[bend right=15, red] node {$
+\backslash
+tau$} (Sink)
+\end_layout
+
+\begin_layout Plain Layout
+
+(D) edge[bend right=30, red] node {$
+\backslash
+tau$} (Sink)
+\end_layout
+
+\begin_layout Plain Layout
+
+(Sink) edge [loop below, red] node {$
+\backslash
+tau$} ();
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tikzpicture}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Example for 
+\begin_inset Formula $\system^{\bot}$
+\end_inset
+
+ from Theorem 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "thm:s-cs-reduction"
+
+\end_inset
+
+ (
+\begin_inset Formula $\system$
+\end_inset
+
+ in black, 
+\begin_inset Formula $\system^{\bot}\backslash\system$
+\end_inset
+
+ in red).
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:game-cs-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Theorem
+\begin_inset CommandInset label
+LatexCommand label
+name "thm:s-cs-reduction"
+
+\end_inset
+
+Every decision algorithm for 
+\begin_inset Formula $\csSimBy^{\system}$
+\end_inset
+
+ with running time 
+\begin_inset Formula $\bigo(g(t))$
+\end_inset
+
+ can be used to decide 
+\begin_inset Formula $\weakSimBy^{\system}$
+\end_inset
+
+ in running time 
+\begin_inset Formula $\bigo(g(2t))$
+\end_inset
+
+, where 
+\begin_inset Formula $t=\relSize{\step{}}$
+\end_inset
+
+ is the number of transitions in system 
+\begin_inset Formula $\system$
+\end_inset
+
+ and 
+\begin_inset Formula $g$
+\end_inset
+
+ is some strictly increasing function.
+\end_layout
+
+\begin_layout Proof
+Let 
+\begin_inset Formula $\system=(S,\actions,\step{})$
+\end_inset
+
+ be an arbitrary transition system and 
+\begin_inset Formula $\bot\notin S$
+\end_inset
+
+.
+ Then
+\begin_inset Formula 
+\[
+\system^{\bot}\:\defEq\:\left(S\cup\{\bot\},\quad\actions,\quad\step{\cdot}\cup\left\{ (p,\tau,\bot)\mid p\in S\cup\{\bot\}\right\} \right)
+\]
+
+\end_inset
+
+ extends 
+\begin_inset Formula $\system$
+\end_inset
+
+ with a sink 
+\begin_inset Formula $\bot$
+\end_inset
+
+ that can be reached by a 
+\begin_inset Formula $\tau$
+\end_inset
+
+-step from everywhere.
+ (For an illustration see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:game-cs-1"
+
+\end_inset
+
+.) Note that 
+\begin_inset Formula $\weakSimBy^{\system}$
+\end_inset
+
+ and 
+\begin_inset Formula $\weakSimBy^{\system^{\bot}}$
+\end_inset
+
+ resemble each other; that is, for 
+\begin_inset Formula $p,q\neq\bot$
+\end_inset
+
+, 
+\begin_inset Formula $p\weakSimBy^{\system}q$
+\end_inset
+
+ exactly if 
+\begin_inset Formula $p\weakSimBy^{\system^{\bot}}q$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Weak
+\backslash
+_Relations}{simulation
+\backslash
+_sink
+\backslash
+_invariant}
+\end_layout
+
+\end_inset
+
+ On 
+\begin_inset Formula $\system^{\bot}$
+\end_inset
+
+, coupled simulation preorder and weak simulation preorder coincide, 
+\begin_inset Formula $\weakSimBy^{\system^{\bot}}\,=\,\csSimBy^{\system^{\bot}}$
+\end_inset
+
+, because 
+\begin_inset Formula $\bot$
+\end_inset
+
+ is 
+\begin_inset Formula $\tau$
+\end_inset
+
+-reachable everywhere, and, for each 
+\begin_inset Formula $p$
+\end_inset
+
+, 
+\begin_inset Formula $\bot\csSimBy^{\system^{\bot}}p$
+\end_inset
+
+ discharges the coupling constraint of coupled simulation.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Coupled
+\backslash
+_Simulation}{tau
+\backslash
+_sink
+\backslash
+_sim
+\backslash
+_coupledsim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Proof
+Because 
+\begin_inset Formula $\weakSimBy^{\system}$
+\end_inset
+
+ can be decided by deciding 
+\begin_inset Formula $\csSimBy^{\system^{\bot}}$
+\end_inset
+
+, a decision procedure for 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ also induces a decision procedure for 
+\begin_inset Formula $\weakSimBy$
+\end_inset
+
+.
+ The transformation increases the amount of transitions by a factor of at
+ most 2 (it adds 
+\begin_inset Formula $\bigo(\relSize S)\subseteq\bigo(t)$
+\end_inset
+
+ new transitions) and can itself be done in 
+\begin_inset Formula $t$
+\end_inset
+
+ time, so that the resulting algorithm runs in 
+\begin_inset Formula $\bigo(t+g(2t))=\bigo(g(2t))$
+\end_inset
+
+ time.
+\end_layout
+
+\begin_layout Standard
+As 
+\begin_inset Formula $\bigo(g(2t))=\bigo(g(t))$
+\end_inset
+
+ in the polynomial world of weak simulation, deciding 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ cannot have a lower complexity class than deciding 
+\begin_inset Formula $\weakSimBy$
+\end_inset
+
+.
+ The best known algorithms for strong simulation 
+\begin_inset Formula $\strongSimBy$
+\end_inset
+
+ without transition labeling 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "hhk1995simulations,rt2008generalizingPT"
+
+\end_inset
+
+ run in 
+\begin_inset Formula $\bigo(\relSize S\,\relSize{\step{}})$
+\end_inset
+
+ time.
+ Of these 
+\noun on
+Ranzato
+\noun default
+ and 
+\noun on
+Tapparo's
+\noun default
+ algorithm 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rt2010efficientSimulation"
+
+\end_inset
+
+ has the upside that it actually is bounded in terms of the number of simulation
+ equivalence classes 
+\begin_inset Formula $\relSize{S_{/\strongSimEq}}$
+\end_inset
+
+ and not the full size of 
+\begin_inset Formula $S$
+\end_inset
+
+, that is, by 
+\begin_inset Formula $\bigo(\relSize{S_{/\strongSimEq}}\,\relSize{\step{}})$
+\end_inset
+
+.
+ They advocate the use of the method by 
+\noun on
+Dovier
+\noun default
+ et al.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "dpp2004"
+
+\end_inset
+
+ to transform transition-labeled systems to state-labeled ones.
+ This method consists in replacing every labeled transition 
+\begin_inset Formula $p\step{\alpha}p^{\prime}$
+\end_inset
+
+ by an 
+\begin_inset Formula $\alpha$
+\end_inset
+
+-labeled state 
+\begin_inset Formula $p\alpha p^{\prime}$
+\end_inset
+
+ and two unlabeled transitions 
+\begin_inset Formula $p\step{}p\alpha p^{\prime}\step{}p^{\prime}$
+\end_inset
+
+.
+ For a naive reduction from weak simulation to strong simulation, this would
+ amount to a significantly higher complexity of 
+\begin_inset Formula $\bigo(\relSize{\weakStepTau{\cdot}}^{2})$
+\end_inset
+
+, because each weak step would induce its own new state.
+ However, all the 
+\begin_inset Formula $\relSize{\weakStepTau{\cdot}}$
+\end_inset
+
+ new states can be merged to 
+\begin_inset Formula $\bigo(\relSize{\actions}\,\relSize S)$
+\end_inset
+
+ states with out-degree 1.
+ Thus, we can confidently conjecture that implementations of 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rt2010efficientSimulation"
+
+\end_inset
+
+ specialized for weak systems would have time bounds of 
+\begin_inset Formula $\bigo(\relSize{S_{/\weakSimEq}}\,\relSize{\weakStepTau{\cdot}})$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+The Costs of Weakness
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:weak-costs"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We already observed that coarseness comes at a price in the linear-time
+ branching-time spectrum.
+ This is also true for the 
+\emph on
+weak transition relation
+\emph default
+ 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+, which plays an important role in the definition of coupled simulation.
+\end_layout
+
+\begin_layout Standard
+In theory, both the real weak transition relation 
+\begin_inset Formula $\weakStep{\cdot}\;=\;\weakStep{}\!\step{\cdot}\!\weakStep{}$
+\end_inset
+
+ and the conventional transition relation 
+\begin_inset Formula $\step{\cdot}$
+\end_inset
+
+ are bounded in size by 
+\begin_inset Formula $\relSize{\actions}\,\relSize S^{2}$
+\end_inset
+
+.
+ But for most transition systems, 
+\begin_inset Formula $\weakStep{\cdot}$
+\end_inset
+
+ tends to be much bigger in size.
+\end_layout
+
+\begin_layout Example
+\begin_inset CommandInset label
+LatexCommand label
+name "exa:tau-systems"
+
+\end_inset
+
+
+\begin_inset Float figure
+placement t
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tabular}{cc}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+subf{
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+begin{tikzpicture}[->,auto,node distance=2.2cm]
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P0) {$c_0$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P1) [below right of=P0] {$c_1$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P2) [below left of=P1] {$c_2$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P3) [above left of=P2] {$c_3$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge [bend left=20] node {$
+\backslash
+tau, 
+\backslash
+action a$} (P1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P1) edge [bend left=20] node {$
+\backslash
+tau, 
+\backslash
+action b$} (P2)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P2) edge [bend left=20] node {$
+\backslash
+tau, 
+\backslash
+action c$} (P3)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P3) edge [bend left=20] node {$
+\backslash
+tau, 
+\backslash
+action d$} (P0)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge [draw=none, loop above] node[draw=none] {$
+\backslash
+vphantom{
+\backslash
+action a,
+\backslash
+action b,
+\backslash
+action c,
+\backslash
+action d,
+\backslash
+tau}$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P2) edge [draw=none, loop below] node {} ();
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+end{tikzpicture}
+\end_layout
+
+\begin_layout Plain Layout
+
+}      {
+\end_layout
+
+\begin_layout Plain Layout
+
+System $
+\backslash
+system_C$ with $n=4$.
+\end_layout
+
+\begin_layout Plain Layout
+
+} & 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+subf{
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+begin{tikzpicture}[->,auto,node distance=2.2cm, close/.style={thick, dotted,font=
+\backslash
+it,red}]
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P0) {$c_0$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P1) [below right of=P0] {$c_1$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P2) [below left of=P1] {$c_2$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P3) [above left of=P2] {$c_3$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge [bend left=20] node {$
+\backslash
+tau, 
+\backslash
+action a, 
+\backslash
+color{red} 
+\backslash
+action b, 
+\backslash
+action c, 
+\backslash
+action d$} (P1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P1) edge [bend left=20] node {$
+\backslash
+tau, 
+\backslash
+action b, 
+\backslash
+color{red} 
+\backslash
+action a, 
+\backslash
+action c, 
+\backslash
+action d$} (P2)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P2) edge [bend left=20] node {$
+\backslash
+tau, 
+\backslash
+action c, 
+\backslash
+color{red} 
+\backslash
+action a, 
+\backslash
+action b, 
+\backslash
+action d$} (P3)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P3) edge [bend left=20] node {$
+\backslash
+tau, 
+\backslash
+action d, 
+\backslash
+color{red} 
+\backslash
+action a, 
+\backslash
+action b, 
+\backslash
+action c$} (P0)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge [close, bend left=20] node {} (P2)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge [close, bend left=20] node {} (P3)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge [close, loop above] node {$
+\backslash
+action a,
+\backslash
+action b,
+\backslash
+action c,
+\backslash
+action d,
+\backslash
+tau$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P1) edge [close, bend left=20] node {} (P0)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P1) edge [close, bend left=20] node {} (P3)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P1) edge [close, loop right] node {} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P2) edge [close, bend left=20] node {} (P0)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P2) edge [close, bend left=20] node {} (P1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P2) edge [close, loop below] node {} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P3) edge [close, bend left=20] node {} (P1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P3) edge [close, bend left=20] node {} (P2)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P3) edge [close, loop left] node {} ();
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+end{tikzpicture}
+\end_layout
+
+\begin_layout Plain Layout
+
+}      {
+\end_layout
+
+\begin_layout Plain Layout
+
+$
+\backslash
+tau$-closure of $
+\backslash
+system_C$.
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+
+\backslash
+
+\backslash
+
+\backslash
+
+\backslash
+subf{
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+begin{tikzpicture}[->,auto,node distance=2.2cm]
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P0) {$l_0$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P1) [below right of=P0] {$l_1$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P2) [below left of=P1] {$l_2$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P3) [above left of=P2] {$l_3$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge [bend left=20] node {$
+\backslash
+tau, 
+\backslash
+action a$} (P1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P1) edge [bend left=20] node {$
+\backslash
+tau, 
+\backslash
+action b$} (P2)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P2) edge [bend left=20] node {$
+\backslash
+tau, 
+\backslash
+action c$} (P3);
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+end{tikzpicture}
+\end_layout
+
+\begin_layout Plain Layout
+
+}      {
+\end_layout
+
+\begin_layout Plain Layout
+
+System $
+\backslash
+system_L$ with $n=4$.
+\end_layout
+
+\begin_layout Plain Layout
+
+} & 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+subf{
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+begin{tikzpicture}[->,auto,node distance=2.2cm, close/.style={thick, dotted,font=
+\backslash
+it,red}]
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P0) {$l_0$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P1) [below right of=P0] {$l_1$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P2) [below left of=P1] {$l_2$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node[state] (P3) [above left of=P2] {$l_3$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge [bend left=20] node {$
+\backslash
+tau, 
+\backslash
+action a$} (P1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P1) edge [bend left=20] node {$
+\backslash
+tau, 
+\backslash
+action b$} (P2)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P2) edge [bend left=20] node {$
+\backslash
+tau, 
+\backslash
+action c$} (P3)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge [close, bend right=20] node {$
+\backslash
+tau, 
+\backslash
+action a,
+\backslash
+action b$} (P2)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge [close, bend right=20] node[swap] {$
+\backslash
+tau, 
+\backslash
+action a,
+\backslash
+action b,
+\backslash
+action c$} (P3)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P1) edge [close, bend left=20] node {$
+\backslash
+tau, 
+\backslash
+action b,
+\backslash
+action c$} (P3);
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+end{tikzpicture}
+\end_layout
+
+\begin_layout Plain Layout
+
+}      {
+\end_layout
+
+\begin_layout Plain Layout
+
+$
+\backslash
+tau$-closure of $
+\backslash
+system_L$.
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tabular}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:size-weak-step"
+
+\end_inset
+
+Worst-case transition systems for the size of 
+\begin_inset Formula $\weakStep{\cdot}$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+Consider cyclic systems like 
+\begin_inset Formula $\system_{C}$
+\end_inset
+
+ and linear systems like 
+\begin_inset Formula $\system_{L}$
+\end_inset
+
+ from Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:size-weak-step"
+
+\end_inset
+
+, where 
+\begin_inset Formula $\relSize{\visibleActions}\leq\relSize S$
+\end_inset
+
+.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Also available at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://coupledsim.bbisping.de/#cyclic-linear
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ The systems are given on the left-hand side whereas the right-hand side
+ displays the weak step closure 
+\begin_inset Formula $\weakStep{\cdot}$
+\end_inset
+
+ of the systems.
+ The difference is highlighted in red.
+ For readability, some labels of 
+\begin_inset Formula $\actions$
+\end_inset
+
+-labeled edges are omitted.
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+System 
+\begin_inset Formula $\system_{C}$
+\end_inset
+
+ contains a cycle of 
+\begin_inset Formula $\tau$
+\end_inset
+
+-steps.
+ Consequently, the transitive 
+\begin_inset Formula $\tau$
+\end_inset
+
+-closure 
+\begin_inset Formula $\weakStep{}$
+\end_inset
+
+ relates all states and 
+\begin_inset Formula $\weakStep{\cdot}\,=S\times\actions\!\times S$
+\end_inset
+
+.
+ For cyclic systems like 
+\begin_inset Formula $\system_{C}$
+\end_inset
+
+, the weak step relation is of cubic size in the number of original transitions,
+ that is, 
+\begin_inset Formula $\relSize{\weakStep{\cdot}}=n^{2}(n+1)\in\bigo(n^{3})$
+\end_inset
+
+ where 
+\begin_inset Formula $n=\frac{\relSize{\step{\cdot}}}{2}=\relSize S$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+System 
+\begin_inset Formula $\system_{L}$
+\end_inset
+
+ is linearized by 
+\begin_inset Formula $\tau$
+\end_inset
+
+-steps.
+ Consequently, 
+\begin_inset Formula $\weakStep{}$
+\end_inset
+
+ is a total order and the weak step relation prepones all the steps of 
+\begin_inset Quotes eld
+\end_inset
+
+greater
+\begin_inset Quotes erd
+\end_inset
+
+ states.
+ For linear systems like 
+\begin_inset Formula $\system_{L}$
+\end_inset
+
+, the weak step relation is not as dense as for systems like 
+\begin_inset Formula $\system_{C}$
+\end_inset
+
+ but still of cubic size 
+\begin_inset Formula $\relSize{\weakStep{\cdot}}=\!\!\underset{k\in\{1..n\}}{\sum}\frac{(k+2)(k-1)}{2}\in\bigo(n^{3})$
+\end_inset
+
+ where 
+\begin_inset Formula $n=\frac{\relSize{\step{\cdot}}+2}{2}=\relSize S$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+So, quite sparse 
+\begin_inset Formula $\step{\cdot}$
+\end_inset
+
+-graphs can generate dense 
+\begin_inset Formula $\weakStep{\cdot}$
+\end_inset
+
+-graphs.
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+the example why 
+\begin_inset Formula $\tau$
+\end_inset
+
+-step=no-step encoding does not work would be nice.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Moreover, the computation of the transitive closure also has significant
+ time complexity.
+ Algorithms for transitive closures on graphs 
+\begin_inset Formula $(V,E)$
+\end_inset
+
+ usually are in 
+\begin_inset Formula $\bigo(\relSize V\,\relSize E)$
+\end_inset
+
+.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+The theoretical bound is somewhat lower, since the problem can be reduced
+ to matrix multiplication, for which the best algorithm currently known
+ (Le Gall) runs in 
+\begin_inset Formula $\bigo(\relSize V^{2.372864})$
+\end_inset
+
+ time.
+\end_layout
+
+\end_inset
+
+ This means computing 
+\begin_inset Formula $\weakStep{}$
+\end_inset
+
+ would already be in 
+\begin_inset Formula $\bigo(\relSize S\,\relSize{\step{\tau}})$
+\end_inset
+
+, thus cubic in the size of the state space.
+\end_layout
+
+\begin_layout Standard
+One might argue that the size of weakly 
+\begin_inset Formula $\tau$
+\end_inset
+
+-connected components in big state spaces often is bounded by a lower parameter
+ than 
+\begin_inset Formula $\relSize{\step{\tau}}$
+\end_inset
+
+, so that the 
+\begin_inset Formula $\bigo(\relSize S\,\relSize{\step{\tau}})$
+\end_inset
+
+-complexity is not actualized.
+ Still, the general theoretical complexity of the whole weak equivalence
+ algorithm cannot be much better than cubic if the transition closure is
+ computed.
+\end_layout
+
+\begin_layout Standard
+So, aside from the complexity inherited from simulation, coupled simulation
+ additionally is affected by the inherent complexity of the weak transition
+ relation.
+ Consequently, one of the questions in the next chapter is how to keep the
+ weak transition blow-up at bay.
+\end_layout
+
+\end_body
+\end_document

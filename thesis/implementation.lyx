@@ -1,0 +1,1527 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass report
+\begin_preamble
+\input{preamble}
+\end_preamble
+\use_default_options true
+\master ../../../Dokumente/coupledsim/thesis/main.lyx
+\begin_modules
+logicalmkup
+fixltx2e
+algorithm2e
+fixme
+theorems-ams
+theorems-ams-extended
+theorems-chap
+\end_modules
+\maintain_unincluded_children false
+\language american
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 1
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle plain
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Chapter
+A Scalable Implementation
+\begin_inset CommandInset label
+LatexCommand label
+name "chap:flink-implementation"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+How applicable are our algorithms in practice? Coupled similarity has restrictio
+ns on the size of systems it can cope with as it inherits from similarity
+ that it is computationally harder than bisimilarity.
+\end_layout
+
+\begin_layout Standard
+The experimental results by 
+\noun on
+Ranzato
+\noun default
+ and 
+\noun on
+Tapparo
+\noun default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rt2010efficientSimulation"
+
+\end_inset
+
+ suggest that their simulation algorithm and the algorithm by 
+\noun on
+Henzinger
+\noun default
+, 
+\noun on
+Henzinger
+\noun default
+, and 
+\noun on
+Kopke
+\noun default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "hhk1995simulations"
+
+\end_inset
+
+ only work on comparably small systems.
+ The necessary data structures quickly consume gigabytes of RAM.
+ So, the bothering question is not so much whether some highly optimized
+ C++-implementation can do the job in milliseconds for small problems, but
+ how to implement the algorithm such that large-scale systems are feasible
+ at all.
+\end_layout
+
+\begin_layout Standard
+To give first answers, this chapter presents a scalable and distributable
+ prototype implementation of the coupled simulation game algorithm using
+ the stream processing framework Apache Flink.
+\end_layout
+
+\begin_layout Section
+Prototype Implementation
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:scalable-implementation"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We base our implementation on the game algorithm from Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-Game-Theoretic-Approach"
+
+\end_inset
+
+ and the optimizations presented in Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:optimizing-game-algo"
+
+\end_inset
+
+.
+ The implementation is a vertical prototype in the sense that every feature
+ to get from a transition system to its coupled simulation preorder is present,
+ but there is no big variety of options in the process.
+\end_layout
+
+\begin_layout Subsection
+Apache Flink
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Apache Flink
+\emph default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "carbone2015flink"
+
+\end_inset
+
+ (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://flink.apache.org/
+\end_layout
+
+\end_inset
+
+) is a platform for computations on large data sets built around a universal
+ data-flow engine.
+ Once an algorithm has been adapted to the data-flow way of describing computati
+on, it in principle is easy to distribute and replicate the program parts
+ to use whole server farms of memory and computational power.
+\end_layout
+
+\begin_layout Standard
+An Apache Flink program is a graph whose nodes represent data sources and
+ sinks, intermediate data sets, and operations.
+ The programs can easily be built using Scala code.
+ Its API supports iterative algorithms.
+ Flink ships with the library 
+\emph on
+Gelly
+\emph default
+
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Gelly—Flink Graph API, 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://ci.apache.org/projects/flink/flink-docs-release-1.4/dev/libs/gelly/
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ for graph algorithms.
+\end_layout
+
+\begin_layout Subsection
+Algorithm Stages
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+The implementation in
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+coderefF[class]{flink/src/main/scala-2.11/}{de.bbisping.coupledsim.flink.CoupledSimul
+ationFlink}
+\end_layout
+
+\end_inset
+
+ describes a pipeline to compute the coupled simulation preorder.
+ Abstractly, it first minimizes the transition graph using a finer equivalence
+ relation, then computes an over-approximation, uses the result to build
+ the interesting part of the coupled simulation game, and finally computes
+ the winning regions of the game.
+ The phases, in detail, are:
+\end_layout
+
+\begin_layout Description
+Import Reads a CSV representation of the transition system 
+\begin_inset Formula $\system$
+\end_inset
+
+.
+ Transition systems are encoded as comma separated values of edge sets,
+ which is one of the default formats for graphs in Flink/Gelly.
+ Every line represents one transition in the form 
+\begin_inset Formula $\mathit{sourceID},\mathit{targetID},\texttt{"}\mathit{actionLabel}\texttt{"}$
+\end_inset
+
+.
+ The IDs are positive integers, the actions are strings.
+ The internal action (
+\begin_inset Formula $\tau$
+\end_inset
+
+) is denoted by 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+i
+\end_layout
+
+\end_inset
+
+.
+ At runtime, the actions are recoded to integers.
+\end_layout
+
+\begin_layout Description
+Minimize Computes an equivalence relation under-approximating 
+\begin_inset Formula $\csEq$
+\end_inset
+
+ on the transition system.
+ The partition structure is represented as a coloring 
+\begin_inset Formula $C$
+\end_inset
+
+, that is, as a mapping from state IDs to 
+\begin_inset Quotes eld
+\end_inset
+
+colors
+\begin_inset Quotes erd
+\end_inset
+
+ (integers).
+ This mapping then is used to minimize the transition graph, obtaining 
+\begin_inset Formula $\system_{M}$
+\end_inset
+
+, and to restore the full 
+\begin_inset Formula $\csSimBy^{\system}$
+\end_inset
+
+ relation later on.
+ This stage should at least compress 
+\begin_inset Formula $\tau$
+\end_inset
+
+-cycles if there are any.
+ Currently, there is only a weak bisimulation (
+\begin_inset Formula $\weakBisim^{\system}$
+\end_inset
+
+) and a delay bisimulation (
+\begin_inset Formula $\equiv_{\mathit{DB}}^{\system}$
+\end_inset
+
+) option.
+ To reduce the cost of the weak bisimulation computation, we prepend it
+ by a strong bisimulation minimization.
+\end_layout
+
+\begin_layout Description
+Compute
+\begin_inset space ~
+\end_inset
+
+over-approximation Determines an equivalence relation over-ap\SpecialChar softhyphen
+prox\SpecialChar softhyphen
+i\SpecialChar softhyphen
+ma\SpecialChar softhyphen
+ting
+ 
+\begin_inset Formula $\csEq^{\system_{M}}$
+\end_inset
+
+.
+ The result is a mapping 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ from states to 
+\emph on
+signatures
+\emph default
+ (sets of colors) such that 
+\begin_inset Formula $p\csSimBy^{\system_{M}}q$
+\end_inset
+
+ implies 
+\begin_inset Formula $\sigma(p)\subseteq\sigma(q)$
+\end_inset
+
+.
+ In the prototype, only the maximal weak step equivalence 
+\begin_inset Formula $\equiv_{\maxBSi}$
+\end_inset
+
+ from Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:over-approx-max-weak-step"
+
+\end_inset
+
+ is available.
+\end_layout
+
+\begin_layout Description
+Build
+\begin_inset space ~
+\end_inset
+
+game
+\begin_inset space ~
+\end_inset
+
+graph Constructs the 
+\begin_inset Formula $\tau$
+\end_inset
+
+-closure-free coupled simulation game 
+\begin_inset Formula $\game_{\mathit{CS}}^{\tau\,\system_{M}}$
+\end_inset
+
+ for 
+\begin_inset Formula $\system_{M}$
+\end_inset
+
+ (Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:cs-game-tau"
+
+\end_inset
+
+) with attacker states restricted according to the over-ap\SpecialChar softhyphen
+prox\SpecialChar softhyphen
+i\SpecialChar softhyphen
+mation signatures
+ 
+\begin_inset Formula $\sigma$
+\end_inset
+
+.
+ The algorithm in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+coderefF[class]{flink/src/main/scala-2.11/}{de.bbisping.coupledsim.flink.CoupledSimul
+ationGameDiscovery}
+\end_layout
+
+\end_inset
+
+ is a distributable version of the iterative game space discovery from Subsectio
+n
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:game-discovery"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+Compute
+\begin_inset space ~
+\end_inset
+
+winning
+\begin_inset space ~
+\end_inset
+
+regions Decides for 
+\begin_inset Formula $\game_{\mathit{CS}}^{\tau\,\system_{M}}$
+\end_inset
+
+ where the attacker has a winning strategy.
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+coderefF[class]{flink/src/main/scala-2.11/}{de.bbisping.coupledsim.flink.SimpleGameDe
+cider}
+\end_layout
+
+\end_inset
+
+ implements a distributable version of Algorithm 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "alg:game-algorithm"
+
+\end_inset
+
+, following the scatter-gather scheme from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "kalavri2018scatter-gather"
+
+\end_inset
+
+.
+ If a game node is discovered to be won by the attacker, it 
+\emph on
+scatters
+\emph default
+ the information to its predecessors.
+ Every game node 
+\emph on
+gathers
+\emph default
+ information on its winning successors.
+ Defender nodes count down their degrees of freedom starting at their game
+ move out-degrees.
+\end_layout
+
+\begin_layout Description
+Output Finally, the results can be output or verified.
+ The winning regions directly imply 
+\begin_inset Formula $\csSimBy^{\system_{M}}$
+\end_inset
+
+.
+ To work with 
+\begin_inset Formula $\csSimBy^{\system}$
+\end_inset
+
+, the tuples from 
+\begin_inset Formula $\csSimBy^{\system_{M}}$
+\end_inset
+
+ must be multiplied with 
+\begin_inset Formula $C$
+\end_inset
+
+ to obtain 
+\begin_inset Formula $\csSimBy^{\system}\;=\;C\csSimBy^{\system_{M}}C^{-1}$
+\end_inset
+
+.
+ At output, the algorithm can also check that the computed 
+\begin_inset Formula $\csSimBy^{\system}$
+\end_inset
+
+ indeed is a coupled simulation.
+ Due to the massive size of 
+\begin_inset Formula $\csSimBy^{\system}$
+\end_inset
+
+ and 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+, this might not always be possible in a reasonable amount of time.
+\end_layout
+
+\begin_layout Subsection
+Signature Refinement
+\end_layout
+
+\begin_layout Standard
+Unfortunately, there seems to be no prior implementation of bisimulation
+ computation in Apache Flink.
+ 
+\noun on
+De Lange
+\noun default
+ et al.
+ 
+\noun on
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "luo2013bisimMapReduce"
+
+\end_inset
+
+
+\noun default
+ have realized bisimulation for the akin technology stack HADOOP/MapReduce
+ using a signature-based approach.
+ Signature-based approaches indeed are the natural pick for our setting
+ because of their distributability.
+ The computations of 
+\begin_inset Formula $\weakBisim$
+\end_inset
+
+ and 
+\begin_inset Formula $\equiv_{\maxBSi}$
+\end_inset
+
+ rely on a small ad-hoc signature refinement implementation of bisimulation
+ in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+coderefF[class]{flink/src/main/scala-2.11/}{de.bbisping.coupledsim.flink.SignatureRef
+inement}
+\end_layout
+
+\end_inset
+
+.
+ Due to some technicalities that would require a lot of fiddling, our implementa
+tion, for now, only is correct as long as the 32-bit hash values of the
+ signature sets do not collide.
+ So, starting at about 10,000 input states, there is a danger (
+\begin_inset Formula $>1\,\%$
+\end_inset
+
+) of erroneous results.
+ A more mature solution would be desirable.
+ Especially, in order to tackle bigger examples, the explicit computation
+ of the 
+\begin_inset Formula $\tau$
+\end_inset
+
+-closure would have to be optimized away as in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "brr2016"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Evaluation
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:implementation-evaluation"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+renewcommand*
+\backslash
+arraystretch{0.95} 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+pgfplotstabletypeset[
+\end_layout
+
+\begin_layout Plain Layout
+
+    string type,
+\end_layout
+
+\begin_layout Plain Layout
+
+    col sep=semicolon,
+\end_layout
+
+\begin_layout Plain Layout
+
+    column type= r,
+\end_layout
+
+\begin_layout Plain Layout
+
+    %begin table={
+\backslash
+begin{tabularx}{
+\backslash
+textwidth}{X r r r r r r r}},
+\end_layout
+
+\begin_layout Plain Layout
+
+	%end table={
+\backslash
+end{tabularx}},
+\end_layout
+
+\begin_layout Plain Layout
+
+    header=false,
+\end_layout
+
+\begin_layout Plain Layout
+
+	columns={0,1,2,3,4,6,7,8},
+\end_layout
+
+\begin_layout Plain Layout
+
+	every head row/.style={ output empty row},
+\end_layout
+
+\begin_layout Plain Layout
+
+    every even row/.style={ before row={
+\backslash
+rowcolor[gray]{0.9}}},
+\end_layout
+
+\begin_layout Plain Layout
+
+    every first row/.style={ before row=
+\backslash
+toprule,after row=
+\backslash
+midrule},
+\end_layout
+
+\begin_layout Plain Layout
+
+    every last row/.style={ after row=
+\backslash
+bottomrule},
+\end_layout
+
+\begin_layout Plain Layout
+
+	columns/2/.style={column type/.add={}{|}},
+\end_layout
+
+\begin_layout Plain Layout
+
+	columns/4/.style={column type/.add={}{|}},
+\end_layout
+
+\begin_layout Plain Layout
+
+	columns/7/.style={column type/.add={}{|}},
+\end_layout
+
+\begin_layout Plain Layout
+
+    %column type={>{
+\backslash
+raggedleft
+\backslash
+arraybackslash}p{1cm}},
+\end_layout
+
+\begin_layout Plain Layout
+
+    columns/0/.style={string type, column type={l|}}
+\end_layout
+
+\begin_layout Plain Layout
+
+    ]{data/flinkBenchmarkSummary.csv}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:benchmark-results"
+
+\end_inset
+
+Sample systems, sizes, and benchmark results.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Experimental evaluation shows that the approach can cope with the smaller
+ examples of the 
+\begin_inset Quotes eld
+\end_inset
+
+Very Large Transition Systems (VLTS) Benchmark Suite
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "garavel2017vlts"
+
+\end_inset
+
+ (
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+vasy_*
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+cwi_*
+\end_layout
+
+\end_inset
+
+ up to 50,000 transitions).
+ On small examples, we also tested that the output matches the return values
+ of the verified fixed-point 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+-algorithm from Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:algo-cs-fixed-point"
+
+\end_inset
+
+.
+ These samples include, among others, the philosopher system 
+\begin_inset Formula $\texttt{phil}$
+\end_inset
+
+ containing 
+\begin_inset Formula $\ccsIdentifier P_{g}$
+\end_inset
+
+ and 
+\begin_inset Formula $\ccsIdentifier P_{o}$
+\end_inset
+
+ from Example
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:philosophers-gradual"
+
+\end_inset
+
+f.
+\begin_inset space \space{}
+\end_inset
+
+and 
+\begin_inset Formula $\texttt{ltbts}$
+\end_inset
+
+, which consists of the finitary separating examples from the linear-time
+ branching-time spectrum 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "p.~73"
+key "glabbeek1993ltbt"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:benchmark-results"
+
+\end_inset
+
+ summarizes the results for some of our test systems with pre-minimization
+ by delay bisimilarity and over-approximation by maximal weak step equivalence.
+ The first two value columns give the system sizes in number of states 
+\begin_inset Formula $S$
+\end_inset
+
+ and transitions 
+\begin_inset Formula $\step{\cdot}$
+\end_inset
+
+.
+ The next two columns present derived properties, namely the size of the
+ (weak) delay step relation 
+\begin_inset Formula $\weakStepDelay{\cdot}$
+\end_inset
+
+,
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fn:delayws-size"
+
+\end_inset
+
+The reported size of 
+\begin_inset Formula $\weakStepDelay{\cdot}$
+\end_inset
+
+ actually only is an upper estimate! As the algorithm works on a system
+ minimized by strong bisimilarity at this stage, the exact size is unknown.
+\end_layout
+
+\end_inset
+
+ and the number of partitions with respect to delay bisimulation 
+\begin_inset Formula $S_{/\equiv_{\mathit{DB}}}$
+\end_inset
+
+.
+ The following columns enumerate the sizes of the resulting coupled simulation
+ preorders represented by the partition relation pair 
+\begin_inset Formula $(S_{/\csEq},\csSimBy^{\system_{/\csEq}})$
+\end_inset
+
+, where 
+\begin_inset Formula $S_{/\csEq}$
+\end_inset
+
+ is the partitioning of 
+\begin_inset Formula $S$
+\end_inset
+
+ with respect to coupled similarity 
+\begin_inset Formula $\csEq$
+\end_inset
+
+, and 
+\begin_inset Formula $\csSimBy^{\system_{/\csEq}}$
+\end_inset
+
+ the coupled simulation preorder projected to this quotient.
+ The last column reports the running time of the programs on an Intel i7-7500U
+ CPU (2.70GHz) with 2 GB Java Virtual Machine heap space.
+\end_layout
+
+\begin_layout Standard
+The systems in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:benchmark-results"
+
+\end_inset
+
+ are a superset of the VLTS systems for which 
+\noun on
+Ranzato
+\noun default
+ and 
+\noun on
+Tapparo
+\noun default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rt2010efficientSimulation"
+
+\end_inset
+
+ report their algorithm 
+\emph on
+SA
+\emph default
+ to terminate.
+ Regarding complexity, SA is the best simulation algorithm known.
+ In the 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rt2010efficientSimulation"
+
+\end_inset
+
+-experiments, the C++ implementation ran out of 2 GB RAM for 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+vasy_10_56
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+vasy_25_25
+\end_layout
+
+\end_inset
+
+ but finished much faster than our setup for most smaller examples.
+ Their time advantage on small systems comes as no surprise as the start-up
+ of the whole Apache Flink pipeline induces heavy overhead costs of about
+ 8 seconds even for tiny examples like 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+phil
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+However, on bigger examples such as 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+vasy_18_73
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+vasy_40_60
+\end_layout
+
+\end_inset
+
+ both implementations fail.
+ This is in stark contrast to 
+\emph on
+bi
+\emph default
+-simulation implementations, which usually cope with much larger systems
+ single-handedly 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "li2009weakbisim,brr2016"
+
+\end_inset
+
+.
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+vasy_40_60
+\end_layout
+
+\end_inset
+
+ is an anomaly where 
+\noun on
+Paige
+\noun default
+–
+\noun on
+Tarjan-
+\noun default
+based algorithms outperform signature-based algorithms by orders of magnitude;
+ for 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+vasy_25_25
+\end_layout
+
+\end_inset
+
+, it is the other way around.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The experiments yield further evidence for claims from the thesis.
+ The weak step relations 
+\begin_inset Formula $\weakStepDelay{\cdot}$
+\end_inset
+
+ (and its superset 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+) can indeed become abhorrently large, which is in line with the theoretical
+ considerations from Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:weak-costs"
+
+\end_inset
+
+.
+ For all tested VLTS systems, 
+\begin_inset Formula $S_{/\weakBisim}$
+\end_inset
+
+ equals 
+\begin_inset Formula $S_{/\csEq}$
+\end_inset
+
+ (and, with the exception of 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+vasy_8_24
+\end_layout
+
+\end_inset
+
+, 
+\begin_inset Formula $S_{/\equiv_{\mathit{DB}}}$
+\end_inset
+
+).
+ This supports the prediction from Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:algorithms-discussion"
+
+\end_inset
+
+ that partition relation refinement algorithms cannot gain much in a setting
+ where a finer weak/delay bisimulation minimization has already been applied.
+ The preorder 
+\begin_inset Formula $\csSimBy^{\system_{/\csEq}}$
+\end_inset
+
+ also matches the identity in 6 of 9 examples.
+\end_layout
+
+\begin_layout Standard
+This observation about the effective closeness of 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ and 
+\begin_inset Formula $\weakBisim$
+\end_inset
+
+ is two-fold.
+ On the one hand, it brings into question how meaningful coupled similarity
+ is for minimization.
+ After all, it takes a lot of space and time to come up with the output
+ that delay bisimilarity already minimized everything that could be minimized.
+ On the other hand, the observation suggests that the considered VLTS samples
+ are based around models that do not need—or maybe even do avoid—the expressive
+ power of 
+\begin_inset Formula $\weakBisim$
+\end_inset
+
+.
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Itemize
+VLTS x
+\begin_inset CommandInset citation
+LatexCommand cite
+key "garavel2017vlts"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+table on the sizes of transition systems / games / result partitions
+\end_layout
+
+\begin_layout Itemize
+other implementation 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rt2010efficientSimulation"
+
+\end_inset
+
+ had better runtimes but died on bigger systems (name, which).
+\end_layout
+
+\begin_layout Itemize
+tests run on an Intel i7-7500U CPU @ 2.70GHz × 4 in 2 GB Java Virtual Machines.
+\end_layout
+
+\begin_layout Itemize
+vlts examples yield the same partitions for 
+\begin_inset Formula $\csEq$
+\end_inset
+
+ and 
+\begin_inset Formula $\weakBisim$
+\end_inset
+
+.
+ this supports our claim from xx, that partition-relation symbolic refinement
+ would not yield benefits.
+ but also shows that weak bisim, delay bisim, and coupled sim coincide for
+ such problems.
+\end_layout
+
+\end_inset
+
+ This is further evidence for the case that 
+\begin_inset Formula $\csSimBy$
+\end_inset
+
+ 
+\emph on
+has a more sensible level of precision than
+\emph default
+ 
+\begin_inset Formula $\weakBisim$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Wrap table
+lines 0
+placement o
+overhang 0in
+width "50col%"
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+renewcommand*
+\backslash
+arraystretch{0.95} 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+pgfplotstabletypeset[
+\end_layout
+
+\begin_layout Plain Layout
+
+    string type,
+\end_layout
+
+\begin_layout Plain Layout
+
+    col sep=semicolon,
+\end_layout
+
+\begin_layout Plain Layout
+
+    column type= r,
+\end_layout
+
+\begin_layout Plain Layout
+
+    header=false,
+\end_layout
+
+\begin_layout Plain Layout
+
+	columns={0,1,4,5},
+\end_layout
+
+\begin_layout Plain Layout
+
+	every head row/.style={ output empty row},
+\end_layout
+
+\begin_layout Plain Layout
+
+    every even row/.style={ before row={
+\backslash
+rowcolor[gray]{0.9}}},
+\end_layout
+
+\begin_layout Plain Layout
+
+    every first row/.style={ before row=
+\backslash
+toprule,after row=
+\backslash
+midrule},
+\end_layout
+
+\begin_layout Plain Layout
+
+    every last row/.style={ after row=
+\backslash
+bottomrule},
+\end_layout
+
+\begin_layout Plain Layout
+
+    %column type={>{
+\backslash
+raggedleft
+\backslash
+arraybackslash}p{1cm}},
+\end_layout
+
+\begin_layout Plain Layout
+
+    columns/0/.style={string type, column type={l|}},
+\end_layout
+
+\begin_layout Plain Layout
+
+	columns/1/.style={column type/.add={}{|}},
+\end_layout
+
+\begin_layout Plain Layout
+
+    ]{data/flinkBenchmarkSizes.csv}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:benchmark-sizes"
+
+\end_inset
+
+Plain vs.
+\begin_inset space \space{}
+\end_inset
+
+optimized game size.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The experiments moreover demonstrate that the optimizations from Section
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:optimizing-game-algo"
+
+\end_inset
+
+ really are necessary for larger systems.
+ Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:benchmark-sizes"
+
+\end_inset
+
+ lists the sizes 
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+of the games.
+ 
+\begin_inset Formula $\weakStepDelay{\cdot}$
+\end_inset
+
+ tends to be up to an order of magnitude smaller than 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+.
+ What is more interesting, are the sizes 
+\end_layout
+
+\end_inset
+
+of the game graphs without and with maximal weak step over-approximation
+ (
+\begin_inset Formula $\gameMove$
+\end_inset
+
+ and 
+\begin_inset Formula $\gameMove_{\sigma}$
+\end_inset
+
+).
+ Without over-approximation, 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+vasy_10_56
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset Flex Code
+status open
+
+\begin_layout Plain Layout
+vasy_25_25
+\end_layout
+
+\end_inset
+
+ ran out of memory (
+\begin_inset Quotes eld
+\end_inset
+
+o.o.m.
+\begin_inset Quotes erd
+\end_inset
+
+).
+ The over-ap\SpecialChar softhyphen
+prox\SpecialChar softhyphen
+i\SpecialChar softhyphen
+ma\SpecialChar softhyphen
+tion stage, which accounts for half of the program running
+ time, creates the opportunity to bring down game size decisively.
+ Due to the 
+\begin_inset Formula $\tau$
+\end_inset
+
+-trick from Subsection 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:gamifying-tau"
+
+\end_inset
+
+, the game size can remain a fraction of the weak transition relation size.
+\end_layout
+
+\end_body
+\end_document

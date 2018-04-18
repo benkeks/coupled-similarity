@@ -1,0 +1,11 @@
+session "Coupled_Simulation" = "HOL" +
+  options [document = "pdf", browser_info = true, document_output = "output"]
+  theories [quick_and_dirty, document = false]
+    "~~/src/HOL/Library/While_Combinator"
+    "~~/src/HOL/Library/Finite_Lattice"
+  theories [quick_and_dirty]
+    CS_Fixpoint_Algo
+    CS_Game
+  document_files
+    "root.tex"
+    (*"root.bib"*)

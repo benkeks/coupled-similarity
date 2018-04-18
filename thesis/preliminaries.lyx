@@ -1,0 +1,7931 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass report
+\begin_preamble
+\input{preamble}
+\end_preamble
+\use_default_options true
+\master ../../../Dokumente/coupledsim/thesis/main.lyx
+\begin_modules
+logicalmkup
+fixltx2e
+algorithm2e
+fixme
+theorems-ams
+theorems-ams-extended
+theorems-chap
+\end_modules
+\maintain_unincluded_children false
+\language american
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 1
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle headings
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Chapter
+Preliminaries
+\begin_inset CommandInset label
+LatexCommand label
+name "chap:preliminaries"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As it is the custom, this chapter introduces some standard notions and notations
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Later on, the nomenclature on page 
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "nomenclature"
+
+\end_inset
+
+ can be used to disentangle notation.
+ Other hints for notation: Formulas are implicitly parenthesized from the
+ right.
+ We use 
+\begin_inset Formula $\cdot$
+\end_inset
+
+ to abstract functions and relations: 
+\begin_inset Formula $f(\cdot)$
+\end_inset
+
+ stands for 
+\begin_inset Formula $\lambda x\ldotp f(x)$
+\end_inset
+
+, which is identified with the relation 
+\begin_inset Formula $\{(x,y)\mid y=f(x)\}$
+\end_inset
+
+.
+ In infix notation, we omit the outer dots, so 
+\begin_inset Formula $\step{\cdot}=\cdot\step{\cdot}\cdot$
+\end_inset
+
+.
+ 
+\end_layout
+
+\end_inset
+
+ for equivalences on labeled transition systems with internal actions.
+ We will look at examples of how notions of equivalence close to coupled
+ similarity are characterized in terms of relations, axioms, and games.
+\end_layout
+
+\begin_layout Standard
+The focus of this chapter lies on properties that are important for the
+ characterization of coupled similarity later on.
+ A more detailed introduction to the field can be found in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sangiorgi2012"
+
+\end_inset
+
+.
+ Readers familiar with the field can fast-forward to the next chapter.
+\end_layout
+
+\begin_layout Section
+System Models
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:system-models"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Labeled transition systems and process calculi are two of the core concepts
+ in describing the behavior of distributed interactive systems—and what
+ in the world is not a distributed interactive system in some way?
+\end_layout
+
+\begin_layout Subsection
+Transition Systems
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Labeled transition systems
+\emph default
+ capture a discrete world view, where there is a current state and a branching
+ structure of possible state changes (
+\begin_inset Quotes eld
+\end_inset
+
+transitions
+\begin_inset Quotes erd
+\end_inset
+
+) to future states.
+ They, for instance, can be used as semantical models for flowcharts, computer
+ programs, and board games.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Labeled transition system
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:transition-system"
+
+\end_inset
+
+ A 
+\emph on
+labeled transition system
+\emph default
+ (LTS) is a tuple 
+\begin_inset Formula $\system=(S,\actions,\step{})$
+\end_inset
+
+ where
+\begin_inset Separator latexpar
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $S$
+\end_inset
+
+ is a set of 
+\emph on
+states
+\emph default
+,
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\actions$
+\end_inset
+
+ is a set of 
+\emph on
+actions
+\emph default
+ containing a special 
+\emph on
+internal action
+\emph default
+ 
+\begin_inset Formula $\tau\in\actions$
+\end_inset
+
+, and
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\step{}\subseteq S\times\actions\times S$
+\end_inset
+
+ is the 
+\emph on
+transition
+\emph default
+ 
+\emph on
+relation
+\emph default
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[locale]{Transition_Systems}{lts}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Definition
+We write 
+\begin_inset Formula $\visibleActions\defEq\actions\backslash\{\tau\}$
+\end_inset
+
+ for the set of 
+\emph on
+visible actions
+\emph default
+ and 
+\begin_inset Formula $p\step{\alpha}p^{\prime}$
+\end_inset
+
+ for 
+\begin_inset Formula $(p,\alpha,p^{\prime})\in\step{}$
+\end_inset
+
+.
+ We use 
+\begin_inset Formula $p,q$
+\end_inset
+
+ to range over states, 
+\begin_inset Formula $\alpha,\beta$
+\end_inset
+
+ to range over actions, and 
+\begin_inset Formula $a,b$
+\end_inset
+
+ to range over visible actions.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator parbreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Weak transition relation
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:weak-transition-relation"
+
+\end_inset
+
+ The 
+\emph on
+weak transition relation
+\emph default
+ 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+ is defined as the reflexive transitive closure of internal steps 
+\begin_inset Formula $\weakStepTau{\tau}\defEq\step{\tau}^{*}$
+\end_inset
+
+ combined with 
+\begin_inset Formula $\weakStepTau a\defEq\weakStep a$
+\end_inset
+
+ where 
+\begin_inset Formula $\weakStep{\alpha}\defEq\weakStepTau{\tau}\step{\alpha}\weakStepTau{\tau}$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[locale]{Weak_Transition_Systems}{lts
+\backslash
+_tau}
+\end_layout
+
+\end_inset
+
+ We write 
+\begin_inset Formula $p\weakStepSeq ap^{\prime}$
+\end_inset
+
+, where 
+\begin_inset Formula $\vec{a}\in\Sigma^{*}$
+\end_inset
+
+, iff there is a sequence of steps 
+\begin_inset Formula $p=p_{0}\weakStep{a_{0\vphantom{n-1}}}p_{1}\weakStep{a_{1\vphantom{n-1}}}\dots\weakStep{a_{n-1}}p_{n}=p^{\prime}$
+\end_inset
+
+ or, for the empty word 
+\begin_inset Formula $\vec{a}=\langle\rangle$
+\end_inset
+
+, iff 
+\begin_inset Formula $p\weakStepTau{\tau}q$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+So, the difference between 
+\begin_inset Formula $\weakStep{\tau}$
+\end_inset
+
+ and 
+\begin_inset Formula $\weakStepTau{\tau}$
+\end_inset
+
+ is that the first needs at least one 
+\begin_inset Formula $\step{\tau}$
+\end_inset
+
+-step whereas the latter is reflexive.
+ As a shorthand for 
+\begin_inset Formula $\weakStepTau{\tau}$
+\end_inset
+
+, we also write just 
+\begin_inset Formula $\weakStep{}$
+\end_inset
+
+.
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+Obsolete: In the literature, including 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sangiorgi2012"
+
+\end_inset
+
+, these relations are usually referred to as 
+\begin_inset Formula $\Longrightarrow$
+\end_inset
+
+ for 
+\begin_inset Formula $\weakStep{}$
+\end_inset
+
+, 
+\begin_inset Formula $\overset{\alpha}{\Longrightarrow}$
+\end_inset
+
+ for 
+\begin_inset Formula $\weakStep{\alpha}$
+\end_inset
+
+, and 
+\begin_inset Formula $\overset{\hat{\alpha}}{\Longrightarrow}$
+\end_inset
+
+ for 
+\begin_inset Formula $\weakStepTau{\alpha}$
+\end_inset
+
+.
+ Because this thesis also employs some Isabelle/HOL terms, we use the 
+\begin_inset Formula $\leadsto$
+\end_inset
+
+ symbol to avoid confusion with Isabelle's implication symbol 
+\begin_inset Formula $\implies$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We call an 
+\begin_inset Formula $\weakStep{\alpha}$
+\end_inset
+
+-step 
+\begin_inset Quotes eld
+\end_inset
+
+weak
+\begin_inset Quotes erd
+\end_inset
+
+ whereas an 
+\begin_inset Formula $\step{\alpha}$
+\end_inset
+
+-step is referred to as 
+\begin_inset Quotes eld
+\end_inset
+
+strong.
+\begin_inset Quotes erd
+\end_inset
+
+ In general, 
+\begin_inset Formula $p\step{\alpha}p^{\prime}$
+\end_inset
+
+ entails 
+\begin_inset Formula $p\weakStep{\alpha}p^{\prime}$
+\end_inset
+
+, and 
+\begin_inset Formula $p\weakStep{\alpha}p^{\prime}$
+\end_inset
+
+ entails 
+\begin_inset Formula $p\weakStepTau{\alpha}p^{\prime}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+A visible action 
+\begin_inset Formula $a\in\visibleActions$
+\end_inset
+
+ is said to be 
+\emph on
+weakly enabled
+\emph default
+ in 
+\begin_inset Formula $p$
+\end_inset
+
+ iff there is 
+\begin_inset Formula $p^{\prime}$
+\end_inset
+
+ such that 
+\begin_inset Formula $p\weakStep ap^{\prime}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Stability and divergence
+\end_layout
+
+\end_inset
+
+ A state 
+\begin_inset Formula $p$
+\end_inset
+
+ is called 
+\emph on
+stable 
+\emph default
+iff it has no 
+\begin_inset Formula $\tau$
+\end_inset
+
+-transitions, 
+\begin_inset Formula $p\noStep{\tau}$
+\end_inset
+
+.
+ Stable states are 
+\emph on
+maximal
+\emph default
+ with respect to 
+\begin_inset Formula $\weakStep{}$
+\end_inset
+
+.
+ For a stable state 
+\begin_inset Formula $p$
+\end_inset
+
+, weak and strong steps coincide 
+\begin_inset Formula $p\weakStep{\alpha}\cdot=p\step{\alpha}\cdot$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition
+A state 
+\begin_inset Formula $p$
+\end_inset
+
+ is called 
+\emph on
+divergent
+\emph default
+ iff it is possible to perform an infinite sequence of 
+\begin_inset Formula $\tau$
+\end_inset
+
+-transitions beginning in this state, 
+\begin_inset Formula $p\step{\tau}^{\omega}$
+\end_inset
+
+.
+ For a divergent state 
+\begin_inset Formula $p^{\prime}$
+\end_inset
+
+, 
+\begin_inset Formula $p\weakStep{}p^{\prime}$
+\end_inset
+
+ implies that 
+\begin_inset Formula $p$
+\end_inset
+
+ also is divergent, that is: divergence is 
+\emph on
+downward closed 
+\emph default
+under 
+\begin_inset Formula $\weakStep{}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Process Calculi
+\end_layout
+
+\begin_layout Standard
+Transition systems arise naturally as an operational semantics for programs
+ written in some programming language.
+ Concurrency theory aims to provide abstract ways of understanding distributed
+ computation.
+ To this end, the field has developed a number of 
+\emph on
+process calculi
+\emph default
+—formal languages the dynamics of concurrent systems can be expressed in.
+ These languages are 
+\emph on
+algebraic
+\emph default
+ in the sense that they are built around term equalities that enable calculation
+s on the terms of the languages.
+\end_layout
+
+\begin_layout Standard
+This thesis is not about the nuances of these process calculi.
+ Nevertheless, it is worthwhile to understand that the relevance of the
+ different notions of equivalence we shall discuss, including coupled similarity
+, is linked to these nuances.
+\end_layout
+
+\begin_layout Standard
+For our purposes, it is enough to introduce the following fragment of 
+\noun on
+Milner's
+\noun default
+ 
+\emph on
+Calculus of Communicating Systems 
+\emph default
+(CCS) 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "milner1989comcon"
+
+\end_inset
+
+ without value passing:
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+CCS
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:ccs"
+
+\end_inset
+
+ The following grammar gives the language of 
+\emph on
+Calculus of Communicating Systems
+\emph default
+ expressions 
+\begin_inset Formula $\ccs[\ccsProcessNames,\visibleActions_{\mathit{in}}]$
+\end_inset
+
+ for a set of process names 
+\begin_inset Formula $\ccsProcessNames$
+\end_inset
+
+ and a set of visible input actions 
+\begin_inset Formula $\visibleActions_{\mathit{in}}$
+\end_inset
+
+, which induce corresponding output actions 
+\begin_inset Formula $\visibleActions_{\mathit{out}}\,\defEq\:\{\ccsOutm a\mid a\in\visibleActions_{\mathit{in}}\}$
+\end_inset
+
+ and 
+\begin_inset Formula $\visibleActions\,\defEq\,\visibleActions_{\mathit{in}}\cup\visibleActions_{\mathit{out}}$
+\end_inset
+
+
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+, is given by the grammar
+\end_layout
+
+\end_inset
+
+:
+\begin_inset Formula 
+\begin{eqnarray*}
+P,Q & ::= & K\quad\mid\quad\alpha\ccsPrefix P\quad\mid\quad P\ccsChoice Q\quad\mid\quad P\ccsPar Q\quad\mid\quad P\ccsHide L,\\
+ &  & \text{where \ensuremath{K\in\ccsProcessNames}, \ensuremath{\alpha\in\actions}, and \ensuremath{L\subseteq\visibleActions}}.
+\end{eqnarray*}
+
+\end_inset
+
+Under a process valuation 
+\begin_inset Formula $\ccsValuation\colon\ccsProcessNames\rightarrow\ccs[\ccsProcessNames,\visibleActions_{\mathit{in}}]$
+\end_inset
+
+, the operational semantics of 
+\begin_inset Formula $\ccs[\ccsProcessNames,\visibleActions_{\mathit{in}}]$
+\end_inset
+
+ is the transition system 
+\begin_inset Formula $\system_{\ccsValuation,\ccs[\ccsProcessNames,\visibleActions_{\mathit{in}}]}=(\ccs[\ccsProcessNames,\visibleActions_{\mathit{in}}],\actions,\step{})$
+\end_inset
+
+ on process expressions, where 
+\begin_inset Formula $\step{\alpha}$
+\end_inset
+
+ for 
+\begin_inset Formula $\alpha\in\actions$
+\end_inset
+
+ is defined by the following rules.
+ (We define 
+\begin_inset Formula $\ccsOutm{\ccsOutm a}=a$
+\end_inset
+
+.)
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+Recursion 
+\begin_inset Formula $K\step{\alpha}P^{\prime}$
+\end_inset
+
+ 
+\begin_inset space ~
+\end_inset
+
+if
+\begin_inset space ~
+\end_inset
+
+ 
+\begin_inset Formula $P\step{\alpha}P^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $\ccsValuation(K)=P$
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
+A process name occurrence 
+\begin_inset Formula $K$
+\end_inset
+
+ behaves like the referenced process.
+ 
+\end_layout
+
+\begin_layout Description
+Action
+\begin_inset space ~
+\end_inset
+
+prefix 
+\begin_inset Formula $\alpha\ccsPrefix P\step{\alpha}P$
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
+An action prefix 
+\begin_inset Formula $\alpha\ccsPrefix P$
+\end_inset
+
+ can do an 
+\begin_inset Formula $\alpha$
+\end_inset
+
+-step and then behave like 
+\begin_inset Formula $P$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Description
+Choice 
+\begin_inset Formula $P+Q\;\step{\alpha}\;P^{\prime}$
+\end_inset
+
+ 
+\begin_inset space ~
+\end_inset
+
+if
+\begin_inset space ~
+\end_inset
+
+ 
+\begin_inset Formula $P\step{\alpha}P^{\prime}$
+\end_inset
+
+ or 
+\begin_inset Formula $Q\step{\alpha}P^{\prime}$
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
+A choice is resolved towards the first process that makes a step.
+\end_layout
+
+\begin_layout Description
+Parallel
+\begin_inset space ~
+\end_inset
+
+step 
+\begin_inset Formula $P\ccsPar Q\;\step{\alpha}\;P^{\prime}\ccsPar Q$
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+ if 
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Formula $P\step{\alpha}P^{\prime}$
+\end_inset
+
+; 
+\begin_inset space ~
+\end_inset
+
+and
+\begin_inset space ~
+\end_inset
+
+ 
+\begin_inset Formula $P\ccsPar Q\;\step{\alpha}\;P\ccsPar Q^{\prime}$
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+ if 
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Formula $Q\step{\alpha}Q^{\prime}$
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
+Processes in a parallel composition can perform steps with interleaving
+ concurrency.
+\end_layout
+
+\begin_layout Description
+Communication 
+\begin_inset Formula $P\ccsPar Q\;\step{\tau}\;P^{\prime}\ccsPar Q^{\prime}$
+\end_inset
+
+ 
+\begin_inset space ~
+\end_inset
+
+if
+\begin_inset space ~
+\end_inset
+
+ 
+\begin_inset Formula $P\step aP^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $Q\step{\ccsOutm a}Q^{\prime}$
+\end_inset
+
+
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+ (or 
+\begin_inset Formula $P\step{\ccsOutm{\alpha}}P^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $Q\step aQ^{\prime}$
+\end_inset
+
+)
+\end_layout
+
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
+Parallel processes can advance with a synchronized step on a shared action
+ that is output by one of them and input to the other process.
+ The message is consumed and becomes internal behavior 
+\begin_inset Formula $\tau$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Description
+Restriction 
+\begin_inset Formula $P\ccsHide L\;\step{\alpha}\;P^{\prime}\ccsHide L$
+\end_inset
+
+ 
+\begin_inset space ~
+\end_inset
+
+if
+\begin_inset space ~
+\end_inset
+
+ 
+\begin_inset Formula $P\step{\alpha}P^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $\alpha,\ccsOutm{\alpha}\notin L$
+\end_inset
+
+.
+\begin_inset Newline newline
+\end_inset
+
+A restricted process cannot communicate certain events 
+\begin_inset Formula $L$
+\end_inset
+
+ to the environment.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula $\ccsStop$
+\end_inset
+
+ expressable with recursion, prefix, and restriction.
+\end_layout
+
+\end_inset
+
+
+\begin_inset Note Note
+status open
+
+\begin_layout Definition
+An equivalence 
+\begin_inset Formula $\equiv_{X}$
+\end_inset
+
+ on expressions is a congruence for an 
+\begin_inset Formula $n$
+\end_inset
+
+-ary operator 
+\begin_inset Formula $\mathit{op}$
+\end_inset
+
+ iff 
+\begin_inset Formula $\mathit{op}(p_{i})\equiv_{X}\mathit{op}(q_{i})$
+\end_inset
+
+ for 
+\begin_inset Formula $i\in\{1,\dots,n\}$
+\end_inset
+
+ implies 
+\begin_inset Formula $\mathit{op}(p_{1},\dots,p_{n})\equiv_{X}\mathit{op}(q_{1},\dots,q_{n})$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $P\cspExternalChoice(Q\cspInternalChoice R)=(P\cspExternalChoice Q)\cspInternalChoice(P\cspExternalChoice R)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $P+(\tau.Q+\tau.R)=\tau.(P+Q)+\tau.(P+R)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We write 
+\begin_inset Formula $K\ccsDef P$
+\end_inset
+
+ to set 
+\begin_inset Formula $\ccsValuation(K)$
+\end_inset
+
+ to 
+\begin_inset Formula $P$
+\end_inset
+
+.
+ We assume that there always is a stuck process 
+\begin_inset Formula $\ccsStop$
+\end_inset
+
+, which can be derived by letting 
+\begin_inset Formula $\ccsStop\ccsDef(a\ccsPrefix\ccsStop)\ccsHide\{a\}$
+\end_inset
+
+ where 
+\begin_inset Formula $a$
+\end_inset
+
+ is some 
+\begin_inset Formula $a\in\visibleActions$
+\end_inset
+
+.
+ We use just 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ as an abbreviation for the process term 
+\begin_inset Formula $\alpha\ccsPrefix\ccsStop$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\ccs$
+\end_inset
+
+ is extremely expressive due to its choice operator.
+ One can easily encode arbitrary finitely branching transition systems 
+\begin_inset Formula $\system=(S,\actions,\step{})$
+\end_inset
+
+ with the valuation 
+\begin_inset Formula $\ccsValuation_{\system}\colon S\rightarrow\ccs[S,\visibleActions]$
+\end_inset
+
+:
+\begin_inset VSpace -3mm
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\ccsValuation_{\system}(s)\defEq\begin{cases}
+\alpha_{1}\ccsPrefix s_{1}^{\prime}\ccsChoice\dots\ccsChoice\alpha_{n}\ccsPrefix s_{n}^{\prime} & \text{for }\{(\alpha_{i},s_{i}^{\prime})\mid1\leq i\leq n\}=s\step{\cdot}\cdot\\
+\ccsStop & \text{if }s\noStep{}
+\end{cases}
+\]
+
+\end_inset
+
+If 
+\begin_inset Formula $\system$
+\end_inset
+
+ is finite, the 
+\begin_inset Formula $\ccsValuation_{\system}$
+\end_inset
+
+-structure is finite as well.
+\end_layout
+
+\begin_layout Standard
+Now, it seems natural to wonder when to consider two processes as behaviorally
+ equivalent.
+ For example, 
+\begin_inset Formula $\,\ccsStop\,$
+\end_inset
+
+ and 
+\begin_inset Formula $\,\ccsStop\!\ccsPar\!\ccsStop\,$
+\end_inset
+
+ obviously have the same set of outgoing transitions (the empty set) but
+ are different states in the transition system 
+\begin_inset Formula $\system_{\ccsValuation,\ccs[\ccsProcessNames,\visibleActions_{\mathit{in}}]}$
+\end_inset
+
+.
+ To discuss equivalences, let us introduce a more enlightening example.
+\end_layout
+
+\begin_layout Subsection
+Running Example: Exclusively Dining Philosophers
+\end_layout
+
+\begin_layout Standard
+Let us see how transition systems and 
+\begin_inset Formula $\ccs$
+\end_inset
+
+ can be used to model a concurrent situation.
+ More abstract variants of the following example have been used in the literatur
+e to motivate coupled similarity 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "nestmann1996decoding,parrow1992,sangiorgi2012"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tikzpicture}[->,auto,node distance=2cm, rel/.style={dashed,font=
+\backslash
+it}]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (A1){$p_1$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (A2) [below right of=A1] {$p_2$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (A3) [below of=A1, node distance=3cm] {$p_3$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (A4) [below left of=A1, node distance=2.9cm] {$p_4$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge node {$
+\backslash
+tau$} (A2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge node {$
+\backslash
+tau$} (A3)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge node {$
+\backslash
+tau$} (A4)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A2) edge [loop below] node {$
+\backslash
+mathit{aEats}$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(A3) edge [loop below] node {$
+\backslash
+mathit{bEats}$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(A4) edge [loop below] node {$
+\backslash
+mathit{cEats}$} ();
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B1) [right of=A1, node distance=6cm] {$q_1$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B2) [below left of=B1] {$q_2$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B34) [below right of=B1] {$q_{34}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B3) [below left of=B34] {$q_3$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B4) [below right of=B34] {$q_4$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B22) [below left of=B2] {$q_{22}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(B1) edge node {$
+\backslash
+tau$} (B2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B2) edge node {$
+\backslash
+tau$} (B22)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B1) edge node {$
+\backslash
+tau$} (B34)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B34) edge node {$
+\backslash
+tau$} (B3)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B34) edge node {$
+\backslash
+tau$} (B4)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B22) edge [loop below] node {$
+\backslash
+mathit{aEats}$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(B3) edge [loop below] node {$
+\backslash
+mathit{bEats}$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(B4) edge [loop below] node {$
+\backslash
+mathit{cEats}$} ();
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tikzpicture}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Transition system for dining philosophers.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:philosophers"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Gradually committing philosophers
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "exa:philosophers-gradual"
+
+\end_inset
+
+Three philosophers 
+\begin_inset Formula $\ccsIdentifier A$
+\end_inset
+
+, 
+\begin_inset Formula $\ccsIdentifier B$
+\end_inset
+
+ and 
+\begin_inset Formula $\ccsIdentifier C$
+\end_inset
+
+ want to eat pasta.
+ To do so, they must first sit down on a bench 
+\begin_inset Formula $\action s$
+\end_inset
+
+ and grab a fork 
+\begin_inset Formula $\action f$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Example
+\begin_inset Box Boxed
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/philosophers.svg
+	width 70col%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+Unfortunately, only either 
+\begin_inset Formula $\ccsIdentifier A$
+\end_inset
+
+ alone or the thinner 
+\begin_inset Formula $\ccsIdentifier B$
+\end_inset
+
+ and 
+\begin_inset Formula $\ccsIdentifier C$
+\end_inset
+
+ can fit on the bench simultaneously and there is just one fork.
+ (The philosophers have the skill of eating with one fork.) From the outside,
+ we are only interested in the fact who of them eats.
+ So we consider the whole bench-and-fork business internal to the system.
+\end_layout
+
+\begin_layout Example
+The following 
+\begin_inset Formula $\ccs$
+\end_inset
+
+ structure models the situation
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+asynchronous 
+\begin_inset Formula $\pi$
+\end_inset
+
+-calculus term
+\end_layout
+
+\end_inset
+
+.
+ The resources correspond to output actions (which can only be consumed
+ once) and the obtaining of the resources corresponds to matching input
+ actions.
+\begin_inset Formula 
+\begin{eqnarray*}
+\ccsIdentifier P_{g} & \ccsDef & \left(\,\ccsOutm{\action s}\,\ccsPar\,\action{\ccsOutm f}\,\ccsPar\,\action s\ccsPrefix\action f\ccsPrefix\ccsIdentifier A\,\ccsPar\,\action s\ccsPrefix\left(\,\action f\ccsPrefix\ccsIdentifier B\ccsPar\action f\ccsPrefix\ccsIdentifier C\,\right)\,\right)\;\ccsHide\:\{\action s,\action f\}\\
+\ccsIdentifier A & \ccsDef & \action{aEats}\ccsPrefix\ccsIdentifier A\\
+\ccsIdentifier B & \ccsDef & \action{bEats}\ccsPrefix\ccsIdentifier B\\
+\ccsIdentifier C & \ccsDef & \action{cEats}\ccsPrefix\ccsIdentifier C
+\end{eqnarray*}
+
+\end_inset
+
+This structure has the following transition system with initial state 
+\begin_inset Formula $\ccsIdentifier P_{g}$
+\end_inset
+
+ as its semantics.
+ Notice that the internal communication concerning the resource allocation
+ turns into internal 
+\begin_inset Formula $\tau$
+\end_inset
+
+-actions, which in 
+\begin_inset Formula $\ccsIdentifier P_{g}$
+\end_inset
+
+, 
+\begin_inset Formula $g_{\ccsIdentifier A}$
+\end_inset
+
+, and 
+\begin_inset Formula $g_{\ccsIdentifier{BC}}$
+\end_inset
+
+ 
+\emph on
+gradually decide
+\emph default
+ who is going to eat the pasta.
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tikzpicture}[->,auto,node distance=1.8cm, rel/.style={dashed,font=
+\backslash
+it}]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B1) [] {$
+\backslash
+ccsIdentifier {P}_g$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B2) [below left of=B1] {$g_
+\backslash
+ccsIdentifier{A}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B34) [below right of=B1] {$g_{
+\backslash
+ccsIdentifier{BC}}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B3) [below left of=B34] {$
+\backslash
+ccsIdentifier B$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B4) [below right of=B34] {$
+\backslash
+ccsIdentifier C$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B22) [below left of=B2] {$
+\backslash
+ccsIdentifier A$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(B1) edge node[swap] {$
+\backslash
+tau$} (B2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B2) edge node[swap] {$
+\backslash
+tau$} (B22)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B1) edge node {$
+\backslash
+tau$} (B34)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B34) edge node[swap] {$
+\backslash
+tau$} (B3)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B34) edge node {$
+\backslash
+tau$} (B4)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B22) edge [loop below] node {$
+\backslash
+action{aEats}$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(B3) edge [loop below] node {$
+\backslash
+action{bEats}$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(B4) edge [loop below] node {$
+\backslash
+action{cEats}$} ();
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tikzpicture}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+One might now be inclined to ponder that exactly one of the philosophers
+ will get both resources and that we thus could model the situation just
+ as well in the following way.
+\end_layout
+
+\begin_layout Example
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+One-step non-determinism philosophers
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "exa:philosophers-one-step"
+
+\end_inset
+
+If we merge 
+\begin_inset Formula $\action s$
+\end_inset
+
+ and 
+\begin_inset Formula $\action f$
+\end_inset
+
+ into a single resource 
+\begin_inset Formula $\action{sf}$
+\end_inset
+
+, the model becomes:
+\begin_inset Formula 
+\[
+\ccsIdentifier P_{o}\,\ccsDef\quad\left(\,\ccsOutm{\mathit{\action{sf}}}\quad\ccsPar\quad\action{sf}\ccsPrefix\ccsIdentifier A\,\ccsPar\,\action{sf}\ccsPrefix\ccsIdentifier B\,\ccsPar\,\action{sf}\ccsPrefix\ccsIdentifier C\,\right)\;\ccsHide\:\{\action{sf}\}
+\]
+
+\end_inset
+
+The corresponding transition system concentrates the internal choice to
+ the starting node 
+\begin_inset Formula $P_{o}$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{center}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tikzpicture}[->,auto,node distance=1.8cm, rel/.style={dashed,font=
+\backslash
+it}]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (A1){$
+\backslash
+ccsIdentifier P_o$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (A2) [below left of=A1] {$
+\backslash
+ccsIdentifier A$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (A3) [below of=A1] {$
+\backslash
+ccsIdentifier B$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (A4) [below right of=A1] {$
+\backslash
+ccsIdentifier C$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge node[swap] {$
+\backslash
+tau$} (A2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge node {$
+\backslash
+tau$} (A3)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge node {$
+\backslash
+tau$} (A4)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A2) edge [loop below] node {$
+\backslash
+action{aEats}$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(A3) edge [loop below] node {$
+\backslash
+action{bEats}$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(A4) edge [loop below] node {$
+\backslash
+action{cEats}$} ();
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tikzpicture}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{center}
+\end_layout
+
+\end_inset
+
+We refer to the philosopher system containing the components of 
+\begin_inset Formula $\ccsIdentifier P_{g}$
+\end_inset
+
+ and 
+\begin_inset Formula $\ccsIdentifier P_{o}$
+\end_inset
+
+ (sharing 
+\begin_inset Formula $\ccsIdentifier A,\ccsIdentifier B,\ccsIdentifier C$
+\end_inset
+
+) as 
+\begin_inset Formula $\system_{\ccsIdentifier P}$
+\end_inset
+
+.
+ It can also be inspected at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://coupledsim.bbisping.de/#phil
+\end_layout
+
+\end_inset
+
+ or in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:c-cs-philosophers"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+So, are 
+\begin_inset Formula $\ccsIdentifier P_{g}$
+\end_inset
+
+ and 
+\begin_inset Formula $\ccsIdentifier P_{o}$
+\end_inset
+
+ behaviorally equivalent? This depends on the notion of equivalence we employ.
+ They obviously can reach different transitions.
+ A notion of equivalence then tells us which aspects of the state changes
+ really matter—which are 
+\begin_inset Quotes eld
+\end_inset
+
+observable.
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Some notions will consider 
+\begin_inset Formula $\ccsIdentifier P_{g}$
+\end_inset
+
+ and 
+\begin_inset Formula $\ccsIdentifier P_{o}$
+\end_inset
+
+ equivalent, some will reject the equivalence.
+ Sometimes this is a philosophical question.
+ But, more often than not, encodings between formalisms, and reasonable
+ refinements of specifications only become possible if the notion of equivalence
+ is coarse enough to accept gradual and one-step internal commitment as
+ equivalent.
+ Spoiler: Coupled similarity is one of the finest branching-time equivalences
+ considering 
+\begin_inset Formula $\ccsIdentifier P_{g}$
+\end_inset
+
+ and 
+\begin_inset Formula $\ccsIdentifier P_{o}$
+\end_inset
+
+ equivalent.
+\end_layout
+
+\begin_layout Section
+Equivalences and Preorders
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:equivalences-and-preorders"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Let us introduce weak simulation, weak bisimulation, and contrasimulation.
+ They are the most relevant notions of equivalence related to coupled similarity.
+\end_layout
+
+\begin_layout Standard
+The framework for arbitrary 
+\begin_inset Formula $\system=(S,\actions,\step{})$
+\end_inset
+
+ is the following: We define a property 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $X$
+\end_inset
+
+
+\emph on
+-simulation
+\emph default
+.
+\begin_inset Quotes erd
+\end_inset
+
+ If a relation on the state space 
+\begin_inset Formula $\rel R\subseteq S\times S$
+\end_inset
+
+ fulfills the property, we call it an 
+\begin_inset Formula $X$
+\end_inset
+
+-simulation on 
+\begin_inset Formula $\system$
+\end_inset
+
+.
+ The property induces a preorder 
+\begin_inset Formula $\sqsubseteq_{X}^{\system}$
+\end_inset
+
+, the 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $X$
+\end_inset
+
+-simulation 
+\emph on
+preorder
+\emph default
+,
+\begin_inset Quotes erd
+\end_inset
+
+ with 
+\begin_inset Formula $p\sqsubseteq_{X}^{\system}q$
+\end_inset
+
+ iff there is an 
+\begin_inset Formula $X$
+\end_inset
+
+-simulation 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ on 
+\begin_inset Formula $\system$
+\end_inset
+
+ with 
+\begin_inset Formula $(p,q)\in\rel R$
+\end_inset
+
+.
+ The preorder then induces an 
+\emph on
+equivalence
+\emph default
+ 
+\begin_inset Formula $\equiv_{X}^{\system}\,=\,\,\sqsubseteq_{X}^{\system}\!\cap\:{\sqsubseteq_{X}^{\system}}^{-1}$
+\end_inset
+
+, the 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $X$
+\end_inset
+
+
+\emph on
+-similarity
+\emph default
+.
+\begin_inset Quotes erd
+\end_inset
+
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+In the following, we omit the system 
+\begin_inset Formula $\system$
+\end_inset
+
+ where it is clear from the context.
+ Also, 
+\begin_inset Formula $\weakStep{\cdot}$
+\end_inset
+
+, 
+\begin_inset Formula $\visibleActions$
+\end_inset
+
+, etc.
+\begin_inset space \space{}
+\end_inset
+
+are implicitly instantiated by fixed 
+\begin_inset Formula $\system$
+\end_inset
+
+.
+ Sometimes we just write 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $X$
+\end_inset
+
+-simulation
+\begin_inset Quotes erd
+\end_inset
+
+ to refer to the preorder.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+There are hundreds of notions of equivalence in the linear-time branching-time
+ spectrum 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glabbeek1990ltbt1,glabbeek1993ltbt"
+
+\end_inset
+
+ that can be characterized in this way.
+ In this section, we use the framework for the main neighbors of coupled
+ simulation in the spectrum.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+nondeterminism
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tabular}{cc}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+subf{
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+begin{tikzpicture}[
+\end_layout
+
+\begin_layout Plain Layout
+
+	  ->,auto,node distance=2.4cm,
+\end_layout
+
+\begin_layout Plain Layout
+
+	  /tikz/initial text={},
+\end_layout
+
+\begin_layout Plain Layout
+
+	  font=
+\backslash
+tt,
+\end_layout
+
+\begin_layout Plain Layout
+
+	  weak/.style={double, double distance=0.6mm, >={To[length=3pt]}, font=
+\backslash
+it},
+\end_layout
+
+\begin_layout Plain Layout
+
+	  rel/.style={dashed,font=
+\backslash
+it}]
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (P0){$p$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (Q0) [right of=P0] {$q$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (Imp) [node distance=1.55cm, below right of=P0, rotate=-45] {$
+\backslash
+implies$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (P1) [below of=P0] {$p^
+\backslash
+prime$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (Q1) [below of=Q0, red] {$q^
+\backslash
+prime$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge [rel, bend left=20] node {$
+\backslash
+rel{R}$} (Q0)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge node {$
+\backslash
+alpha$} (P1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P1) edge [rel, bend left=20, red] node [below] {$
+\backslash
+rel{R}$} (Q1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(Q0) edge [weak, red] node {$
+\backslash
+hat
+\backslash
+alpha$} (Q1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	;
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+end{tikzpicture}
+\end_layout
+
+\begin_layout Plain Layout
+
+}      {
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+textbf{A:} Weak simulation
+\end_layout
+
+\begin_layout Plain Layout
+
+} & 
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+subf{
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+begin{tikzpicture}[
+\end_layout
+
+\begin_layout Plain Layout
+
+	  ->,auto,node distance=2.4cm,
+\end_layout
+
+\begin_layout Plain Layout
+
+	  /tikz/initial text={},
+\end_layout
+
+\begin_layout Plain Layout
+
+	  font=
+\backslash
+tt,
+\end_layout
+
+\begin_layout Plain Layout
+
+	  weak/.style={double, double distance=0.6mm, >={To[length=3pt]},font=
+\backslash
+it},
+\end_layout
+
+\begin_layout Plain Layout
+
+	  rel/.style={dashed,font=
+\backslash
+it}]
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (P0){$p$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (Q0) [right of=P0] {$q$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (Imp) [node distance=1.55cm, below right of=P0, rotate=-135] {$
+\backslash
+implies$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (P1) [below of=P0, red] {$p^
+\backslash
+prime$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (Q1) [below of=Q0] {$q^
+\backslash
+prime$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge [rel, bend left=20] node {$
+\backslash
+rel{R}$} (Q0)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge [weak, red] node {$
+\backslash
+hat
+\backslash
+alpha$} (P1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P1) edge [rel, bend left=20, red] node [below] {$
+\backslash
+rel{R}$} (Q1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(Q0) edge node {$
+\backslash
+alpha$} (Q1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	;
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+end{tikzpicture}
+\end_layout
+
+\begin_layout Plain Layout
+
+}      {
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+textbf{B:} Weak bisimulation (2)
+\end_layout
+
+\begin_layout Plain Layout
+
+} 
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+subf{
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+begin{tikzpicture}[
+\end_layout
+
+\begin_layout Plain Layout
+
+	  ->,auto,node distance=2.4cm,
+\end_layout
+
+\begin_layout Plain Layout
+
+	  /tikz/initial text={},
+\end_layout
+
+\begin_layout Plain Layout
+
+	  font=
+\backslash
+tt,
+\end_layout
+
+\begin_layout Plain Layout
+
+	  weak/.style={double, double distance=0.6mm, >={To[length=3pt]},font=
+\backslash
+it},
+\end_layout
+
+\begin_layout Plain Layout
+
+	  rel/.style={dashed,font=
+\backslash
+it}]
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (P0){$p$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (Q0) [right of=P0] {$q$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (Imp) [node distance=1.55cm, below right of=P0, rotate=-45] {$
+\backslash
+implies$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (P1) [below of=P0] {$p^
+\backslash
+prime$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (Q1) [below of=Q0, red] {$q^
+\backslash
+prime$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge [rel, bend left=20] node {$
+\backslash
+rel{R}$} (Q0)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge [weak] node {$
+\backslash
+vec a$} (P1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	(Q1) edge [rel, bend left=20, red] node [above] {$
+\backslash
+rel{R}$} (P1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(Q0) edge [weak, red] node {$
+\backslash
+vec a$} (Q1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	;
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+end{tikzpicture}
+\end_layout
+
+\begin_layout Plain Layout
+
+}      {
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+textbf{C:} Contrasimulation
+\end_layout
+
+\begin_layout Plain Layout
+
+} &
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+subf{
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+begin{tikzpicture}[
+\end_layout
+
+\begin_layout Plain Layout
+
+	  ->,auto,node distance=2.4cm,
+\end_layout
+
+\begin_layout Plain Layout
+
+	  /tikz/initial text={},
+\end_layout
+
+\begin_layout Plain Layout
+
+	  font=
+\backslash
+tt,
+\end_layout
+
+\begin_layout Plain Layout
+
+	  weak/.style={double, double distance=0.6mm, >={To[length=3pt]}, font=
+\backslash
+it},
+\end_layout
+
+\begin_layout Plain Layout
+
+	  rel/.style={dashed,font=
+\backslash
+it}]
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (P0){$p$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (Q0) [right of=P0] {$q$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (Imp) [node distance=1.55cm, below right of=P0, rotate=-45] {$
+\backslash
+implies$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+node (Q1) [below of=Q0, red] {$q^
+\backslash
+prime$};
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+	(P0) edge [rel, bend left=20] node {$
+\backslash
+rel{R}$} (Q0)	
+\end_layout
+
+\begin_layout Plain Layout
+
+	(Q1) edge [rel, bend left=40, red] node [below] {$
+\backslash
+rel{R}$} (P0)
+\end_layout
+
+\begin_layout Plain Layout
+
+	(Q0) edge [weak, red] node {} (Q1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	;
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+end{tikzpicture}
+\end_layout
+
+\begin_layout Plain Layout
+
+}      {
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+textbf{D:} Coupling
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+
+\backslash
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tabular}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Illustration of weak relations on transition systems.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Illustration-weak-relations"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Weak Similarity and Weak Simulation Preorder
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Weak simulation
+\emph default
+ is a variant of simulation illustrated by Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Illustration-weak-relations"
+
+\end_inset
+
+(A).
+ A
+\emph on
+ simulation
+\emph default
+ maps each state to other states that can do at least as much as it and
+ therefore 
+\begin_inset Quotes eld
+\end_inset
+
+simulate
+\begin_inset Quotes erd
+\end_inset
+
+ it.
+ 
+\begin_inset Quotes eld
+\end_inset
+
+Simulation
+\begin_inset Quotes erd
+\end_inset
+
+ means for a pair of states 
+\begin_inset Formula $p,q$
+\end_inset
+
+ that, for every 
+\begin_inset Formula $\alpha$
+\end_inset
+
+-step that can be performed in the first state 
+\begin_inset Formula $p$
+\end_inset
+
+, the second 
+\emph on
+simulating
+\emph default
+ state 
+\begin_inset Formula $q$
+\end_inset
+
+ can 
+\emph on
+answer
+\emph default
+ with a matching step leading to a state that simulates the target of the
+ first step.
+ The answer part is rendered red in the figure.
+ For 
+\emph on
+weak
+\emph default
+ simulation, the answer may use the additional freedom of weak steps 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+ as opposed to just strong steps 
+\begin_inset Formula $\step{\cdot}$
+\end_inset
+
+.
+ Intuitively, a state 
+\begin_inset Formula $p$
+\end_inset
+
+ is simulated by 
+\begin_inset Formula $q$
+\end_inset
+
+ if 
+\begin_inset Formula $p$
+\end_inset
+
+ cannot expose more behavior than 
+\begin_inset Formula $q$
+\end_inset
+
+.
+ More formally:
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Weak simulation
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:weak_simulation"
+
+\end_inset
+
+ A 
+\emph on
+weak simulation
+\emph default
+ is a relation 
+\begin_inset Formula $\rel R\subseteq S\times S$
+\end_inset
+
+ such that, for all 
+\begin_inset Formula $(p,q)\in\rel R$
+\end_inset
+
+, 
+\begin_inset Formula $p\step{\alpha}p^{\prime}$
+\end_inset
+
+ implies that there is a 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\weakStepTau{\alpha}q^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $(p^{\prime},q^{\prime})\in\rel R$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition
+The 
+\emph on
+weak simulation preorder
+\emph default
+ relates two states, 
+\begin_inset Formula $p\weakSimBy q$
+\end_inset
+
+, iff there is a weak simulation 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ such that 
+\begin_inset Formula $(p,q)\in\rel R$
+\end_inset
+
+.
+ Two states are 
+\emph on
+weakly similar, 
+\emph default
+
+\begin_inset Formula $p\weakSimEq q$
+\end_inset
+
+, iff 
+\begin_inset Formula $p\weakSimBy q$
+\end_inset
+
+ and 
+\begin_inset Formula $q\weakSimBy p$
+\end_inset
+
+.
+ The relation 
+\begin_inset Formula $\weakSimEq$
+\end_inset
+
+ is called weak similarity.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[definition]{Weak
+\backslash
+_Relations}{weak
+\backslash
+_simulation}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Remark
+Another, trivially equivalent, way of expressing the definition would be:
+ 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is a weak simulation iff 
+\begin_inset Formula $\rel R^{-1}\step{\alpha}\,\subseteq\weakStepTau{\alpha}\rel R^{-1}$
+\end_inset
+
+ for all 
+\begin_inset Formula $\alpha\in\actions$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Example
+\begin_inset CommandInset label
+LatexCommand label
+name "exa:weak-sims-sp"
+
+\end_inset
+
+Some weak simulations on 
+\begin_inset Formula $\system_{\ccsIdentifier P}$
+\end_inset
+
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\rel R_{1}=\emptyset$
+\end_inset
+
+ (the empty relation)
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\rel R_{2}=\diagonal_{S}$
+\end_inset
+
+ (the identity relation)
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\rel R_{3}=\weakStep{}^{-1}$
+\end_inset
+
+ (the inverted 
+\begin_inset Formula $\tau$
+\end_inset
+
+-closure)
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\rel R_{4}=\{g_{\ccsIdentifier A},\ccsIdentifier A\}\times\{g_{\ccsIdentifier A},\ccsIdentifier A\}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\rel R_{5}=\left(\rel R_{3}\cup\rel R_{4}\cup\{(\ccsIdentifier P_{g},\ccsIdentifier P_{o}),(\ccsIdentifier P_{o},\ccsIdentifier P_{g})\}\right)^{*}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The weak simulation 
+\begin_inset Formula $\rel R_{5}$
+\end_inset
+
+ justifies 
+\begin_inset Formula $\ccsIdentifier P_{g}\weakSimEq\ccsIdentifier P_{o}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Actually, there is no weak simulation on 
+\begin_inset Formula $\system_{\ccsIdentifier P}$
+\end_inset
+
+ that is greater than 
+\begin_inset Formula $\rel R_{5}$
+\end_inset
+
+—that is: 
+\begin_inset Formula $\rel R\subseteq\rel R_{5}$
+\end_inset
+
+ for all weak simulations 
+\begin_inset Formula $\rel R$
+\end_inset
+
+.
+ The greatest weak simulation always equals 
+\begin_inset Formula $\weakSimBy$
+\end_inset
+
+.
+ So, in this case, 
+\begin_inset Formula $\rel R_{5}\,=\,\,\weakSimBy$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Lemma
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula $\weakSimBy$
+\end_inset
+
+ greatest
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:ws-gfp"
+
+\end_inset
+
+The weak simulation preorder can be characterized,
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+by the union:
+\begin_inset Formula 
+\[
+\weakSimBy\:=\:\bigcup\{\rel R\mid\text{\rel R}\text{ is a weak simulation}\}\text{, and}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset CommandInset label
+LatexCommand label
+name "enu:coinductively-by-the"
+
+\end_inset
+
+coinductively by the rule:
+\begin_inset Formula 
+\[
+\cfrac{\forall p^{\prime},\alpha\ldotp\;p\step{\alpha}p^{\prime}\longrightarrow\:\exists q^{\prime}\ldotp\;q\weakStepTau{\alpha}q^{\prime}\:\land\:p^{\prime}\weakSimBy q^{\prime}}{p\weakSimBy q}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+The coinductive characterization under number 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "enu:coinductively-by-the"
+
+\end_inset
+
+ means that 
+\begin_inset Formula $\weakSimBy$
+\end_inset
+
+ is the greatest relation 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ where 
+\begin_inset Formula $(p,q)\in\rel R$
+\end_inset
+
+ locally implies weak simulation for all 
+\begin_inset Formula $p,q$
+\end_inset
+
+.
+ For more material on coinduction, please refer to 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sangiorgi2012"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:weak-sims-sp"
+
+\end_inset
+
+ has shown that weak similarity is coarse enough for the gradually committing
+ philosophers 
+\begin_inset Formula $\ccsIdentifier P_{g}$
+\end_inset
+
+ and the one-step committing philosophers 
+\begin_inset Formula $\ccsIdentifier P_{o}$
+\end_inset
+
+ to be equivalent.
+ However, the weak simulation preorder is too coarse for many applications
+ that work with some basic ideas of fairness, namely that all paths matter.
+ It is blind to spurious deadlocks as illustrated by the following example.
+\end_layout
+
+\begin_layout Example
+\begin_inset CommandInset label
+LatexCommand label
+name "exa:philosophers-trolled"
+
+\end_inset
+
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Trolled philosophers
+\end_layout
+
+\end_inset
+
+ Although it is more common for philosophers to struggle with trolley problems,
+ let us imagine for the sake of the example that our philosophers, like
+ other scientists 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "schulte2015deutsch"
+
+\end_inset
+
+, are having a 
+\emph on
+troll problem
+\emph default
+.
+ A hidden troll (
+\begin_inset Formula $\trollface$
+\end_inset
+
+) enters the stage of Example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:philosophers-one-step"
+
+\end_inset
+
+ and might grab the resource 
+\begin_inset Formula $\action{sf}$
+\end_inset
+
+.
+\begin_inset Formula 
+\[
+\ccsIdentifier P_{t}\ccsDef\left(\,\ccsOutm{\action{sf}}\,\ccsPar\,\action{sf}\ccsPrefix\ccsIdentifier A\,\ccsPar\,\action{sf}\ccsPrefix\ccsIdentifier B\ccsPar\action{sf}\ccsPrefix\ccsIdentifier C\ccsPar\quad\action{sf}.\trollface\,\right)\;\ccsHide\{\action{sf},\trollface\}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+This yields a transition system with one new deadlock node (marked by 
+\begin_inset Formula $\trollface$
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Example
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{center}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tikzpicture}[->,auto,node distance=2cm, rel/.style={dashed,font=
+\backslash
+it}]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (A1){$
+\backslash
+ccsIdentifier P_t$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (A2) [below left of=A1] {$
+\backslash
+ccsIdentifier A$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (A3) [below of=A1] {$
+\backslash
+ccsIdentifier B$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (A4) [below right of=A1] {$
+\backslash
+ccsIdentifier C$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[] (A5) [left of=A1, node distance=2cm] {$
+\backslash
+huge{
+\backslash
+trollface}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge node {$
+\backslash
+tau$} (A2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge node {$
+\backslash
+tau$} (A3)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge node {$
+\backslash
+tau$} (A4)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge node {$
+\backslash
+tau$} (A5)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A2) edge [loop below] node {$
+\backslash
+action{aEats}$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(A3) edge [loop below] node {$
+\backslash
+action{bEats}$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(A4) edge [loop below] node {$
+\backslash
+action{cEats}$} ();
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tikzpicture}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{center}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+Consider the components of 
+\begin_inset Formula $\ccsIdentifier P_{o}$
+\end_inset
+
+ and 
+\begin_inset Formula $\ccsIdentifier P_{t}$
+\end_inset
+
+ in the same system.
+ The troll state cannot perform any actions and thus is weakly simulated
+ by all other states.
+ So, the 
+\begin_inset Formula $\ccsIdentifier P_{t}\step{\tau}\trollface$
+\end_inset
+
+-transition can be simulated by any 
+\begin_inset Formula $\ccsIdentifier P_{o}\step{\tau}$
+\end_inset
+
+-step.
+ As this transition is the only difference between 
+\begin_inset Formula $\ccsIdentifier P_{o}$
+\end_inset
+
+ and 
+\begin_inset Formula $\ccsIdentifier P_{t}$
+\end_inset
+
+, weak similarity considers them equivalent 
+\begin_inset Formula $\ccsIdentifier P_{o}\weakSimEq\ccsIdentifier P_{t}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+For most system models, it indeed is relevant whether a hidden process can
+ block a choice or not.
+ It matters whether the philosophers starve.
+ Weak similarity is too coarse to make this differentiation.
+ So, let us look at a finer notion of equivalence.
+\end_layout
+
+\begin_layout Subsection
+Weak Bisimilarity
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Weak bisimilarity 
+\emph default
+probably is the best-known notion of equivalence for transition systems
+ with internal steps.
+ It adds a converse requirement to the definition of weak similarity, which
+ is depicted in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Illustration-weak-relations"
+
+\end_inset
+
+(B).
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Weak bisimulation
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:weak_bisimulation"
+
+\end_inset
+
+ A 
+\emph on
+weak bisimulation
+\emph default
+ is a relation 
+\begin_inset Formula $\rel R\subseteq S\times S$
+\end_inset
+
+ such that, for all 
+\begin_inset Formula $(p,q)\in\rel R$
+\end_inset
+
+,
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $p\step{\alpha}p^{\prime}$
+\end_inset
+
+ implies that there is a 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\weakStepTau{\alpha}q^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $(p^{\prime},q^{\prime})\in\rel R$
+\end_inset
+
+, and
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $q\step{\alpha}q^{\prime}$
+\end_inset
+
+ implies that there is a 
+\begin_inset Formula $p^{\prime}$
+\end_inset
+
+ such that 
+\begin_inset Formula $p\weakStepTau{\alpha}p^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $(p^{\prime},q^{\prime})\in\rel R$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Definition
+Two states are called 
+\emph on
+weakly bisimilar, 
+\emph default
+
+\begin_inset Formula $p\weakBisim q$
+\end_inset
+
+, iff there is a weak bisimulation 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ such that 
+\begin_inset Formula $(p,q)\in\rel R$
+\end_inset
+
+.
+ (For bisimulation, equivalence 
+\begin_inset Formula $\weakBisim$
+\end_inset
+
+ and preorder 
+\begin_inset Formula $\sqsubseteq_{\mathit{WB}}$
+\end_inset
+
+ coincide.)
+\end_layout
+
+\begin_layout Standard
+Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:weak_bisimulation"
+
+\end_inset
+
+ says in other words that 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is a (weak) bisimulation iff 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ and 
+\begin_inset Formula $\rel R^{-1}$
+\end_inset
+
+ are (weak) simulations.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Weak
+\backslash
+_Relations}{weak
+\backslash
+_bisim
+\backslash
+_weak
+\backslash
+_sim}
+\end_layout
+
+\end_inset
+
+ Weak bisimilarity is the greatest symmetric weak simulation.
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+ 
+\begin_inset Flex Fixme Warning
+status collapsed
+
+\begin_layout Plain Layout
+Lemma + Proof would be nice!
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example*
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:philosophers-gradual"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:philosophers-one-step"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:philosophers-trolled"
+
+\end_inset
+
+ continued
+\end_layout
+
+\end_inset
+
+ Returning to our running example, we see that weak bisimilarity notices
+ the troll so that 
+\begin_inset Formula $\ccsIdentifier P_{o}\not\weakBisim\ccsIdentifier P_{t}$
+\end_inset
+
+.
+ This is because the troll state 
+\begin_inset Formula $\trollface$
+\end_inset
+
+ cannot simulate any other state, and thus cannot be covered by any bisimulation
+ containing 
+\begin_inset Formula $(\ccsIdentifier P_{o},\ccsIdentifier P_{t})$
+\end_inset
+
+ answering to 
+\begin_inset Formula $\ccsIdentifier P_{t}\step{\tau}\trollface$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Example*
+But weak bisimilarity also notices the differing internal branching structure
+ of 
+\begin_inset Formula $\ccsIdentifier P_{o}$
+\end_inset
+
+ and 
+\begin_inset Formula $\ccsIdentifier P_{g}$
+\end_inset
+
+.
+ 
+\begin_inset Formula $\ccsIdentifier P_{o}$
+\end_inset
+
+ can reach no state with the same set of enabled actions like 
+\begin_inset Formula $g_{\ccsIdentifier{BC}}$
+\end_inset
+
+.
+ So, 
+\begin_inset Formula $\ccsIdentifier P_{g}\step{\tau}g_{\ccsIdentifier{BC}}$
+\end_inset
+
+ cannot be bisimulated by 
+\begin_inset Formula $\ccsIdentifier P_{o}$
+\end_inset
+
+, and thus 
+\begin_inset Formula $\ccsIdentifier P_{o}\not\weakBisim\ccsIdentifier P_{g}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\noindent
+The second part of the example shows that weak bisimilarity is too strong
+ for settings where we need to abstract away from the structure of gradual
+ internal choices.
+ The next section introduces a remedy: contrasimilarity.
+\end_layout
+
+\begin_layout Subsection
+Contrasimilarity and Contrasimulation Preorder
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Contrasimilarity-and-Contrasimul"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Contrasimulation
+\emph default
+ is a slight modification of simulation, alternating the simulation direction.
+ The answering process must have a successor state that is simulated by
+ the target state of the 
+\emph on
+challenging
+\emph default
+ transitions, as shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Illustration-weak-relations"
+
+\end_inset
+
+(C).
+ The direction of the red 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is inverse to ordinary simulation.
+ Moreover, challenge and answer may be words of actions 
+\begin_inset Formula $\vec{a}$
+\end_inset
+
+ instead of single actions 
+\begin_inset Formula $\hat{\alpha}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Contrasimulation
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:contra_simulation"
+
+\end_inset
+
+ A 
+\emph on
+contrasimulation
+\emph default
+ is a relation 
+\begin_inset Formula $\rel R\subseteq S\times S$
+\end_inset
+
+ such that, for all 
+\begin_inset Formula $(p,q)\in\rel R$
+\end_inset
+
+, 
+\begin_inset Formula $p\weakStepSeq ap^{\prime}$
+\end_inset
+
+ implies that there is a 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\weakStepSeq aq^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $(q^{\prime},p^{\prime})\in\rel R$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[definition]{Weak
+\backslash
+_Relations}{contrasim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+Pay attention to the swap of sides between 
+\begin_inset Formula $p^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ on the right-hand side of the definition if compared to weak simulation!
+ 
+\begin_inset Formula $\sqsubseteq_{\mathit{C}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\equiv_{C}$
+\end_inset
+
+ are implied as with weak similarity.
+\end_layout
+
+\begin_layout Remark
+\begin_inset CommandInset label
+LatexCommand label
+name "lem:contra_simulation_weak_premise_fails"
+
+\end_inset
+
+ Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:contra_simulation"
+
+\end_inset
+
+ becomes 
+\emph on
+extensionally weaker
+\emph default
+ if one replaces the occurrences of 
+\begin_inset Formula $\weakStepSeq a$
+\end_inset
+
+ by 
+\begin_inset Formula $\weakStepTau{\alpha}$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Weak
+\backslash
+_Relations}{contrasim
+\backslash
+_step
+\backslash
+_weaker
+\backslash
+_than
+\backslash
+_seq}
+\end_layout
+
+\end_inset
+
+ If one then replaces the 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $p\weakStepTau{\alpha}p^{\prime}$
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+ on the left-hand side by 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $p\step{\alpha}p^{\prime}$
+\end_inset
+
+
+\begin_inset Quotes erd
+\end_inset
+
+, the extension of the definition grows again.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Weak
+\backslash
+_Relations}{contrasim
+\backslash
+_challenge
+\backslash
+_strength
+\backslash
+_does
+\backslash
+_not
+\backslash
+_imply}
+\end_layout
+
+\end_inset
+
+ This is noteworthy because many other weak simulation-like properties have
+ equivalent definitions with weak and strong challenge transitions as well
+ as with single step or transition path formulations.
+\end_layout
+
+\begin_layout Standard
+Let us return to our running example.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tikzpicture}[->,auto,node distance=2.8cm, rel/.style={dashed,font=
+\backslash
+it}]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (A1){$
+\backslash
+ccsIdentifier P_o$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B1) [left of=A1, node distance=7cm] {$
+\backslash
+ccsIdentifier P_g$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B2) [below left of=B1, node distance=2cm] {$g_{
+\backslash
+ccsIdentifier A}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (B34) [below right of=B1, node distance = 2cm] {$g_{
+\backslash
+ccsIdentifier{BC}}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (AB2) [below of=B2] {$
+\backslash
+ccsIdentifier A$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (AB3) [below of=B34, node distance = 2cm] {$
+\backslash
+ccsIdentifier B$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (AB4) [right of=B34, node distance = 2cm] {$
+\backslash
+ccsIdentifier C$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge [bend left=60] node {$
+\backslash
+tau$} (AB2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge [bend left=30] node {$
+\backslash
+tau$} (AB3)
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge [bend left=10] node {$
+\backslash
+tau$} (AB4)
+\end_layout
+
+\begin_layout Plain Layout
+
+(AB2) edge [loop below] node {$
+\backslash
+action{aEats}$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(AB3) edge [loop below] node {$
+\backslash
+action{bEats}$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(AB4) edge [loop below] node {$
+\backslash
+action{cEats}$} ();
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(B1) edge node[swap] {$
+\backslash
+tau$} (B2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B2) edge node {$
+\backslash
+tau$} (AB2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B1) edge node {$
+\backslash
+tau$} (B34)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B34) edge node {$
+\backslash
+tau$} (AB3)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B34) edge node {$
+\backslash
+tau$} (AB4);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(A1) edge [<->, rel, bend right=20] node {$
+\backslash
+rel{R}$} (B1)
+\end_layout
+
+\begin_layout Plain Layout
+
+(AB2) edge [rel, loop left] node {} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(AB3) edge [rel, loop left] node {} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(AB4) edge [rel, loop above] node {} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(AB2) edge [rel, red, bend left=20] node {} (B2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(AB3) edge [rel, red, bend left=20] node {} (B34)
+\end_layout
+
+\begin_layout Plain Layout
+
+(AB4) edge [rel, red, bend left=20] node {} (B34)
+\end_layout
+
+\begin_layout Plain Layout
+
+(B34) edge [rel, red, bend left=20] node {} (A1);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tikzpicture}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+A non-maximal (contra/coupled/weak) simulation on the philosopher system
+ 
+\begin_inset Formula $\system_{\ccsIdentifier P}$
+\end_inset
+
+.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:c-cs-philosophers"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example*
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:philosophers-gradual"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:philosophers-one-step"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:philosophers-trolled"
+
+\end_inset
+
+ continued II
+\end_layout
+
+\end_inset
+
+ The differing internal branching structure of 
+\begin_inset Formula $\ccsIdentifier P_{o}$
+\end_inset
+
+ and 
+\begin_inset Formula $\ccsIdentifier P_{g}$
+\end_inset
+
+ is invisible to contrasimilarity by the same witnesses as for weak similarity.
+ A visualization of such a (contra-)simulation on 
+\begin_inset Formula $\system_{\ccsIdentifier P}$
+\end_inset
+
+ can be seen in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:c-cs-philosophers"
+
+\end_inset
+
+.
+ The asymmetric parts of the relation are drawn in red.
+\end_layout
+
+\begin_layout Example*
+Just as weak bisimilarity, contrasimilarity notices the troll so that 
+\begin_inset Formula $\ccsIdentifier P_{o}\not\contraSimEq\ccsIdentifier P_{t}$
+\end_inset
+
+.
+ Again, this is because the troll state 
+\begin_inset Formula $\trollface$
+\end_inset
+
+ cannot simulate any other state, and, consequently, there cannot be any
+ contrasimulation answer for 
+\begin_inset Formula $\ccsIdentifier P_{t}\step{\tau}\trollface$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Contrasimulation shares some lemma schemes with simulation.
+ For example, contrasimulation and symmetry together also imply for a relation
+ to be a bisimulation.
+\end_layout
+
+\begin_layout Proposition
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Symmetric contrasimulation
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+If 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is a contrasimulation and a symmetric relation, then 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is a weak bisimulation.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Weak
+\backslash
+_Relations}{symm
+\backslash
+_contrasim
+\backslash
+_implies
+\backslash
+_weak
+\backslash
+_bisim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Although contrasimulation looks like a variation of simulation, it is in
+ a certain way 
+\begin_inset Quotes eld
+\end_inset
+
+closer
+\begin_inset Quotes erd
+\end_inset
+
+ to the symmetry of the greatest bisimulation than weak simulation is.
+ This is due to the 
+\emph on
+coupling property
+\emph default
+ of contrasimulation, illustrated in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Illustration-weak-relations"
+
+\end_inset
+
+(D):
+\end_layout
+
+\begin_layout Proposition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Coupling
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "prop:contrasim-coupling"
+
+\end_inset
+
+ If 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is a contrasimulation, then 
+\begin_inset Formula $(p,q)\in\rel R$
+\end_inset
+
+ implies there is a 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\weakStep{}q^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $(q^{\prime},p)\in\rel R$
+\end_inset
+
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Weak
+\backslash
+_Relations}{contrasim
+\backslash
+_implies
+\backslash
+_coupling}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Coupling can be thought of as a relaxed form of symmetry—
+\begin_inset Quotes eld
+\end_inset
+
+weak symmetry
+\begin_inset Quotes erd
+\end_inset
+
+ so to speak.
+ For a relation to be symmetric, 
+\begin_inset Formula $\rel R^{-1}\subseteq\rel R$
+\end_inset
+
+ must be true whereas coupling boils down to 
+\begin_inset Formula $\rel R^{-1}\subseteq\weakStep{}\rel R$
+\end_inset
+
+.
+ In particular, if coupling holds for a relation, it must be symmetric on
+ the stable states, and 
+\begin_inset Formula $\tau$
+\end_inset
+
+-free systems only have stable states, so
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+, which leads to the following proposition
+\end_layout
+
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Corollary
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula $\tau$
+\end_inset
+
+-free contrasimulation
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ If 
+\begin_inset Formula $\step{\cdot}$
+\end_inset
+
+ contains no 
+\begin_inset Formula $\tau$
+\end_inset
+
+-steps, and 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is a contrasimulation, then 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is symmetric and thus a bisimulation.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[lemma]{Weak
+\backslash
+_Relations}{taufree
+\backslash
+_contrasim
+\backslash
+_implies
+\backslash
+_weak
+\backslash
+_bisim}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that there is no analogous proposition for simulation.
+ A 
+\emph on
+weak simulation
+\emph default
+ within a 
+\begin_inset Formula $\tau$
+\end_inset
+
+-free system is just a 
+\emph on
+strong simulation
+\emph default
+, but not necessarily a bisimulation.
+ This motivates our claim that contrasimulation is, in this respect, 
+\begin_inset Quotes eld
+\end_inset
+
+closer to bisimulation
+\begin_inset Quotes erd
+\end_inset
+
+ than weak simulation, even though the two are incomparable in the mathematical
+ sense.
+\end_layout
+
+\begin_layout Standard
+So, does this close our case? One indeed can argue that contrasimilarity
+ has the desired properties concerning the transparency of distributed choices
+ and the closeness to weak bisimilarity.
+ However, it also entails equalities concerning drifting choice points that
+ will seem strange to people who are not writing parallelizing compilers.
+\end_layout
+
+\begin_layout Example
+\begin_inset CommandInset label
+LatexCommand label
+name "exa:philosophers-religious"
+
+\end_inset
+
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Religious philosophers
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tikzpicture}[->,auto,node distance=2.8cm, rel/.style={dashed,font=
+\backslash
+it}]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (P0){$
+\backslash
+ccsIdentifier P_r$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (P1) [below left of=P0, node distance=3.2cm] {$r_{
+\backslash
+ccsIdentifier A}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (P2) [below right of=P0, node distance=3.2cm] {$r_{
+\backslash
+ccsIdentifier B}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (P3) [below of=P1, node distance=2.2cm] {$
+\backslash
+ccsIdentifier A$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (P4) [below of=P2, node distance=2.2cm] {$
+\backslash
+ccsIdentifier B$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(P0) edge node [swap] {$
+\backslash
+tau$} (P1)
+\end_layout
+
+\begin_layout Plain Layout
+
+(P0) edge node {$
+\backslash
+tau$} (P2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(P1) edge node [swap] {$
+\backslash
+action{grace}$} (P3)
+\end_layout
+
+\begin_layout Plain Layout
+
+(P2) edge node {$
+\backslash
+action{grace}$} (P4)
+\end_layout
+
+\begin_layout Plain Layout
+
+(P3) edge [loop below] node {$
+\backslash
+action{aEats}$} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(P4) edge [loop below] node {$
+\backslash
+action{bEats}$} ();
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (Q0) [right of=P0, node distance=2.45cm] {$
+\backslash
+ccsIdentifier P_r^
+\backslash
+prime$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (Q34) [below of=P0, node distance=3cm] {$r^
+\backslash
+prime_{
+\backslash
+ccsIdentifier{AB}}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(Q0) edge node [swap] {$
+\backslash
+tau$} (P1)
+\end_layout
+
+\begin_layout Plain Layout
+
+(Q0) edge node {$
+\backslash
+tau$} (P2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(Q0) edge [bend left=15] node [swap, pos=0.7] {$
+\backslash
+action{grace}$} (Q34)
+\end_layout
+
+\begin_layout Plain Layout
+
+(Q34) edge node [swap] {$
+\backslash
+tau$} (P3)
+\end_layout
+
+\begin_layout Plain Layout
+
+(Q34) edge node {$
+\backslash
+tau$} (P4);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(P0) edge [<->, rel, bend left=20] node {$
+\backslash
+rel{R}$} (Q0)
+\end_layout
+
+\begin_layout Plain Layout
+
+(P3) edge [rel, red, bend right=10] node {} (Q34)
+\end_layout
+
+\begin_layout Plain Layout
+
+(P1) edge [rel, loop left] node {} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(P2) edge [rel, loop right] node {} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(P3) edge [rel, loop left] node {} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+(P4) edge [rel, loop right] node {} ()
+\end_layout
+
+\begin_layout Plain Layout
+
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tikzpicture}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Contrasimulation for religious philosophers.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:contra-simulation"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+ For centuries, philosophers usually have been persons of faith.
+ So, maybe they would say a grace before starting their meal (this example
+ is narrowed down to only two philosophers):
+\begin_inset Formula 
+\[
+\ccsIdentifier P_{r}\,\ccsDef\quad\left(\quad\ccsOutm{\mathit{\action{sf}}}\quad\ccsPar\quad\action{sf}\ccsPrefix\action{grace}\ccsPrefix\ccsIdentifier A\,\ccsPar\,\action{sf}\ccsPrefix\action{grace}\ccsPrefix\ccsIdentifier B\quad\right)\quad\ccsHide\;\{\action{sf}\}
+\]
+
+\end_inset
+
+Interestingly, contrasimilarity does not care whether they say their grace
+ before or after the acquirement of the resource, as can be seen by the
+ transition system in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:contra-simulation"
+
+\end_inset
+
+ with additional state 
+\begin_inset Formula $\ccsIdentifier P_{r}^{\prime}$
+\end_inset
+
+ (also at 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://coupledsim.bbisping.de/#phil-religious
+\end_layout
+
+\end_inset
+
+).
+ There, 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is a contrasimulation, yielding 
+\begin_inset Formula $\ccsIdentifier P_{r}\text{\contraSimEq}\ccsIdentifier P_{r}^{\prime}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\ccsIdentifier P_{r}^{\prime}$
+\end_inset
+
+ in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:contra-simulation"
+
+\end_inset
+
+ can do quite the same as 
+\begin_inset Formula $\ccsIdentifier P_{r}$
+\end_inset
+
+—with the difference that it may also postpone the internal choice to 
+\begin_inset Formula $r_{\ccsIdentifier{AB}}^{\prime}$
+\end_inset
+
+, that is, 
+\emph on
+after
+\emph default
+ the occurrence of 
+\begin_inset Formula $\action{grace}$
+\end_inset
+
+.
+ Note that 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is no weak simulation.
+ Indeed, there cannot be any mutually relating 
+\begin_inset Formula $\ccsIdentifier P_{r}$
+\end_inset
+
+ and 
+\begin_inset Formula $\ccsIdentifier P_{r}^{\prime}$
+\end_inset
+
+ as there is no state that also weakly enables at least as many actions
+ as 
+\begin_inset Formula $r_{\ccsIdentifier{AB}}^{\prime}$
+\end_inset
+
+ (that is, 
+\begin_inset Formula $\{\action{aEats},\action{bEats}\}$
+\end_inset
+
+) and consequently 
+\begin_inset Formula $\ccsIdentifier P_{r}^{\prime}\step{\action{grace}}r_{\ccsIdentifier{AB}}^{\prime}$
+\end_inset
+
+ cannot be simulated by 
+\begin_inset Formula $\ccsIdentifier P_{r}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Example
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Contrasimilar Process Parallelization
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "exa:contrasim-parallelization"
+
+\end_inset
+
+Consider the following sequential program 
+\begin_inset Formula $p_{0}$
+\end_inset
+
+ (example from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "bell2013certifiably"
+
+\end_inset
+
+):
+\end_layout
+
+\begin_layout Example
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+x = either "b" or "c";
+\end_layout
+
+\begin_layout Plain Layout
+
+print "a";
+\end_layout
+
+\begin_layout Plain Layout
+
+print x;
+\end_layout
+
+\begin_layout Plain Layout
+
+end;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+An optimizing compiler would likely see the first and the second operation
+ as parallel.
+ So, an intermediate representation 
+\begin_inset Formula $q_{0}$
+\end_inset
+
+ would parallelize the statements:
+\end_layout
+
+\begin_layout Example
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+(x = either "b" or "c"
+\end_layout
+
+\begin_layout Plain Layout
+
+||  print "a");
+\end_layout
+
+\begin_layout Plain Layout
+
+print x;
+\end_layout
+
+\begin_layout Plain Layout
+
+end;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Example
+Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:contra-simulation"
+
+\end_inset
+
+ contains the transition system for the two programms 
+\begin_inset Formula $p_{0}$
+\end_inset
+
+ and 
+\begin_inset Formula $q_{0}$
+\end_inset
+
+ and their potential successor states as well as a contrasimulation 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ between the two.
+ The only difference between the two programs is that the output of 
+\begin_inset Formula $a$
+\end_inset
+
+ and the internal choice between the 
+\begin_inset Formula $b$
+\end_inset
+
+-route and the 
+\series bold
+
+\begin_inset Formula $c$
+\end_inset
+
+
+\series default
+-route are sequential for 
+\begin_inset Formula $p_{0}$
+\end_inset
+
+ and interleaved for 
+\begin_inset Formula $q_{0}$
+\end_inset
+
+.
+ Starting in 
+\begin_inset Formula $q_{0}$
+\end_inset
+
+ the two can be swapped using the path over 
+\begin_inset Formula $q_{34}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Example
+Let us first stop to observe that 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ is no simulation and thus no bisimulation, and that there indeed is no
+ simulation mutually relating 
+\begin_inset Formula $p_{0}$
+\end_inset
+
+ and 
+\begin_inset Formula $q_{0}$
+\end_inset
+
+.
+ In particular, 
+\begin_inset Formula $q_{0}\not\weakSimBy p_{0}$
+\end_inset
+
+: The transition 
+\begin_inset Formula $q_{0}\step aq_{34}$
+\end_inset
+
+ just cannot be matched by any 
+\begin_inset Formula $p_{0}$
+\end_inset
+
+-transition, because 
+\begin_inset Formula $p_{0}$
+\end_inset
+
+ has no single 
+\begin_inset Formula $\weakStepTau a$
+\end_inset
+
+-successor which could still decide between the 
+\begin_inset Formula $b$
+\end_inset
+
+-route and the 
+\series bold
+
+\begin_inset Formula $c$
+\end_inset
+
+
+\series default
+-route like 
+\begin_inset Formula $q_{34}$
+\end_inset
+
+ can.
+\end_layout
+
+\begin_layout Example
+On the other hand, 
+\begin_inset Formula $q_{0}\step aq_{34}$
+\end_inset
+
+ can be 
+\emph on
+contrasimulated
+\emph default
+ by 
+\begin_inset Formula $p_{0}\weakStepTau ap_{3}$
+\end_inset
+
+ because 
+\begin_inset Formula $p_{3}\contraSimBy q_{34}$
+\end_inset
+
+.
+ So, the critical part for 
+\begin_inset Formula $\rel R$
+\end_inset
+
+ being a contrasimulation is the anti-symmetric fragment 
+\begin_inset Formula $\{(p_{3},q_{34}),(p_{4},q_{34})\}\subseteq\rel R$
+\end_inset
+
+ (highlighted in red).
+ These tuples would also be contained in a sufficiently great simulation,
+ but there, they would not warrant 
+\begin_inset Formula $(q_{0},p_{0})$
+\end_inset
+
+ being part of the relation.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Example 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:philosophers-religious"
+
+\end_inset
+
+ already points to the fact that contrasimulation is partly blind to the
+ structure of internal choice and non-determinism.
+ 
+\begin_inset Formula $\contraSimBy$
+\end_inset
+
+ cannot tell the difference between a non-deterministic choice by visible
+ steps and a deterministic visible step followed by an internal choice.
+ 
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+So, while 
+\begin_inset Formula $p_{0}$
+\end_inset
+
+ can do 
+\begin_inset Formula $p_{0}\weakStepTau ap_{3}$
+\end_inset
+
+ and 
+\begin_inset Formula $p_{0}\weakStepTau ap_{4}$
+\end_inset
+
+, 
+\begin_inset Formula $q_{0}$
+\end_inset
+
+ allows to postpone the choice to 
+\begin_inset Formula $q_{34}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\end_inset
+
+In a nutshell: Non-determinism of visible steps can be postponed into internal
+ choice! This is made explicit by the characteristic axiom of contrasimulation
+ in 
+\noun on
+Voorhoeve
+\noun default
+ and 
+\noun on
+Mauw's
+\noun default
+ study 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "vm2001impossible"
+
+\end_inset
+
+ being 
+\begin_inset Formula 
+\[
+a.P+a.Q\:\contraSimEq\:a.(\tau.P+\tau.Q).
+\]
+
+\end_inset
+
+Note however that contrasimilarity still is stronger than the well-known
+ weak trace equivalence when it comes to drifting choices (see 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "Figure 5"
+key "bell2013certifiably"
+
+\end_inset
+
+).
+ There still are 
+\begin_inset Formula $P,Q$
+\end_inset
+
+ such that 
+\begin_inset Formula 
+\[
+a.P+a.Q\:\not\contraSimEq\:a.(P+Q).
+\]
+
+\end_inset
+
+The choice drifting is crucial for compilers that try to analyze which code
+ depends on what other computations 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "bell2013certifiably"
+
+\end_inset
+
+.
+ From the point of view of such a compiler, seeing that 
+\begin_inset Formula $\action{grace}$
+\end_inset
+
+ is bound to happen either way, it seems perfectly natural to allow it to
+ occur independently of the internal choice.
+\end_layout
+
+\begin_layout Standard
+But imagine a setting where the 
+\begin_inset Formula $\action{grace}$
+\end_inset
+
+-event is actually a way to communicate to the environment that a group
+ of processes has made up their mind on who will continue a course of action.
+ There, we would have difficulties to accept 
+\begin_inset Formula $\ccsIdentifier P_{r}$
+\end_inset
+
+ and 
+\begin_inset Formula $\ccsIdentifier P_{r}^{\prime}$
+\end_inset
+
+ to be congruent.
+\end_layout
+
+\begin_layout Subsection
+Equivalences, Differences, Intersections
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:eqs-discussion"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Time to wrap up our observations.
+\end_layout
+
+\begin_layout Itemize
+Weak bisimilarity maintains 
+\begin_inset Formula $\ccsIdentifier P_{o}\not\weakBisim\ccsIdentifier P_{g}$
+\end_inset
+
+.
+ It is too strong to ignore the distribution of choices.
+\end_layout
+
+\begin_layout Itemize
+Weak similarity considers 
+\begin_inset Formula $\ccsIdentifier P_{o}\weakSimEq\ccsIdentifier P_{g}$
+\end_inset
+
+, but also 
+\begin_inset Formula $\ccsIdentifier P_{o}\weakSimEq\ccsIdentifier P_{t}$
+\end_inset
+
+.
+ It is so far away from weak bisimilarity that it is oblivious to spurious
+ deadlocks.
+ Still, it respects the temporal order of internal choices and visible actions,
+ 
+\begin_inset Formula $\ccsIdentifier P_{r}\not\weakSimEq\ccsIdentifier P_{r}^{\prime}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Itemize
+Contrasimilarity also considers 
+\begin_inset Formula $\ccsIdentifier P_{o}\contraSimEq\ccsIdentifier P_{g}$
+\end_inset
+
+, and indeed maintains that 
+\begin_inset Formula $\ccsIdentifier P_{o}\not\contraSimEq\ccsIdentifier P_{t}$
+\end_inset
+
+.
+ But, strangely, 
+\begin_inset Formula $\ccsIdentifier P_{r}\contraSimEq\ccsIdentifier P_{r}^{\prime}$
+\end_inset
+
+.
+ It partially allows internal choices and external behavior to be drifted.
+ This breaks some intuitive temporal assumptions we might hold about our
+ models.
+ Moreover, contrasimilarity is unwieldy when it comes to proofs due to its
+ definition in terms of transition sequences instead of single weak transitions.
+\end_layout
+
+\begin_layout Standard
+So, if one looks for a notion of equivalence 
+\begin_inset Formula $\equiv_{X}$
+\end_inset
+
+, where distributed choice is transparent (
+\begin_inset Formula $\ccsIdentifier P_{o}\equiv_{X}\ccsIdentifier P_{g}$
+\end_inset
+
+), while deadlocks 
+\emph on
+and
+\emph default
+ temporal drifts are noticed (
+\begin_inset Formula $\ccsIdentifier P_{o}\not\equiv_{X}\ccsIdentifier P_{t}$
+\end_inset
+
+ and 
+\begin_inset Formula $\ccsIdentifier P_{r}\not\equiv_{X}\ccsIdentifier P_{r}^{\prime}$
+\end_inset
+
+), one will have to turn to some equivalence in the intersection of 
+\begin_inset Formula $\weakSimEq$
+\end_inset
+
+ and 
+\begin_inset Formula $\contraSimEq$
+\end_inset
+
+ while staying coarser than 
+\begin_inset Formula $\weakBisim$
+\end_inset
+
+.
+ This is what we shall do in Chapter 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "chap:coupled-simulation"
+
+\end_inset
+
+—coupled similarity is precisely the intersection of 
+\begin_inset Formula $\weakSimEq$
+\end_inset
+
+ and 
+\begin_inset Formula $\contraSimEq$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+If the application demands it, some 
+\emph on
+other refinements for notions of equivalence
+\emph default
+ can easily be added on top.
+ Classical examples include the preservation of some state property such
+ as stability or divergence.
+ For instance, a behavioral preorder 
+\begin_inset Formula $\sqsubseteq_{\Delta X}$
+\end_inset
+
+ is 
+\emph on
+divergence respecting
+\emph default
+ iff 
+\begin_inset Formula $p\sqsubseteq_{\Delta X}q$
+\end_inset
+
+ implies that, if 
+\begin_inset Formula $p$
+\end_inset
+
+ diverges, then 
+\begin_inset Formula $q$
+\end_inset
+
+ does so too.
+\end_layout
+
+\begin_layout Section
+Axiomatizations
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:axiomatizations"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+An important way of characterizing notions of equivalence in the context
+ of process calculi is in terms of 
+\emph on
+complete axiomatizations
+\emph default
+.
+ These consist of sets of equational laws on process terms that equate two
+ processes precisely when the corresponding notion of equivalence is meant
+ to.
+ Axiomatizations are of particular interest to us because the complete axiomatiz
+ation of coupled similarity by 
+\noun on
+Parrow
+\noun default
+ and 
+\noun on
+Sjödin
+\noun default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ps1994"
+
+\end_inset
+
+ hints at the possibility of employing the axiomatization for a decision
+ algorithm.
+ This section introduces the concept of axiomatization for weak bisimilarity.
+\end_layout
+
+\begin_layout Subsection
+Soundness and Completeness 
+\end_layout
+
+\begin_layout Standard
+An axiomatization 
+\begin_inset Formula $\mathcal{A}$
+\end_inset
+
+ is a set of 
+\emph on
+equational laws
+\emph default
+ that can be used to rewrite terms by substituting subterms accordingly.
+ Expressions 
+\begin_inset Formula $P$
+\end_inset
+
+ and 
+\begin_inset Formula $Q$
+\end_inset
+
+ are considered equal if they can be transformed into one-another, for which
+ we write 
+\begin_inset Formula $\mathcal{A}\vdash P=Q$
+\end_inset
+
+.
+ The correspondence between an axiomatization and an equivalence is understood
+ in terms of soundness and completeness.
+\end_layout
+
+\begin_layout Definition
+With respect to an equivalence 
+\begin_inset Formula $\equiv_{X}$
+\end_inset
+
+, an axiomatization 
+\begin_inset Formula $\mathcal{A}$
+\end_inset
+
+ is
+\end_layout
+
+\begin_deeper
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\emph on
+sound
+\emph default
+ iff
+\begin_inset space ~
+\end_inset
+
+ 
+\begin_inset Formula $\mathcal{A}\vdash P=Q$
+\end_inset
+
+ implies 
+\begin_inset Formula $P\equiv_{X}Q$
+\end_inset
+
+, and
+\end_layout
+
+\begin_layout Labeling
+\labelwidthstring 00.00.0000
+
+\emph on
+complete
+\emph default
+ iff
+\begin_inset space ~
+\end_inset
+
+ 
+\begin_inset Formula $P\equiv_{X}Q$
+\end_inset
+
+ implies 
+\begin_inset Formula $\mathcal{A}\vdash P=Q$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Soundness virtually always requires 
+\begin_inset Formula $\equiv_{X}$
+\end_inset
+
+ to be a 
+\emph on
+congruence
+\emph default
+ (with respect to the operators occurring in 
+\begin_inset Formula $\mathcal{A}$
+\end_inset
+
+) and the 
+\begin_inset Formula $\mathcal{A}$
+\end_inset
+
+-laws to be valid.
+\end_layout
+
+\begin_layout Definition
+An equivalence 
+\begin_inset Formula $\equiv_{X}$
+\end_inset
+
+ on expressions is a 
+\emph on
+congruence
+\emph default
+ for an 
+\begin_inset Formula $n$
+\end_inset
+
+-ary operator 
+\begin_inset Formula $\mathit{op}$
+\end_inset
+
+ iff 
+\begin_inset Formula $p_{i}\equiv_{X}q_{i}$
+\end_inset
+
+ for 
+\begin_inset Formula $i\in\{1,\dots,n\}$
+\end_inset
+
+ implies 
+\begin_inset Formula $\mathit{op}(p_{1},\dots,p_{n})\equiv_{X}\mathit{op}(q_{1},\dots,q_{n})$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition
+If we let a preorder 
+\begin_inset Formula $\sqsubseteq_{X}$
+\end_inset
+
+ take the place of 
+\begin_inset Formula $\equiv_{X}$
+\end_inset
+
+ in the definition, we say that 
+\begin_inset Formula $\sqsubseteq_{X}$
+\end_inset
+
+ is a 
+\emph on
+precongruence
+\emph default
+ and that 
+\begin_inset Formula $\mathit{op}$
+\end_inset
+
+ is 
+\emph on
+monotone
+\emph default
+ with respect to 
+\begin_inset Formula $\sqsubseteq_{X}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Once soundness is established, it usually becomes feasible to justify a
+ 
+\emph on
+normalization
+\emph default
+ procedure on terms in order to prove completeness.
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Definition
+\begin_inset Formula $P\cspExternalChoice(Q\cspInternalChoice R)=(P\cspExternalChoice Q)\cspInternalChoice(P\cspExternalChoice R)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Formula $P+(\tau.Q+\tau.R)=\tau.(P+Q)+\tau.(P+R)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:axiom-wb"
+
+\end_inset
+
+Axiomatizing Weak Bisimilarity
+\end_layout
+
+\begin_layout Standard
+
+\noun on
+Milner
+\noun default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+after "7.4f."
+key "milner1989comcon"
+
+\end_inset
+
+ provides a complete axiomatization for weak bisimilarity on 
+\emph on
+finite-state 
+\emph default
+
+\begin_inset Formula $\ccs$
+\end_inset
+
+ processes.
+\end_layout
+
+\begin_layout Standard
+A process expression is called 
+\emph on
+finite-state
+\emph default
+ iff it only consists of prefix, choice, process names, and a 
+\begin_inset Formula $\ccsStop$
+\end_inset
+
+-process.
+ If it additionally lacks recursion, then the process is called 
+\emph on
+finite
+\emph default
+.
+ Finite-state processes are isomorphic to finite transition systems, and
+ finite processes correspond to acyclic finite transition systems.
+\end_layout
+
+\begin_layout Standard
+To be exact, the axiomatization does not work with ordinary weak bisimilarity,
+ but with 
+\emph on
+rooted weak bisimilarity
+\emph default
+.
+ This is because weak bisimilarity is no congruence for the operators of
+ 
+\begin_inset Formula $\ccs$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Example
+\begin_inset CommandInset label
+LatexCommand label
+name "exa:weak-bisim-no-congruence"
+
+\end_inset
+
+
+\begin_inset Formula $\tau.\ccsStop\weakBisim\ccsStop$
+\end_inset
+
+ and 
+\begin_inset Formula $\action a\weakBisim\action a$
+\end_inset
+
+, but 
+\begin_inset Formula $\tau.\ccsStop+\action a\not\weakBisim\action a$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+The example shows that 
+\begin_inset Formula $\weakBisim$
+\end_inset
+
+ is no congruence with respect to the operator 
+\begin_inset Formula $\ccsChoice$
+\end_inset
+
+.
+ In its place, we need to use rooted weak bisimilarity, which is often called
+ 
+\begin_inset Quotes eld
+\end_inset
+
+weak bisimulation congruence.
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset CommandInset label
+LatexCommand label
+name "def:rooted-weak-bisim"
+
+\end_inset
+
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Rooted weak bisimilarity
+\end_layout
+
+\end_inset
+
+ Two states are 
+\emph on
+rooted weakly bisimilar
+\emph default
+, written 
+\begin_inset Formula $p\weakBisimCongruence q$
+\end_inset
+
+, iff
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+for all 
+\begin_inset Formula $p^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ with 
+\begin_inset Formula $p\step{\alpha}p^{\prime}$
+\end_inset
+
+, there is a 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ such that 
+\begin_inset Formula $q\weakStep{\alpha}q^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $p^{\prime}\weakBisim q^{\prime}$
+\end_inset
+
+, and
+\end_layout
+
+\begin_layout Enumerate
+for all 
+\begin_inset Formula $q^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ with 
+\begin_inset Formula $q\step{\alpha}q^{\prime}$
+\end_inset
+
+, there is a 
+\begin_inset Formula $p^{\prime}$
+\end_inset
+
+ such that 
+\begin_inset Formula $p\weakStep{\alpha}p^{\prime}$
+\end_inset
+
+ and 
+\begin_inset Formula $p^{\prime}\weakBisim q^{\prime}$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+In contrast to weak bisimilarity, rooted weak bisimilarity requires that
+ initial 
+\begin_inset Formula $\tau$
+\end_inset
+
+-steps are bisimulated by at least one real 
+\begin_inset Formula $\tau$
+\end_inset
+
+-step (and not stuttering).
+ After that, the definition falls back to standard weak bisimilarity 
+\begin_inset Formula $\weakBisim$
+\end_inset
+
+.
+ The result is slightly finer than weak bisimilarity, 
+\begin_inset Formula $\weakBisimCongruence\;\subseteq\;\weakBisim$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+This minimal deviation from the original requirements of 
+\begin_inset Formula $\weakBisim$
+\end_inset
+
+ actually is enough to transform weak bisimilarity into a congruence for
+ finite-state 
+\begin_inset Formula $\ccs$
+\end_inset
+
+ processes.
+ Example
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "exa:weak-bisim-no-congruence"
+
+\end_inset
+
+ is solved because 
+\begin_inset Formula $\tau.\ccsStop\not\weakBisimCongruence\ccsStop$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition
+\begin_inset CommandInset label
+LatexCommand label
+name "def:wb-axioms"
+
+\end_inset
+
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula $\weakBisimCongruence$
+\end_inset
+
+ axioms
+\end_layout
+
+\end_inset
+
+ We define the following axiom system 
+\begin_inset Formula $\mathcal{A}_{\mathit{WB}}$
+\end_inset
+
+:
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{center}
+\end_layout
+
+\end_inset
+
+
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="4">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top">
+<column alignment="right" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="0pt">
+<row topspace="-0.2cm">
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+AC1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $P\ccsChoice Q$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $=$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $Q\ccsChoice P$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topspace="-0.2cm">
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+AC2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $P\ccsChoice(Q\ccsChoice R)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $=$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(P\ccsChoice Q)\ccsChoice R$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topspace="-0.2cm">
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+AC3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $P\ccsChoice P$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $=$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $P$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topspace="-0.2cm">
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+AC4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ 
+\begin_inset Formula $P\ccsChoice\ccsStop$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $=$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $P$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topspace="-0.2cm">
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+AT1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ 
+\begin_inset Formula $\alpha\ccsPrefix\tau\ccsPrefix P$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $=$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\alpha\ccsPrefix P$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topspace="-0.2cm">
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+AT2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $P\ccsChoice\tau\ccsPrefix P$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $=$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\tau\ccsPrefix P$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row topspace="-0.2cm">
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+AT3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="right" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ 
+\begin_inset Formula $\alpha\ccsPrefix(P+\tau\ccsPrefix Q)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $=$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\alpha\ccsPrefix(P+\tau\ccsPrefix Q)+\alpha\ccsPrefix Q$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{center}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The laws 
+\series bold
+AC1–AC4
+\series default
+ are quite straight-forward axioms for the choice operator.
+ They are valid because the corresponding nodes in transition systems according
+ to the operational 
+\begin_inset Formula $\ccs$
+\end_inset
+
+ semantics (Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:ccs"
+
+\end_inset
+
+) have identical outgoing transitions.
+\end_layout
+
+\begin_layout Standard
+The laws 
+\series bold
+AT1–AT3
+\series default
+ are referred to as the 
+\begin_inset Quotes eld
+\end_inset
+
+
+\begin_inset Formula $\tau$
+\end_inset
+
+-laws.
+\begin_inset Quotes erd
+\end_inset
+
+ They capture the intuition that the observer of a system cannot tell how
+ much internal activity occurs between visible activity.
+ They as well are valid for 
+\begin_inset Formula $\weakBisimCongruence$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+While soundness of the laws is not really a problem, completeness takes
+ some proof effort.
+ The proof relies on a normalization of process terms into 
+\begin_inset Formula $\mathit{WB}$
+\end_inset
+
+-normal forms (
+\begin_inset Quotes eld
+\end_inset
+
+full standard forms
+\begin_inset Quotes erd
+\end_inset
+
+ in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "milner1989comcon"
+
+\end_inset
+
+), and this normalization is what is of real interest to us in our pursuit
+ of decision procedures for process equalities.
+\end_layout
+
+\begin_layout Definition
+\begin_inset CommandInset label
+LatexCommand label
+name "def:wb-normal-form"
+
+\end_inset
+
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula $\mathit{WB}$
+\end_inset
+
+-normal form
+\end_layout
+
+\end_inset
+
+ A process term 
+\begin_inset Formula $P$
+\end_inset
+
+ is in 
+\begin_inset Formula $\mathit{WB}$
+\end_inset
+
+-
+\emph on
+normal form
+\emph default
+ iff
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+it has the structure 
+\begin_inset Formula $P=\alpha_{1}\ccsPrefix P_{1}\ccsChoice\alpha_{2}\ccsPrefix P_{2}\ccsChoice\dots\ccsChoice\alpha_{n}\ccsPrefix P_{n}$
+\end_inset
+
+ (or 
+\begin_inset Formula $P=\ccsStop$
+\end_inset
+
+),
+\end_layout
+
+\begin_layout Enumerate
+every 
+\begin_inset Formula $P_{i}$
+\end_inset
+
+ is in 
+\begin_inset Formula $\mathit{WB}$
+\end_inset
+
+-normal form, and
+\end_layout
+
+\begin_layout Enumerate
+\begin_inset Formula $P\weakStep{\alpha}P^{\prime}$
+\end_inset
+
+ implies there is an 
+\begin_inset Formula $i$
+\end_inset
+
+ such that 
+\begin_inset Formula $\alpha_{i}=\alpha$
+\end_inset
+
+ and 
+\begin_inset Formula $P_{i}=P^{\prime}$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Every finite process can soundly be rewritten into such a normal form using
+ a method of 
+\emph on
+saturation
+\emph default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "milner1989comcon"
+
+\end_inset
+
+, adding all the implied weak transitions as explicit process prefixes.
+ With slight modifications, this applies to finite-state processes also.
+\end_layout
+
+\begin_layout Standard
+On the transition systems of such normal forms weak and strong steps coincide,
+ that is, 
+\begin_inset Formula $\weakStep{\cdot}=\step{\cdot}$
+\end_inset
+
+.
+ Consequently, weak bisimilarity 
+\begin_inset Formula $\weakBisim$
+\end_inset
+
+ and strong bisimilarity 
+\emph on
+
+\begin_inset Formula $\strongBisim$
+\end_inset
+
+ almost
+\emph default
+ match.
+ The trick to make them match exactly is adding 
+\begin_inset Formula $\tau$
+\end_inset
+
+-loops to every state.
+ This addition is transparent to weak bisimilarity (though not to rooted
+ weak bisimilarity), and creates transition systems where 
+\begin_inset Formula $\weakStepTau{\cdot}=\step{\cdot}$
+\end_inset
+
+ and thus 
+\begin_inset Formula $\weakBisim\:=\:\equiv_{\mathit{SB}}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+This illustrates how normalization procedures in completeness proofs 
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+for notions of equivalence 
+\end_layout
+
+\end_inset
+
+often justify how to rewrite models such that the equivalence coincides
+ with strong bisimilarity on the result system.
+ The proofs tell us how to reduce deciding one notion of equivalence to
+ deciding strong bisimilarity, which is a common approach (cf.
+\begin_inset space \space{}
+\end_inset
+
+
+\noun on
+Aceto
+\noun default
+ et al.
+\begin_inset space \space{}
+\end_inset
+
+
+\begin_inset Quotes eld
+\end_inset
+
+The algorithmics of bisimilarity
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ais2011algoBisim"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+For weak bisimilarity, one might argue that it is obvious to reduce the
+ problem to strong bisimilarity on 
+\begin_inset Formula $\weakStepTau{\cdot}$
+\end_inset
+
+ by computing the weak transition relation.
+ For coupled similarity however, we are going to encounter a not-so-obvious
+ reduction in Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:algo-bisim-approach"
+
+\end_inset
+
+ based on an axiomatization we discuss in Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:axiomatization-cs"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Game-Theoretic Characterizations
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Game-theoretic-Characterizations"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+There is a tradition of characterizing logics in terms of specialized two-player
+ games with perfect information 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sepLogicGames"
+
+\end_inset
+
+.
+ Notions of equivalence correspond to certain modal logics describing observatio
+ns on systems 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "glabbeek1993ltbt"
+
+\end_inset
+
+.
+ In this light, it comes as no surprise that notions of (bi-)similarity
+ can also be expressed in terms of games.
+ We here introduce 
+\emph on
+simple games
+\emph default
+ in the spirit of the 
+\begin_inset Quotes eld
+\end_inset
+
+finite games
+\begin_inset Quotes erd
+\end_inset
+
+ from 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "graedel2007finite"
+
+\end_inset
+
+, but we will not demand finiteness for now.
+ We then cite the characterizations of weak similarity and bisimilarity
+ as a preparation for our characterization of coupled similarity in Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Game-Characterization"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Simple Games
+\end_layout
+
+\begin_layout Standard
+Checking whether two states are related by a (bi-)simulation preorder 
+\begin_inset Formula $\sqsubseteq_{X}$
+\end_inset
+
+ can also be seen as a 
+\emph on
+game
+\emph default
+ along the lines of coinductive characterizations like the one in Lemma
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:ws-gfp"
+
+\end_inset
+
+.
+ One player, the 
+\emph on
+attacker
+\emph default
+, challenges that 
+\begin_inset Formula $p\sqsubseteq_{X}q$
+\end_inset
+
+, while the other player, the 
+\emph on
+defender
+\emph default
+, has to name witnesses for the existential quantifications of the definition.
+ For the preorders discussed here, quite simple games suffice.
+\end_layout
+
+\begin_layout Definition
+\begin_inset CommandInset label
+LatexCommand label
+name "def:simple-game"
+
+\end_inset
+
+
+\begin_inset Argument 1
+status collapsed
+
+\begin_layout Plain Layout
+Simple games
+\end_layout
+
+\end_inset
+
+ A 
+\emph on
+simple game
+\emph default
+ 
+\begin_inset Formula $\game[p_{0}]$
+\end_inset
+
+ consists of
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+a (countable) set of 
+\emph on
+game positions
+\emph default
+ 
+\begin_inset Formula $G$
+\end_inset
+
+,
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+partitioned into a set of 
+\emph on
+defender positions
+\emph default
+ 
+\begin_inset Formula $G_{d}\subseteq G$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+and 
+\emph on
+attacker positions
+\emph default
+ 
+\begin_inset Formula $G_{a}\defEq G\backslash G_{d}$
+\end_inset
+
+,
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+and a graph of 
+\emph on
+game moves
+\emph default
+ 
+\begin_inset Formula $\gameMove\subseteq G\times G$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $p_{0}\in G$
+\end_inset
+
+ names an 
+\emph on
+initial position
+\emph default
+.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+isbref[locale]{Simple
+\backslash
+_Game}{simple
+\backslash
+_game}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+The positions 
+\begin_inset Formula $G_{a}$
+\end_inset
+
+ and 
+\begin_inset Formula $G_{d}$
+\end_inset
+
+ specify whose turn it is.
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+ In what follows, we mostly consider 
+\emph on
+alternating
+\emph default
+ 
+\emph on
+games
+\emph default
+, that is games where 
+\begin_inset Formula $\gameMove\subseteq(G_{a}\times G_{d})\cup(G_{d}\times G_{a})$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset CommandInset label
+LatexCommand label
+name "def:plays-wins"
+
+\end_inset
+
+
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Plays and wins
+\end_layout
+
+\end_inset
+
+We call the paths 
+\begin_inset Formula $p_{0}p_{1}\wdots\in G^{\infty}$
+\end_inset
+
+ with 
+\begin_inset Formula $p_{i}\gameMove p_{i+1}$
+\end_inset
+
+ 
+\emph on
+plays
+\emph default
+ of 
+\begin_inset Formula $\game[p_{0}]$
+\end_inset
+
+.
+ The defender 
+\emph on
+wins
+\emph default
+ all infinite plays.
+ If a finite play 
+\begin_inset Formula $p_{0}\dots p_{n}$
+\end_inset
+
+ is stuck, that is, if 
+\begin_inset Formula $p_{n}\!\centernot{\gameMove}$
+\end_inset
+
+, then the stuck player loses: The defender wins if 
+\begin_inset Formula $p_{n}\in G_{a}$
+\end_inset
+
+, and the attacker wins if 
+\begin_inset Formula $p_{n}\in G_{d}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+A strategy tells a player how to win.
+ For our purposes, we are only interested in the winning strategies of the
+ defender.
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Strategies and winning strategies
+\end_layout
+
+\end_inset
+
+A 
+\emph on
+defender strategy
+\emph default
+ is a (usually partial) mapping from initial play fragments to next moves
+ 
+\begin_inset Formula $f\subseteq\{(p_{0}\wdots p_{n},p^{\prime})\mid p_{n}\in G_{d}\land p_{n}\gameMove p^{\prime}\}$
+\end_inset
+
+.
+ A play 
+\begin_inset Formula $p$
+\end_inset
+
+ follows a strategy 
+\begin_inset Formula $f$
+\end_inset
+
+ iff, for each move 
+\begin_inset Formula $p_{i}\gameMove p_{i+1}$
+\end_inset
+
+ with 
+\begin_inset Formula $p_{i}\in G_{d}$
+\end_inset
+
+, 
+\begin_inset Formula $p_{i+1}=f(p_{0}\wdots p_{i})$
+\end_inset
+
+.
+ If every such play is won by the defender, 
+\begin_inset Formula $f$
+\end_inset
+
+ is a 
+\emph on
+winning strategy
+\emph default
+ for the defender.
+ The player with a winning strategy for 
+\begin_inset Formula $\game[p_{0}]$
+\end_inset
+
+ is said to 
+\emph on
+win
+\emph default
+ 
+\begin_inset Formula $\game[p_{0}]$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Separator plain
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Winning regions and determinacy
+\end_layout
+
+\end_inset
+
+The 
+\emph on
+winning region
+\emph default
+ 
+\begin_inset Formula $W_{\sigma}$
+\end_inset
+
+ of player 
+\begin_inset Formula $\sigma\in\{a,d\}$
+\end_inset
+
+ for a game 
+\begin_inset Formula $\game$
+\end_inset
+
+ is the set of states 
+\begin_inset Formula $p_{0}$
+\end_inset
+
+ from which player 
+\begin_inset Formula $\sigma$
+\end_inset
+
+ wins 
+\begin_inset Formula $\game[p_{0}]$
+\end_inset
+
+.
+ We call 
+\begin_inset Formula $\game$
+\end_inset
+
+ determined if 
+\begin_inset Formula $G=W_{d}\cup W_{a}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Proposition
+\begin_inset CommandInset label
+LatexCommand label
+name "prop:simple-games-determined"
+
+\end_inset
+
+All simple games are determined.
+\end_layout
+
+\begin_layout Proof
+(Sketch) The winning condition for the defender from Definition 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "def:plays-wins"
+
+\end_inset
+
+ obviously is a safety property (
+\begin_inset Quotes eld
+\end_inset
+
+Don't run into certain deadlocks.
+\begin_inset Quotes erd
+\end_inset
+
+).
+ Safety properties correspond to closed sets of plays.
+ The 
+\noun on
+Gale
+\noun default
+–
+\noun on
+Stewart
+\noun default
+ theorem guarantees games that have closed sets as winning conditions to
+ be determined.
+\end_layout
+
+\begin_layout Subsection
+Characterizing Weak Similarity and Bisimilarity with Games
+\end_layout
+
+\begin_layout Standard
+The coinductive characterization of 
+\begin_inset Formula $\weakSimBy$
+\end_inset
+
+ in Lemma 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lem:ws-gfp"
+
+\end_inset
+
+ can easily be transformed into a simple game 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "stirling1993modal"
+
+\end_inset
+
+.
+ We skip the proofs for this.
+ They are not so different from what we shall do for coupled similarity
+ in Section 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Game-Characterization"
+
+\end_inset
+
+ in more detail.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{tikzpicture}[>->,auto,node distance=4cm, rel/.style={dashed,font=
+\backslash
+it}]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[minimum size=1.3cm,draw] (Att){$(p,q)_{
+\backslash
+mathtt{a}}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[state] (Def) [below right of=Att] {$(
+\backslash
+alpha,p^
+\backslash
+prime,q)_{
+\backslash
+mathtt{d}}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[minimum size=1.3cm,draw, dashed] (Att2) [right of=Att] {$(p^
+\backslash
+prime,q^
+\backslash
+prime)_{
+\backslash
+mathtt{a}}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+node[minimum size=1.3cm,draw, dashed, blue] (Att3) [left of=Att] {$(q,p)_{
+\backslash
+mathtt{a}}$};
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+path
+\end_layout
+
+\begin_layout Plain Layout
+
+(Att) edge[bend right=30] node {[$p
+\backslash
+step{
+\backslash
+alpha}p^{
+\backslash
+prime}$]} (Def)
+\end_layout
+
+\begin_layout Plain Layout
+
+(Def) edge[bend right=30] node {[$q
+\backslash
+weakStepTau{
+\backslash
+alpha}q^{
+\backslash
+prime}$]} (Att2)
+\end_layout
+
+\begin_layout Plain Layout
+
+(Att2) edge[bend right=20, dashed, -] node {} (Att)
+\end_layout
+
+\begin_layout Plain Layout
+
+(Att3) edge[bend left=20, dashed, blue, -] node {} (Att)
+\end_layout
+
+\begin_layout Plain Layout
+
+(Att) edge[bend left=20, blue] node {} (Att3);
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{tikzpicture}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Schematic weak (
+\color blue
+bi-
+\color inherit
+)simulation game.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:game-ws"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula $\weakSimBy$
+\end_inset
+
+ game
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:Weak-simulation-game"
+
+\end_inset
+
+ The 
+\emph on
+weak simulation game
+\emph default
+ 
+\begin_inset Formula $\game_{\mathit{WS}}[p_{0}]=(G,G_{a},\gameMove,p_{0})$
+\end_inset
+
+ for a transition system 
+\begin_inset Formula $\system=(S,\actions,\step{})$
+\end_inset
+
+ consists of
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\emph on
+attacker nodes
+\emph default
+ 
+\begin_inset Formula $(p,q)_{\mathtt{a}}\in G_{a}$
+\end_inset
+
+ with 
+\begin_inset Formula $p,q\in S$
+\end_inset
+
+, and
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+defender nodes
+\emph default
+ 
+\begin_inset Formula $(\alpha,p,q)_{\mathtt{d}}\in G_{d}$
+\end_inset
+
+ for situations where a simulation challenge has been formulated,
+\end_layout
+
+\end_deeper
+\begin_layout Definition
+and two kinds of moves
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\emph on
+challenges
+\emph default
+ 
+\begin_inset Formula $(p,q)_{\mathtt{a}}\gameMove(\alpha,p^{\prime},q)_{\mathtt{d}}$
+\end_inset
+
+ 
+\begin_inset space ~
+\end_inset
+
+if
+\begin_inset space ~
+\end_inset
+
+ 
+\begin_inset Formula $p\step{\alpha}p^{\prime}$
+\end_inset
+
+, and
+\end_layout
+
+\begin_layout Itemize
+
+\emph on
+answers
+\emph default
+ 
+\begin_inset Formula $(\alpha,p^{\prime},q)_{\mathtt{d}}\gameMove(p^{\prime},q^{\prime})_{\mathtt{a}}$
+\end_inset
+
+ 
+\begin_inset space ~
+\end_inset
+
+if
+\begin_inset space ~
+\end_inset
+
+ 
+\begin_inset Formula $q\weakStepTau{\alpha}q^{\prime}$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+The right-hand side of Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:game-ws"
+
+\end_inset
+
+ (the black part) gives a schematic illustration of this game.
+ The square nodes represent kinds of attacker positions, and the circle
+ nodes kinds of defender positions.
+ Arrows stand for schematic game moves.
+ The dashed positions are places where the game returns to attacker positions
+ of the initial kind, but with a new variable assignment.
+\end_layout
+
+\begin_layout Proposition
+The defender wins 
+\begin_inset Formula $\game_{\mathit{WS}}[(p,q)_{\mathtt{a}}]$
+\end_inset
+
+ precisely if  
+\begin_inset Formula $p\weakSimBy q$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\game_{\mathit{WS}}$
+\end_inset
+
+ can easily be extended with 
+\emph on
+swaps
+\emph default
+ of sides to establish 
+\emph on
+symmetry
+\emph default
+ of the characterized relation, thus capturing weak 
+\emph on
+bi-
+\emph default
+similarity
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+, that is to find the greatest symmetric weak simulation
+\end_layout
+
+\end_inset
+
+.
+ Symmetry swaps are represented by the blue part of Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:game-ws"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Definition
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula $\weakBisim$
+\end_inset
+
+ game
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "def:Weak-bisimulation-game"
+
+\end_inset
+
+ The 
+\emph on
+weak bisimulation game
+\emph default
+ 
+\begin_inset Formula $\game_{\mathit{WB}}$
+\end_inset
+
+ for a transition system 
+\begin_inset Formula $\system=(S,\actions,\step{})$
+\end_inset
+
+ is just 
+\begin_inset Formula $\game_{\mathit{WS}}$
+\end_inset
+
+ with one additional kind of moves:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\emph on
+symmetry
+\begin_inset space ~
+\end_inset
+
+swaps
+\emph default
+ 
+\begin_inset Formula $(p,q)_{\mathtt{a}}\gameMove(q,p)_{\mathtt{a}}$
+\end_inset
+
+
+\begin_inset Note Note
+status open
+
+\begin_layout Description
+\begin_inset Formula $(q,p)_{\mathtt{a}}\gameMove(a,p^{\prime},q)_{\mathtt{d}}$
+\end_inset
+
+ if 
+\begin_inset Formula $\game_{\mathit{WS}}$
+\end_inset
+
+ contains the move 
+\begin_inset Formula $(p,q)_{\mathtt{a}}\gameMove(a,p^{\prime},q)_{\mathtt{d}}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+This means that the attacker, where they see fit, can choose to attack on
+ the right-hand side instead of only the left-hand side.
+\end_layout
+
+\begin_layout Proposition
+The defender wins 
+\begin_inset Formula $\game_{\mathit{WB}}[(p,q)_{\mathtt{a}}]$
+\end_inset
+
+ precisely if 
+\begin_inset Formula $p\weakBisim q$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Such games are sufficiently simple for algorithms on them to also be quite
+ simple.
+ That is why they can serve as a nice intermediate level of abstraction
+ for algorithms computing behavioral equivalence relations.
+ The details of this are provided in Section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:The-Game-Theoretic-Approach"
+
+\end_inset
+
+.
+\end_layout
+
+\end_body
+\end_document

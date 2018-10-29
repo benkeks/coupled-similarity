@@ -39,7 +39,7 @@ shows
   "q \<longmapsto> a q' \<Longrightarrow> (\<exists> p'. R p' q' \<and> (p \<longmapsto> a p'))"
   using assms unfolding bisimulation_def by auto
     
-end --"context lts"
+end \<comment>\<open>context lts\<close>
 
 end
   

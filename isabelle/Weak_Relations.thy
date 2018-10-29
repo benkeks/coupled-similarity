@@ -142,7 +142,7 @@ next
     thus "False"
       using steps_retain_weak_sim[OF ws] by blast
   next
-    --"case identical to first case"
+    \<comment>\<open>case identical to first case\<close>
     fix p q p' a pq1 pq2
     assume case_assms:
       "R p q"
@@ -443,7 +443,7 @@ lemma delay_simulation_implies_weak_simulation:
 
 subsection \<open>Bell's Eventual Simulation\<close>
   
---"NOTE: Bell actually defines this on weak step-sequences rather than on single weak steps!!"
+\<comment>\<open>NOTE: Bell actually defines this on weak step-sequences rather than on single weak steps!!\<close>
 definition eventual_sim ::
   "('s \<Rightarrow> 's \<Rightarrow> bool) \<Rightarrow> bool"
 where
@@ -527,7 +527,7 @@ lemma eventual_bisim_implies_contrasim:
   assumes
     "eventual_bisim R" and
     symmetry: "\<And> p q . R p q \<Longrightarrow> R q p"
-      --"it's alright to require symmetry because eventual bisimilarity is symmetric."
+      \<comment>\<open>it's alright to require symmetry because eventual bisimilarity is symmetric.\<close>
   shows 
     "contrasim_step (\<lambda> p q. \<exists>q'. q \<longmapsto>* tau q' \<and> R p q')"
   unfolding contrasim_step_def 
@@ -589,7 +589,7 @@ abbreviation coupling ::
 
 lemma contrasim_implies_coupling:
   assumes
-    "contrasim R" --"actually also is true with 'weaker' @{term contrasim_step}"
+    "contrasim R" \<comment>\<open>actually also is true with 'weaker' @{term contrasim_step}\<close>
     "R p q"
   shows
     "\<exists> q'. q \<longmapsto>*tau q' \<and> R q' p"
@@ -673,7 +673,7 @@ lemma contrasim_challenge_strength_does_not_imply:
   using taufree_contrasim_symm[of R p1 q1] assms
   unfolding contrasim_strong_step_def by (blast+)
 
-end -- "context @{locale lts_tau}"
+end \<comment>\<open>context @{locale lts_tau}\<close>
   
 subsection \<open>Adding a tau sink retains similarity\<close>
   

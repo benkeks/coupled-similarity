@@ -156,7 +156,7 @@ abbreviation tau_max :: "'s \<Rightarrow> bool" where
 lemma tau_max_deadlock:
   fixes q
   assumes
-    "\<And> r1 r2. r1 \<longmapsto>* tau r2 \<and> r2 \<longmapsto>* tau r1 \<Longrightarrow> r1 = r2" --"contracted cycles (anti-symmetry)"
+    "\<And> r1 r2. r1 \<longmapsto>* tau r2 \<and> r2 \<longmapsto>* tau r1 \<Longrightarrow> r1 = r2" \<comment>\<open>contracted cycles (anti-symmetry)\<close>
     "finite {q'. q \<longmapsto>* tau q'}"
   shows
     "\<exists> q' . q \<longmapsto>* tau q' \<and> tau_max q'"
@@ -214,6 +214,6 @@ corollary non_divergence_implies_eventual_stability:
     "\<exists> p' . p \<longmapsto>* tau p' \<and> stable_state p'"
   using assms perpetual_instability_divergence by blast
   
-end --\<open>context @{locale lts_tau}\<close>
+end \<comment>\<open>context @{locale lts_tau}\<close>
   
 end

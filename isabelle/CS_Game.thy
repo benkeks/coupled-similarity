@@ -195,7 +195,7 @@ proof clarify
     thus "cs_game_moves (DefenderStepNode a p qi)
           (strategy_from_coupledsim R (DefenderStepNode a p qi # play))"
       using qi_spec qii_spec unfolding dsn(2) by auto
-  next --"coupling quite analogous."
+  next \<comment>\<open>coupling quite analogous.\<close>
     assume dcn:
       "n0 = DefenderCouplingNode pi qi"
     hence qi_spec:

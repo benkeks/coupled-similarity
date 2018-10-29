@@ -16,7 +16,7 @@ begin
 definition player1_position :: "'s \<Rightarrow> bool"
   where "player1_position s \<equiv> \<not> player0_position s"
 
---\<open>plays (to be precise: play p refixes) are lists. we model them 
+\<comment>\<open>plays (to be precise: play p refixes) are lists. we model them 
   with the most recent move at the beginning. (for our purpose it's enough to consider finite plays)\<close>
 type_synonym ('s2) play = "'s2 list"
 type_synonym ('s2) strategy = "'s2 play \<Rightarrow> 's2"
@@ -25,7 +25,7 @@ inductive_set plays :: "'s play set" where
   "[initial] \<in> plays" |
   "p#play \<in> plays \<Longrightarrow> p \<longmapsto>\<heartsuit> p' \<Longrightarrow> p'#p#play \<in> plays"
 
---"plays for a given player 0 strategy"
+\<comment>\<open>plays for a given player 0 strategy\<close>
 inductive_set plays_for_strategy :: "'s strategy \<Rightarrow> 's play set" for f where
   init: "[initial] \<in> plays_for_strategy f" |
   p0move: "n0#play \<in> plays_for_strategy f \<Longrightarrow> player0_position n0 \<Longrightarrow> n0 \<longmapsto>\<heartsuit> f (n0#play)

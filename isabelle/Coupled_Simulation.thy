@@ -181,7 +181,7 @@ lemma weak_bisim_implies_coupled_sim_gla17:
   assumes
     wbisim:   "weak_bisimulation R" and
     symmetry: "\<And> p q . R p q \<Longrightarrow> R q p"
-    -- "symmetry is needed here, which is alright because bisimilarity is symmetric."
+    \<comment>\<open>symmetry is needed here, which is alright because bisimilarity is symmetric.\<close>
   shows "coupled_simulation R"
 unfolding coupled_simulation_def proof safe
   fix p q p' a
@@ -222,7 +222,7 @@ assumes
   "coupled_simulation R"
   "R p q"
   "p \<longmapsto>* A  p'"
-  "A = tau" --{*some hack because the induction would always eat my tau when i placed it right in the @{text "\<longmapsto>* tau"} part . why is this?!*}
+  "A = tau" \<comment>\<open>some hack because the induction would always eat my tau when i placed it right in the @{text "\<longmapsto>* tau"} part . why is this?!\<close>
 shows "\<exists> q' . q \<longmapsto>* A q' \<and> R p' q'"
   using assms(1,3,2,4) steps_retain_weak_sim
   unfolding coupled_simulation_weak_simulation by blast
@@ -273,7 +273,7 @@ next
     thus "False"
       using silent_steps_retain_coupled_simulation[OF CS] by blast
   next
-    --"case identical to first case"
+    \<comment>\<open>case identical to first case\<close>
     fix p q p' a pq1 pq2
     assume case_assms:
       "R p q"
@@ -341,7 +341,7 @@ proof -
       using R2_def(1) unfolding coupled_simulation_weak_premise by blast
     ultimately show "\<exists>q'. q \<longmapsto>* tau  q' \<and> (\<exists>pq. R1 q' pq \<and> R2 pq p \<or> R2 q' pq \<and> R1 pq p)"
       using steps_concat by blast
-  next --"analogous with R2 and R1 swapped"
+  next \<comment>\<open>analogous with R2 and R1 swapped\<close>
     fix p q pq
     assume r2r1: "R2 p pq" "R1 pq q"
     then obtain pq' where "R2 pq' p" "pq \<longmapsto>* tau  pq'"
@@ -403,7 +403,7 @@ lemma gcs_is_coupled_simulation:
   shows "coupled_simulation greatest_coupled_simulation"
   unfolding coupled_simulation_def
 proof safe
-  --"identical to ws"
+  \<comment>\<open>identical to ws\<close>
   fix p q p' a
   assume ih:
     "greatest_coupled_simulation p q"
@@ -459,7 +459,7 @@ lemma coupledsim_unfold:
 
 subsection \<open>Coupled Simulation Join\<close>
 
---"Proposition 3 in @{cite glabbeek17}"
+\<comment>\<open>Proposition 3 in @{cite glabbeek17}\<close>
 lemma coupledsim_choice_1:
   assumes 
     "p \<sqsubseteq>cs q"
@@ -474,7 +474,7 @@ proof -
   moreover have "coupled_simulation R1"
     unfolding R1_def using coupledsim_step_gla17 .
   ultimately show q_pqc: "q \<sqsubseteq>cs pqc" by blast
---"next case"
+\<comment>\<open>next case\<close>
   define R where "R \<equiv> \<lambda> p0 q0 . p0 = q \<and> q0 = pqc \<or> p0 = pqc \<and> q0 = q \<or> p0 = p \<and> q0 = q"
   hence "R pqc q" by blast
   thus "pqc \<sqsubseteq>cs  q"
@@ -536,7 +536,7 @@ proof -
   qed
 qed
 
---\<open>the opposite direction is trivial\<close>
+\<comment>\<open>the opposite direction is trivial\<close>
 lemma coupledsim_choice_2:
   assumes 
     "pqc \<sqsubseteq>cs q" 
@@ -697,7 +697,7 @@ text\<open>In finite systems, coupling is guaranteed to happen through tau-maxim
 lemma coupledsim_max_coupled:
   assumes 
     "p \<sqsubseteq>cs q"
-    "\<And> r1 r2 . r1 \<longmapsto>* tau r2 \<and> r2 \<longmapsto>* tau r1 \<Longrightarrow> r1 = r2" --"contracted tau cycles"
+    "\<And> r1 r2 . r1 \<longmapsto>* tau r2 \<and> r2 \<longmapsto>* tau r1 \<Longrightarrow> r1 = r2" \<comment>\<open>contracted tau cycles\<close>
     "\<And> r. finite {r'. r \<longmapsto>* tau r'}"
   shows
     "\<exists> q' . q \<longmapsto>* tau q' \<and> q' \<sqsubseteq>cs p \<and> tau_max q'"
@@ -790,7 +790,7 @@ lemma coupledsim_eq_reducible_1:
     contracted_cycles: "\<And> r1 r2 . r1 \<longmapsto>* tau r2 \<and> r2 \<longmapsto>* tau r1 \<Longrightarrow> r1 = r2" and
     finite_taus: "\<And> r. finite {r'. r \<longmapsto>* tau r'}" and
     one_step_taus: "\<And> r a r'. r \<longmapsto>* tau r' \<Longrightarrow> \<exists>r''. tau_max r'' \<and> r \<longmapsto>\<tau> r'' \<and> r' \<sqsubseteq>cs r''"
-      --"this is some kind of cheat :/" and
+      \<comment>\<open>this is some kind of cheat :/\<close> and
     sim_vis_p:
       "\<And> p' a. \<not>tau a \<Longrightarrow> p \<longmapsto>^ a p' \<Longrightarrow> \<exists> p'' q'. q \<longmapsto>^ a q' \<and> p' \<sqsubseteq>cs q'" and
     sim_tau_max_p:
@@ -916,7 +916,7 @@ qed
 
 subsection \<open>Relation to S-Coupled Simulation\<close>
 
---"from sangiorgi2012, p.~226"
+\<comment>\<open>from sangiorgi2012, p.~226\<close>
 lemma divergence_free_coupledsims_coincidence_1:
   defines 
     "R1 \<equiv> (\<lambda> p q . p \<sqsubseteq>cs q \<and> (stable_state p \<longrightarrow> stable_state q))" and
@@ -953,7 +953,7 @@ proof safe
       then show ?thesis using q'_def unfolding R1_def by blast
     qed
   qed
-  --"analogous to previous case"
+  \<comment>\<open>analogous to previous case\<close>
   then show "weak_simulation (\<lambda>p q. R2 q p)" unfolding R1_def R2_def .
 next
   fix p q
@@ -963,7 +963,7 @@ next
   thus "R2 p q"
     unfolding R1_def R2_def 
     using coupled_sim_by_is_coupled_sim coupledsim_stable_state_symm by blast
-next --"analogous"
+next \<comment>\<open>analogous\<close>
   fix p q
   assume
     "R2 p q"
@@ -973,7 +973,7 @@ next --"analogous"
     using coupled_sim_by_is_coupled_sim coupledsim_stable_state_symm by blast
 qed
 
---"from sangiorgi2012, p.~227"
+\<comment>\<open>from sangiorgi2012, p.~227\<close>
 lemma divergence_free_coupledsims_coincidence_2:
   defines 
     "R \<equiv> (\<lambda> p q . p \<sqsubseteq>scs q \<or> (\<exists> q' . q \<longmapsto>* tau q' \<and> p \<equiv>scs q'))"
@@ -1018,7 +1018,7 @@ next
       "R1 p q"
     thus "\<exists>q'. q \<longmapsto>* tau  q' \<and> (q' \<sqsubseteq>scs  p \<or> (\<exists>q'a. p \<longmapsto>* tau  q'a \<and> q' \<equiv>scs  q'a))"
     proof -
-      --"dropped a superfluous case distinction from @cite{sangiorgi2012}"
+      \<comment>\<open>dropped a superfluous case distinction from @cite{sangiorgi2012}\<close>
       obtain p' where "stable_state p'" "p \<longmapsto>* tau p'"
         using non_divergent_system non_divergence_implies_eventual_stability by blast
       hence "p \<longmapsto>^ \<tau>  p'" using tau_tau by blast
@@ -1099,7 +1099,7 @@ where
     (\<exists> q'. (q \<longmapsto>* (\<lambda>a. True) q') \<and> R p' q') \<and>
     (\<exists> q'. (q \<longmapsto>* (\<lambda>a. True) q') \<and> R q' p')"
 
---"A little strange fact about gp15's CS."
+\<comment>\<open>A little strange fact about gp15's CS.\<close>
 lemma coupled_simulation_gp15_no_weak_bisim:
   assumes
     "(x::'s) \<noteq> y"
@@ -1235,7 +1235,7 @@ lemma mutual_coupled_simulation_implies_eventual_bisim:
   using assms coupled_simulation_implies_eventual_sim
   unfolding eventual_bisim_def by simp    
 
-end -- "context @{locale lts_tau}"
+end \<comment>\<open>context @{locale lts_tau}\<close>
 
 subsection \<open>Example Locale more s-coupled than coupled sim.\<close>
   
@@ -1344,6 +1344,6 @@ next
   thus "R1 p q" unfolding assms sys using tau_def by auto
 qed
 
-end --"@{locale ex_lts} // example lts"
-  
+end \<comment>\<open>@{locale ex_lts} // example lts\<close>
+
 end

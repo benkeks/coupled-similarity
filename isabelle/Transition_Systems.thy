@@ -101,15 +101,15 @@ text\<open>If one can reach only a finite portion of the graph following @{text 
 lemma step_max_deadlock:
   fixes A q
   assumes
-    "\<And> r1 r2. r1 \<longmapsto>* A r2 \<and> r2 \<longmapsto>* A r1 \<Longrightarrow> r1 = r2" --"contracted cycles (anti-symmetry)"
+    "\<And> r1 r2. r1 \<longmapsto>* A r2 \<and> r2 \<longmapsto>* A r1 \<Longrightarrow> r1 = r2" \<comment>\<open>contracted cycles (anti-symmetry)\<close>
     "finite {q'. q \<longmapsto>* A q'}"
     "\<forall> q'. q \<longmapsto>* A q' \<longrightarrow> (\<exists>q''. q' \<longmapsto>* A q'' \<and> q' \<noteq> q'')"
   shows
     False
   using assms
-  sorry--"this should be easy to prove if i understood anything about \<open>finite\<close> in isabelle.."
+  sorry \<comment>\<open>this should be easy to prove if i understood anything about \<open>finite\<close> in isabelle..\<close>
   
-end --"end of lts"
+end \<comment>\<open>end of lts\<close>
   
 lemma lts_impl_steps2:
   assumes

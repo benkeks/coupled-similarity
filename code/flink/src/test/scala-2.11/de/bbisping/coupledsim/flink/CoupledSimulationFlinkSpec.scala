@@ -13,16 +13,16 @@ import org.scalatest.time.SpanSugar._
 
 import de.bbisping.coupledsim.algo.cs.FixedPointCoupledSimilarity
 import de.bbisping.coupledsim.ts.DirectTSImporter
-  
+
 class CoupledSimulationFlinkSpec extends FunSpec with TimeLimits {
   
-  val smallSamples = CoupledSimulationFlinkBenchmark.smallSamples
+  val smallSamples: Seq[String] = CoupledSimulationFlinkBenchmark.smallSamples
   
-  val vltsSamplesSmall = CoupledSimulationFlinkBenchmark.vltsSamplesSmall
+  val vltsSamplesSmall: Seq[String] = CoupledSimulationFlinkBenchmark.vltsSamplesSmall
     
-  val vltsSamplesMedium = CoupledSimulationFlinkBenchmark.vltsSamplesMedium
+  val vltsSamplesMedium: Seq[String] = CoupledSimulationFlinkBenchmark.vltsSamplesMedium
     
-  val env = ExecutionEnvironment.getExecutionEnvironment
+  val env: ExecutionEnvironment = ExecutionEnvironment.getExecutionEnvironment
   
   describe("The computed CS relation") {
     forAll(smallSamples) { sample =>
@@ -31,13 +31,13 @@ class CoupledSimulationFlinkSpec extends FunSpec with TimeLimits {
         println("\nTEST: " + Console.BLUE + sample + Console.RESET)
         val ts = new DirectTSImporter(src).result()
         val rel = new FixedPointCoupledSimilarity(ts).compute()
-        
+
         val cs = CoupledSimulationFlink.executeAlgorithm(env, cfgPath = sample, cfgReturnRelation = true).relation.get
-        
+
         it("should be sound") {
           (cs.tupleSet diff rel.tupleSet) should be (empty)
         }
-        
+
         it("should be complete") {
           (rel.tupleSet diff cs.tupleSet) should be (empty)
         }
@@ -47,7 +47,7 @@ class CoupledSimulationFlinkSpec extends FunSpec with TimeLimits {
     forAll(vltsSamplesSmall) { sample =>
       describe("for sample " + sample) {
         println("\n" + Console.BLUE + sample + Console.RESET)
-       
+
         it("should be computed in a reasonable amount of time and be sound (by self-check)") {
           failAfter(180 seconds) {
             val cs = CoupledSimulationFlink.executeAlgorithm(env, cfgPath = sample, cfgReturnRelation = true, cfgCheckSoundness = true)
@@ -56,7 +56,7 @@ class CoupledSimulationFlinkSpec extends FunSpec with TimeLimits {
         }
       }
     }
-    
+
     forAll(vltsSamplesMedium) { sample =>
       describe("for sample " + sample) {
         it("should be computed in a reasonable amount of time") {

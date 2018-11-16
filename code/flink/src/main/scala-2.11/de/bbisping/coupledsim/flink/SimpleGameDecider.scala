@@ -22,12 +22,12 @@ class SimpleGameDecider {
   def compute(
       gameGraph: Graph[(CoupledSimulationFlink.Action, Int, Int), Int, NullValue],
       env: ExecutionEnvironment): Graph[(CoupledSimulationFlink.Action, Int, Int), Int, NullValue] = {
-    implicit val tupleType = TypeInformation.of(classOf[((Action, Int, Int), Int)])
-    implicit val tupleClassTag = ClassTag.apply(classOf[((Action, Int, Int), Int)])
+    implicit val tupleType: TypeInformation[((Action, Int, Int), Int)] = TypeInformation.of(classOf[((Action, Int, Int), Int)])
+    implicit val tupleClassTag: ClassTag[Nothing] = ClassTag.apply(classOf[((Action, Int, Int), Int)])
     
     val successorCount = gameGraph.outDegrees().map(
         (nodeOut: ((Action, Int, Int), LongValue)) => nodeOut match {
-        case ((v: (Action, Int, Int), d: LongValue)) => 
+        case (v: (Action, Int, Int), d: LongValue) =>
           val num = d.getValue.toInt
           (v, if (num == 0 && v._1 != CoupledSimulationGame.ATTACK) SimpleGameDecider.ATTACKER_WIN_MAGIC_NUMBER else num)
       }
@@ -38,7 +38,7 @@ class SimpleGameDecider {
         
     val propagate = new ScatterFunction[(Action, Int, Int), Int, Int, NullValue] {
       
-    	override def sendMessages(vertex: Vertex[(Action, Int, Int), Int]) = {
+    	override def sendMessages(vertex: Vertex[(Action, Int, Int), Int]): Unit = {
     	  if (vertex.getValue == SimpleGameDecider.ATTACKER_WIN_MAGIC_NUMBER ) {
     	    val edges = getEdges.iterator()
     	    while (edges.hasNext) {
@@ -51,13 +51,13 @@ class SimpleGameDecider {
     
     val propagateGather = new GatherFunction[(Action, Int, Int), Int, Int] {
       
-    	override def updateVertex(vertex: Vertex[(Action, Int, Int), Int], inMessages: MessageIterator[Int]) = {
+    	override def updateVertex(vertex: Vertex[(Action, Int, Int), Int], inMessages: MessageIterator[Int]): Unit = {
     		var value = vertex.getValue
     		
     		if (value != SimpleGameDecider.ATTACKER_WIN_MAGIC_NUMBER) {
     		  var count = 0
       		while (inMessages.hasNext) {
-      		  val msg = inMessages.next
+      		  inMessages.next
       		  count += 1
       		}
       		
@@ -84,5 +84,5 @@ class SimpleGameDecider {
 }
 
 object SimpleGameDecider {
-  val ATTACKER_WIN_MAGIC_NUMBER = -1
+  val ATTACKER_WIN_MAGIC_NUMBER: Int = -1
 }

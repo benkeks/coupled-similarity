@@ -15,7 +15,7 @@ class DirectTSImporter(
     val transitionMatcher = """(\d*)\s*,\s*(\d*)\s*,\s*\"?([^\"]*)\"?""".r
     
     val transitions = for {
-      l <- tsFileContent.lines
+      l <- tsFileContent.linesIterator
       val transitionMatcher(srcS, tarS, actionS) = l
       val src = srcS.toInt
       val tar = tarS.toInt

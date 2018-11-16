@@ -2,7 +2,7 @@ package de.bbisping.coupledsim.flink
 
 import org.apache.flink.api.scala._
 import org.apache.flink.graph.scala.Graph
-import org.apache.flink.api.scala.utils.`package`.DataSetUtils
+import org.apache.flink.api.scala.utils.DataSetUtils
 import org.apache.flink.api.scala.DataSet
 import org.apache.flink.types.NullValue
 
@@ -14,7 +14,7 @@ class ActionsStringToLongRelabeling(ts: Graph[Int, NullValue, String]) {
     val actions: DataSet[String] = stringLabeledEdges.map(_._3).distinct()
     val preliminaryActionIds: DataSet[(Long, String)] = DataSetUtils(actions).zipWithIndex//.zipWithUniqueId
     val actionIds: DataSet[(Long, String)] =
-      preliminaryActionIds map ({ case ((id, name)) =>
+      preliminaryActionIds map ({ case (id, name) =>
         if (name == tauStr) {
           (tau, name)
         } else {

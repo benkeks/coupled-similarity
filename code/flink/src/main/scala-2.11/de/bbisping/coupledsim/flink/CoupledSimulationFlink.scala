@@ -1,29 +1,14 @@
 package de.bbisping.coupledsim.flink
 
+import de.bbisping.coupledsim.ts.WeakTransitionSystem
+import de.bbisping.coupledsim.util.{Coloring, LabeledRelation, Relation}
+import org.apache.flink.api.common.functions._
+import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.api.scala._
+import org.apache.flink.core.fs.FileSystem
+import org.apache.flink.graph.Edge
 import org.apache.flink.graph.scala.Graph
 import org.apache.flink.types.NullValue
-import org.apache.flink.api.common.typeinfo.TypeInformation
-import org.apache.flink.core.fs.FileSystem
-import org.apache.flink.api.common.functions._
-import org.apache.flink.types.LongValue
-import org.apache.flink.graph.spargel.ScatterFunction
-import org.apache.flink.graph.spargel.MessageIterator
-import org.apache.flink.graph.spargel.GatherFunction
-import org.apache.flink.graph.Vertex
-import org.apache.flink.graph.Edge
-import scala.reflect.ClassTag
-import org.apache.flink.graph.spargel.ScatterGatherConfiguration
-import org.apache.flink.graph.EdgeDirection
-import org.apache.flink.api.java.utils.ParameterTool
-import org.apache.flink.api.scala.utils.`package`.DataSetUtils
-import org.apache.flink.graph.asm.translate.TranslateFunction
-import org.apache.flink.api.scala.ClosureCleaner
-
-import de.bbisping.coupledsim.ts.WeakTransitionSystem
-import de.bbisping.coupledsim.util.LabeledRelation
-import de.bbisping.coupledsim.util.Coloring
-import de.bbisping.coupledsim.util.Relation
 import org.apache.flink.util.Collector
 
 /**
@@ -60,7 +45,7 @@ object CoupledSimulationFlink {
   
   type Action = Long
   
-  def graphToWeakTransitionSystem(tsGraph: Graph[Int, NullValue, Action], tau: Action) = {
+  def graphToWeakTransitionSystem(tsGraph: Graph[Int, NullValue, Action], tau: Action): WeakTransitionSystem[Int, Action, Int] = {
     val tsEdges: Seq[Edge[Int,Long]] = tsGraph.getEdges.collect()
     val tsVerts: Seq[Int] = tsGraph.getVertexIds.collect()
     
@@ -76,9 +61,9 @@ object CoupledSimulationFlink {
   def crunchGraph(tsGraph: Graph[Int, NullValue, Action], partitionMap: DataSet[(Int, Coloring.Color)], env: ExecutionEnvironment)
   : Graph[Int, NullValue, Action] = {
     
-    val crunchedGraphEdges = ((((partitionMap joinWithHuge tsGraph.getEdgesAsTuple3())
-          .where(0).equalTo(0) ((pl, step) => (pl._2, step._2, step._3)))
-        joinWithTiny partitionMap).where(1).equalTo(0) ((step, pr) => new Edge(step._1, pr._2, step._3)))
+    val crunchedGraphEdges = ((partitionMap joinWithHuge tsGraph.getEdgesAsTuple3())
+          .where(0).equalTo(0) ((pl, step) => (pl._2, step._2, step._3))
+        joinWithTiny partitionMap).where(1).equalTo(0) ((step, pr) => new Edge(step._1, pr._2, step._3))
       .distinct()
       
     Graph.fromDataSet(crunchedGraphEdges, env)
@@ -104,9 +89,9 @@ object CoupledSimulationFlink {
       tauMaximalSteps: Boolean = false, delayWeakSteps: Boolean = false)
     : (Graph[Int, NullValue, Long], DataSet[(Int, Int)]) = {
     
-    val tauSteps: DataSet[(Int, Int)] = tsGraph.getEdgesAsTuple3() filter new FilterFunction[((Int, Int, Action))] {
-      def filter(edge: ((Int, Int, Action))) = edge match {
-        case ((p0, p1, a)) => a == tau && p0 != p1
+    val tauSteps: DataSet[(Int, Int)] = tsGraph.getEdgesAsTuple3() filter new FilterFunction[(Int, Int, Action)] {
+      def filter(edge: (Int, Int, Action)): Boolean = edge match {
+        case (p0, p1, a) => a == tau && p0 != p1
       }
     } map (st => (st._1, st._2))
     
@@ -117,9 +102,9 @@ object CoupledSimulationFlink {
     
     val closedTauStepsPost: DataSet[(Int, Int)] = if (tauMaximalSteps) {
       val tauMaximalStates: DataSet[Int] = (tsGraph.getVertexIds() leftOuterJoin tauSteps)
-        .where(s => s).equalTo(0).apply( ((s: Int, st: (Int, Int), collector: Collector[Int]) => if (st == null) collector.collect(s) ))
+        .where(s => s).equalTo(0).apply( (s: Int, st: (Int, Int), collector: Collector[Int]) => if (st == null) collector.collect(s) )
       
-      (tauMaximalStates join closedTauStepsPre).where(s => s).equalTo(1) ((s, st) => st)
+      (tauMaximalStates join closedTauStepsPre).where(s => s).equalTo(1) ((_, st) => st)
     } else {
       closedTauStepsPre
     }
@@ -148,7 +133,7 @@ object CoupledSimulationFlink {
     
     val (_, signatures) = new SignatureRefinement().compute(weakTransitionGraph)
     
-    val ts = graphToWeakTransitionSystem(tsGraph, tau)
+    graphToWeakTransitionSystem(tsGraph, tau)
     
     signatures
   }
@@ -172,7 +157,7 @@ object CoupledSimulationFlink {
   }
   
   def getSymmetricPart(rel: DataSet[(Int, Int)]): DataSet[(Int, Int)] = {
-    (rel join rel).where(0,1).equalTo(1,0) ((l, r) => l)
+    (rel join rel).where(0,1).equalTo(1,0) ((l, _) => l)
   }
   
   def getCycleEquivalence(tsGraph: Graph[Int, NullValue, Action], tau: Action, env: ExecutionEnvironment): (DataSet[(Int, Int)], Graph[Int, NullValue, Long]) = {
@@ -196,8 +181,11 @@ object CoupledSimulationFlink {
       cfgCheckSoundness: Boolean = false,
       cfgReturnRelation: Boolean = false,
       cfgBenchmarkSizes: Boolean = false,
-      cfgReturnPartitionRelation: Boolean = false) = {
-    
+      cfgReturnPartitionRelation: Boolean = false): Result = {
+
+
+    env.getConfig.enableObjectReuse()
+
     /* Phase 1: Import the transition system */
     
     val ts0: Graph[Int, NullValue, String] = 
@@ -206,15 +194,14 @@ object CoupledSimulationFlink {
     val TAU: Action = 0
     
     // relabel the input to use Longs as IDs for the actions instead of Strings
-    val (ts1: Graph[Int, NullValue, Action],
-        actionIds: DataSet[(Action, String)]) = 
+    val (ts1: Graph[Int, NullValue, Action], _) =
       new ActionsStringToLongRelabeling(ts0).compute(env, TAU_STR, TAU)
       
     /* Phase 2: Apply a minimization to the TS based on a finer notion of equivalence */
       
     val (preminimizationColorsA: DataSet[(Int, Int)], weakTransitionGraph: Graph[Int, NullValue, Long]) =
       if (cfgPreminimization == "weakbisim" || cfgPreminimization == "delaybisim") {
-        getWeakBisim(ts1, TAU, env, delayBisim = (cfgPreminimization == "delaybisim"))
+        getWeakBisim(ts1, TAU, env, delayBisim = cfgPreminimization == "delaybisim")
       } else {
         getCycleEquivalence(ts1, TAU, env)
       }
@@ -237,18 +224,19 @@ object CoupledSimulationFlink {
     
     /* Phase 4: Build the CS game graph */
     
-    val (gameNodes, gameMoves) = new CoupledSimulationGameDiscovery().compute(
+    val (_, gameMoves) = new CoupledSimulationGameDiscovery().compute(
         ts,
         if (cfgOverApproximation != "none") Some(signatures) else None,
         TAU,
         env)
     
     if (cfgOutputGame) {
-      val gameSink = gameMoves.writeAsCsv(
+      gameMoves.writeAsCsv(
         filePath = cfgPath + ".game",
         rowDelimiter = "\n",
         fieldDelimiter = ",",
         writeMode = FileSystem.WriteMode.OVERWRITE)
+        .name("game sink")
     }
     
     val gameGraph: Graph[(Action, Int, Int), Int, NullValue] = Graph.fromTuple2DataSet[(Action, Int, Int), Int](
@@ -290,7 +278,7 @@ object CoupledSimulationFlink {
       val resultCoupledSimulation: DataSet[(Int, Int)] =
         defenderWinningAttackerNodes
         .distinct()
-        .map ({ case (((_, p, q), _)) => (p, q) }: (((Action, Int, Int), Int)) => (Int, Int))
+        .map ({ case ((_, p, q), _) => (p, q) }: (((Action, Int, Int), Int)) => (Int, Int))
       
       // merge strongly connected components
       val csEq = getSymmetricPart(resultCoupledSimulation)
@@ -311,19 +299,20 @@ object CoupledSimulationFlink {
       val resultCoupledSimulation: DataSet[(Int, Int)] =
         defenderWinningAttackerNodes
         .distinct()
-        .map ({ case (((_, p, q), _)) => (p, q) }: (((Action, Int, Int), Int)) => (Int, Int))
+        .map ({ case ((_, p, q), _) => (p, q) }: (((Action, Int, Int), Int)) => (Int, Int))
         .join(preminimizationColors)
           .where(0).equalTo(1).apply((pq, mc) => (mc._1, pq._2))
         .join(preminimizationColors)
           .where(1).equalTo(1) ((pq, mc) => (pq._1, mc._1))
     
       if (cfgOutputRelation) {
-        val sinkCoupledSimulation =
+
         resultCoupledSimulation.writeAsCsv(
             filePath = cfgPath + ".cs",
             rowDelimiter = "\n",
             fieldDelimiter = ",",
             writeMode = FileSystem.WriteMode.OVERWRITE).setParallelism(1)
+          .name("game sink coupled sim")
       }
       
       if (cfgCheckSoundness || cfgReturnRelation) { 
@@ -335,18 +324,18 @@ object CoupledSimulationFlink {
           
           val simulationChallenges: DataSet[(Action, Int, Int)] = (resultCoupledSimulation join ts1.getEdgesAsTuple3())
             .where(0).equalTo(0) ((pq, step) => (step._3, step._2, pq._2))
-          val simulationAnswers: DataSet[(Action, Int, Int, Int)] = (((simulationChallenges join weakTransitionGraph.getEdgesAsTuple3())
-              .where(0,2).equalTo(2,0) ((apq, step) => (apq._1, apq._2, apq._3, step._2)))
+          val simulationAnswers: DataSet[(Action, Int, Int, Int)] = ((simulationChallenges join weakTransitionGraph.getEdgesAsTuple3())
+              .where(0,2).equalTo(2,0) ((apq, step) => (apq._1, apq._2, apq._3, step._2))
             join resultCoupledSimulation)
-              .where(1,3).equalTo(0,1) ((answer, pair) => answer)
+              .where(1,3).equalTo(0,1) ((answer, _) => answer)
           val simulationCounterExamples: DataSet[(Action, Int, Int)] = (simulationChallenges leftOuterJoin simulationAnswers)
             .where(0,1,2).equalTo(0,1,2) ((challenge, answer, collector: Collector[(Action, Int, Int)]) =>
               if (answer == null) collector.collect(challenge))
           
           val couplingAnswers: DataSet[(Int, Int, Int)] =
-            (((resultCoupledSimulation join weakTransitionGraph.getEdgesAsTuple3().filter(_._3 == TAU))
-              .where(1).equalTo(0) ((pq, step) => (pq._1, pq._2, step._2)))
-            join resultCoupledSimulation).where(2,0).equalTo(0,1) ((answer, pair) => answer) // note the inversion for coupling!
+            ((resultCoupledSimulation join weakTransitionGraph.getEdgesAsTuple3().filter(_._3 == TAU))
+              .where(1).equalTo(0) ((pq, step) => (pq._1, pq._2, step._2))
+            join resultCoupledSimulation).where(2,0).equalTo(0,1) ((answer, _) => answer) // note the inversion for coupling!
           val couplingCounterExamples: DataSet[(Int, Int)] = (resultCoupledSimulation leftOuterJoin couplingAnswers)
             .where(0,1).equalTo(0,1) ((challenge, answer, collector: Collector[(Int, Int)]) =>
               if (answer == null) collector.collect(challenge))
@@ -368,7 +357,7 @@ object CoupledSimulationFlink {
         new Result(benchmarkSizes = benchmarkSizes)
       }  
     } else {
-       val count = defenderWinningAttackerNodes.count()
+       defenderWinningAttackerNodes.count()
        new Result(benchmarkSizes = benchmarkSizes)
     }
   }

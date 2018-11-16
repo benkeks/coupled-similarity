@@ -9,8 +9,6 @@ import org.apache.flink.api.common.functions.FlatMapFunction
 import org.apache.flink.util.Collector
 import org.apache.flink.api.common.functions.FilterFunction
 import org.apache.flink.api.common.functions.JoinFunction
-import scala.reflect.ClassTag
-import org.apache.flink.api.common.typeinfo.TypeInformation
 
 
 /**
@@ -46,7 +44,7 @@ class CoupledSimulationGameDiscovery {
         // only generate attacker nodes where there is a chance of the defender winning
         (signatures cross signatures) flatMap new FlatMapFunction[((Int, Signature), (Int, Signature)), (Action, Int, Int)] {
           def flatMap(pqSig: ((Int, Signature), (Int, Signature)),
-              out: Collector[(Action, Int, Int)]) = pqSig match {
+              out: Collector[(Action, Int, Int)]): Unit = pqSig match {
             case ((p, pSig), (q, qSig)) =>
               if (pSig.size <= qSig.size && (pSig subsetOf qSig)) {
                 out.collect((ATTACK, p, q))
@@ -59,9 +57,9 @@ class CoupledSimulationGameDiscovery {
     
     // only allow "real" (non-stuttering) tau-steps (because otherwise this could be used
     // by the defender to go into infinite loops and win) (we assume that tau cycles have been compressed)
-    val tauSteps = ts.getEdgesAsTuple3() filter new FilterFunction[((Int, Int, Action))] {
-      def filter(edge: ((Int, Int, Action))) = edge match {
-        case ((p0, p1, a)) => a == TAU && p0 != p1
+    val tauSteps = ts.getEdgesAsTuple3() filter new FilterFunction[(Int, Int, Action)] {
+      def filter(edge: (Int, Int, Action)): Boolean = edge match {
+        case (p0, p1, a) => a == TAU && p0 != p1
       }
     }
     
@@ -88,14 +86,15 @@ class CoupledSimulationGameDiscovery {
         }
         
         // at some point the defender has to decide that this is the right place to perform the visible action
+        // and yield back to the attacker (that the defender may not postpone the yielding, means that we use delay steps and not weak steps!)
         val newSimulationAnswersUnfiltered =
           (newDefenderSimulationNodes join ts.getEdgesAsTuple3())
-          .where(2/*q*/,0/*a*/).equalTo(0/*src*/,2/*a*/) ((dn, edge) => (dn, (ATTACK, dn._2, edge._2))) // TAU
-        
+          .where(2/*q*/,0/*a*/).equalTo(0/*src*/,2/*a*/) ((dn, edge) => (dn, (ATTACK, dn._2, edge._2)))
+
         val newSimulationAnswers: DataSet[((Action, Int, Int), (Action, Int, Int))] =
-          (attackerNodes join newSimulationAnswersUnfiltered).where(n => n).equalTo(1)((a, mv) => mv)
-          
-        // afterwards (or directly on tau challenges) the defender may yield the inititiative back to the attacker
+          (attackerNodes join newSimulationAnswersUnfiltered).where(n => n).equalTo(1)((_, mv) => mv)
+
+        // on tau challenges the defender may yield the inititiative back to the attacker directly
         val newSimulationAnswerTauResolves: DataSet[((Action, Int, Int), (Action, Int, Int))] =
           (newDefenderSimulationNodes
               .filter(_._1 == TAU)
@@ -104,7 +103,7 @@ class CoupledSimulationGameDiscovery {
           
         // every attacker node can be the entry or exit of a coupling challenge
         val newCouplingChallengesEntrys: DataSet[((Action, Int, Int), (Action, Int, Int))]  =
-          (newAttackerNodes map (an => (an, (COUPLING, an._2, an._3))))
+          newAttackerNodes map (an => (an, (COUPLING, an._2, an._3)))
           
         val newDefenderCouplingNodes: DataSet[(Action, Int, Int)] = deltaNodes.filter(n => n._1 == COUPLING)
           
@@ -115,7 +114,7 @@ class CoupledSimulationGameDiscovery {
         val newCouplingMoves: DataSet[((Action, Int, Int), (Action, Int, Int))] =
           (newDefenderCouplingNodes join tauSteps)
           .where(2/*q*/).equalTo(0/*src*/) (new JoinFunction[(Action, Int, Int), (Int, Int, Action), ((Action, Int, Int), (Action, Int, Int))] {
-            def join(cn: (Action, Int, Int), edge: (Int, Int, Action)) = {
+            def join(cn: (Action, Int, Int), edge: (Int, Int, Action)): ((Action, Int, Int), (Action, Int, Int)) = {
               (cn, (COUPLING, cn._2, edge._2))
             }
         })
@@ -129,7 +128,10 @@ class CoupledSimulationGameDiscovery {
           newCouplingMoves
           
         val reallyNewGameMoves = (newGameMoves coGroup discoveredMoves)
-          .where(0,1).equalTo(0,1).apply(fun = { (mv1: Iterator[((Action, Int, Int), (Action, Int, Int))], mv2: Iterator[((Action, Int, Int), (Action, Int, Int))], out: Collector[((Action, Int, Int), (Action, Int, Int))]) => 
+          .where(0,1).equalTo(0,1).apply(fun = {
+              (mv1: Iterator[((Action, Int, Int), (Action, Int, Int))],
+              mv2: Iterator[((Action, Int, Int), (Action, Int, Int))],
+              out: Collector[((Action, Int, Int), (Action, Int, Int))]) =>
             if (mv2.isEmpty) {
               for (nm <- mv1) out.collect(nm)
             }
@@ -138,7 +140,7 @@ class CoupledSimulationGameDiscovery {
         (reallyNewGameMoves, reallyNewGameMoves)
     }
     
-    val gameNodes = attackerNodes //union defenderSimulationNodes
+    val gameNodes = attackerNodes
       
     (gameNodes, gameMoves)
   }

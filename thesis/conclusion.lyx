@@ -1,5 +1,5 @@
-#LyX 2.2 created this file. For more info see http://www.lyx.org/
-\lyxformat 508
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
 \begin_document
 \begin_header
 \save_transient_properties true
@@ -30,6 +30,8 @@ fixme
 \font_osf false
 \font_sf_scale 100 100
 \font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures false
 \graphics default
 \default_output_format default
 \output_sync 1
@@ -59,6 +61,7 @@ fixme
 \suppress_date false
 \justification true
 \use_refstyle 1
+\use_minted 0
 \index Index
 \shortcut idx
 \color #008000
@@ -67,7 +70,10 @@ fixme
 \tocdepth 3
 \paragraph_separation indent
 \paragraph_indentation default
-\quotes_language english
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
 \papercolumns 1
 \papersides 1
 \paperpagestyle plain
@@ -150,6 +156,7 @@ Van Glabbeek
 \begin_inset CommandInset citation
 LatexCommand cite
 key "glabbeek1993ltbt"
+literal "true"
 
 \end_inset
 
@@ -190,6 +197,7 @@ Tapparo's
 \begin_inset CommandInset citation
 LatexCommand cite
 key "rt2010efficientSimulation"
+literal "true"
 
 \end_inset
 
@@ -287,9 +295,18 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
 \begin_inset Graphics
 	filename img/coupledsimtool.png
 	width 100col%
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -315,6 +332,7 @@ status open
 LatexCommand href
 name "coupledsim.bbisping.de"
 target "https://coupledsim.bbisping.de"
+literal "false"
 
 \end_inset
 
@@ -399,6 +417,7 @@ Weijland
 \begin_inset CommandInset citation
 LatexCommand cite
 key "gw1996branchingBisim"
+literal "true"
 
 \end_inset
 
@@ -416,6 +435,7 @@ es resemble coupled similarity.
 \begin_inset CommandInset citation
 LatexCommand cite
 key "grabr2014fdr"
+literal "true"
 
 \end_inset
 
@@ -423,6 +443,7 @@ key "grabr2014fdr"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "garavel2013cadp"
+literal "true"
 
 \end_inset
 
@@ -430,6 +451,7 @@ key "garavel2013cadp"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "kant2015ltsmin"
+literal "true"
 
 \end_inset
 

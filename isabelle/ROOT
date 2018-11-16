@@ -6,6 +6,8 @@ session "Coupled_Simulation" = "HOL" +
   theories [quick_and_dirty]
     CS_Fixpoint_Algo
     CS_Game
+    CS_Fixpoint_Algo_Delay
+    CS_Game_Delay
   document_files
     "root.tex"
     (*"root.bib"*)

@@ -39,11 +39,15 @@ object CoupledSimulationFlinkBenchmark {
     "shared/src/test/assets/vlts/vasy_10_56.csv",
 //    "shared/src/test/assets/vlts/vasy_18_73.csv" // memory ran out (in discovery)
     "shared/src/test/assets/vlts/vasy_25_25.csv"
-  //  "shared/src/test/assets/vlts/vasy_40_60.csv" // weak bisim takes forever (also 15 secs in the optimized [BGR2016] implementation)
+  //  "shared/src/test/assets/vlts/vasy_40_60.csv"
+      /*
+        transitive closure on vasy_40_60 takes forever (also 15 secs in the optimized [BGR2016] implementation);
+        weak bisim result probably wrong due to hash collisions
+      */
   )
   
-  def runSizeMark(cfgPreminimization: String, cfgOverApproximation: String) = {
-    val samples = 
+  def runSizeMark(cfgPreminimization: String, cfgOverApproximation: String): Unit = {
+    val samples = // List("shared/src/test/assets/vlts/vasy_40_60.csv")
       smallSamples ++
       vltsSamplesSmall ++
       vltsSamplesMedium
@@ -81,7 +85,7 @@ object CoupledSimulationFlinkBenchmark {
     }
   }
   
-  def runTimeMark(cfgPreminimization: String, cfgOverApproximation: String) = {
+  def runTimeMark(cfgPreminimization: String, cfgOverApproximation: String): Unit = {
     val samples = 
       smallSamples ++ // warmup
       smallSamples ++ 
@@ -95,7 +99,7 @@ object CoupledSimulationFlinkBenchmark {
       
       val begin = System.currentTimeMillis()
       
-      val csResult = CoupledSimulationFlink.executeAlgorithm(env,
+      CoupledSimulationFlink.executeAlgorithm(env,
           cfgPath = s,
           cfgPreminimization = cfgPreminimization,
           cfgOverApproximation = cfgOverApproximation)

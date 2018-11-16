@@ -590,8 +590,15 @@ proof safe
   qed
 qed
 
+definition coupled_delay_simulation ::
+  "('s \<Rightarrow> 's \<Rightarrow> bool) \<Rightarrow> bool"
+  where
+  "coupled_delay_simulation R  \<equiv> 
+    delay_simulation R \<and> coupling R"
+
 lemma coupled_sim_by_eq_delay_coupled_simulation:
-  "(p \<sqsubseteq>cs q) = (\<exists>R. R p q \<and> delay_simulation R \<and> coupling R)"
+  "(p \<sqsubseteq>cs q) = (\<exists>R. R p q \<and> coupled_delay_simulation R)"
+  unfolding coupled_delay_simulation_def
 proof
   assume "p \<sqsubseteq>cs q"
   define R where "R \<equiv> coupled_simulated_by"

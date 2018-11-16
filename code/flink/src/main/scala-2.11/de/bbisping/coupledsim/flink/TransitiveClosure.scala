@@ -1,17 +1,10 @@
 package de.bbisping.coupledsim.flink
 
-import org.apache.flink.api.scala._
-import org.apache.flink.api.scala.DataSet
-import org.apache.flink.graph.scala.Graph
-import org.apache.flink.types.NullValue
-import de.bbisping.coupledsim.util.Coloring
-import org.apache.flink.api.common.functions.FlatMapFunction
-import org.apache.flink.util.Collector
-import org.apache.flink.api.common.functions.FilterFunction
-import org.apache.flink.api.common.functions.JoinFunction
-import scala.reflect.ClassTag
 import org.apache.flink.api.common.typeinfo.TypeInformation
-import org.apache.flink.api.scala.utils.`package`.DataSetUtils
+import org.apache.flink.api.scala.DataSet
+import org.apache.flink.util.Collector
+
+import scala.reflect.ClassTag
 
 
 class TransitiveClosure[A] {

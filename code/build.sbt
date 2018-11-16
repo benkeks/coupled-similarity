@@ -2,7 +2,7 @@ name := "CoupledSim"
 
 version := "0.1.0"
 
-scalaVersion := "2.11.11"
+scalaVersion := "2.11.12"
 
 val scalacOpts = Seq(
   "-Xmax-classfile-name", "140",
@@ -13,7 +13,7 @@ val scalacOpts = Seq(
 )
 
 lazy val web = (project in file("web")).settings(
-  scalaVersion := "2.11.11",
+  scalaVersion := "2.11.12",
   scalaJSProjects := Seq(jsClient),
   isDevMode in scalaJSPipeline := false,
   pipelineStages in Assets := Seq(scalaJSPipeline),
@@ -26,24 +26,24 @@ lazy val web = (project in file("web")).settings(
 ).enablePlugins(SbtWeb)
 
 lazy val shared = (project in file("shared")).settings(
-  scalaVersion := "2.11.11",
+  scalaVersion := "2.11.12",
   name := "shared",
   scalacOptions ++= scalacOpts,
   test in assembly := {},
   libraryDependencies ++= Seq(
-    "org.scalaz" %%% "scalaz-core" % "7.2.16"
+    "org.scalaz" %%% "scalaz-core" % "7.2.26"
   )
 )
 
 lazy val jsClient = (project in file("js-client")).settings(
-  scalaVersion := "2.11.11",
+  scalaVersion := "2.11.12",
   name := "coupledsim-client",
   parallelExecution in ThisBuild := false,
   scalacOptions ++= scalacOpts,
   testFrameworks += new TestFramework("utest.runner.Framework"),
   resolvers += sbt.Resolver.bintrayRepo("denigma", "denigma-releases"),
   libraryDependencies ++= Seq(
-    "org.scalaz" %%% "scalaz-core" % "7.2.16",
+    "org.scalaz" %%% "scalaz-core" % "7.2.26",
     "com.lihaoyi" %%% "utest" % "0.5.4",
     "org.singlespaced" %%% "scalajs-d3" % "0.3.4",
     "org.denigma" %%% "codemirror-facade" % "5.13.2-0.8",
@@ -62,22 +62,25 @@ lazy val jsClient = (project in file("js-client")).settings(
       baseDirectory.value / ".." / "shared" / "src" / "main" / "scala-2.11"
 ).aggregate(shared).dependsOn(shared).enablePlugins(ScalaJSPlugin, ScalaJSWeb)
 
-val flinkVersion = "1.4.2"
+val flinkVersion = "1.6.1"
 
 val flinkDependencies = Seq(
   "org.apache.flink" %% "flink-scala" % flinkVersion % "provided",
   "org.apache.flink" %% "flink-table" % flinkVersion % "provided",
   "org.apache.flink" %% "flink-streaming-scala" % flinkVersion % "provided",
-  "org.apache.flink" %% "flink-gelly-scala" % "1.4.1")
+  "org.apache.flink" %% "flink-gelly-scala" % "1.6.1")
 
 lazy val flink = (project in file("flink")).
   settings(
-    scalaVersion := "2.11.11",
+    scalaVersion := "2.11.12",
     resolvers ++= Seq(
  	   "Apache Development Snapshot Repository" at "https://repository.apache.org/content/repositories/snapshots/",
     	Resolver.mavenLocal
     ),
-    libraryDependencies ++= flinkDependencies ++ Seq("org.scalatest" %% "scalatest" % "3.0.5" % "test"),
+    libraryDependencies ++= flinkDependencies ++ Seq(
+      "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+      //,"org.slf4j" % "slf4j-simple" % "1.7.+"
+    ),
     //fork in run := true,
     test in assembly := {},
     run in Compile := Defaults.runTask(fullClasspath in Compile,

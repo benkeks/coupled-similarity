@@ -28,7 +28,7 @@ class SignatureRefinement {
       val oldSigCount: DataSet[Tuple1[Int]] = coloring.map(_._2).distinct.map(_ => Tuple1(1)).sum(0)
       
       val signatureEdges: DataSet[(Int, (Color, Color))] = ts.getEdgesAsTuple3().join(coloring).where(1).equalTo(0) {
-        (edge, color) => (edge._1, (edge._3.toInt, color._2))
+        (edge, color) => (edge._1, (edge._3, color._2))
       }
       val signatures: DataSet[(Int, Color)] =
         signatureEdges.groupBy(0).reduceGroup { g =>

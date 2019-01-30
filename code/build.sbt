@@ -2,7 +2,7 @@ name := "CoupledSim"
 
 version := "0.1.0"
 
-scalaVersion := "2.11.12"
+scalaVersion := "2.12.8"
 
 val scalacOpts = Seq(
   "-Xmax-classfile-name", "140",
@@ -13,7 +13,7 @@ val scalacOpts = Seq(
 )
 
 lazy val web = (project in file("web")).settings(
-  scalaVersion := "2.11.12",
+  scalaVersion := "2.12.8",
   scalaJSProjects := Seq(jsClient),
   isDevMode in scalaJSPipeline := false,
   pipelineStages in Assets := Seq(scalaJSPipeline),
@@ -26,7 +26,7 @@ lazy val web = (project in file("web")).settings(
 ).enablePlugins(SbtWeb)
 
 lazy val shared = (project in file("shared")).settings(
-  scalaVersion := "2.11.12",
+  scalaVersion := "2.12.8",
   name := "shared",
   scalacOptions ++= scalacOpts,
   test in assembly := {},
@@ -62,17 +62,17 @@ lazy val jsClient = (project in file("js-client")).settings(
       baseDirectory.value / ".." / "shared" / "src" / "main" / "scala-2.11"
 ).aggregate(shared).dependsOn(shared).enablePlugins(ScalaJSPlugin, ScalaJSWeb)
 
-val flinkVersion = "1.6.1"
+val flinkVersion = "1.7.0"
 
 val flinkDependencies = Seq(
   "org.apache.flink" %% "flink-scala" % flinkVersion % "provided",
   "org.apache.flink" %% "flink-table" % flinkVersion % "provided",
   "org.apache.flink" %% "flink-streaming-scala" % flinkVersion % "provided",
-  "org.apache.flink" %% "flink-gelly-scala" % "1.6.1")
+  "org.apache.flink" %% "flink-gelly-scala" % "1.7.0")
 
 lazy val flink = (project in file("flink")).
   settings(
-    scalaVersion := "2.11.12",
+    scalaVersion := "2.12.8",
     resolvers ++= Seq(
  	   "Apache Development Snapshot Repository" at "https://repository.apache.org/content/repositories/snapshots/",
     	Resolver.mavenLocal

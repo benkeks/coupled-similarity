@@ -390,6 +390,8 @@ object CoupledSimulationFlink {
       CoupledSimulationFlinkBenchmark.runSizeMark(cfgPreminimization = cfgPreminimization, cfgOverApproximation = cfgOverApproximation)
     } else if (params.has("timemark")) {
       CoupledSimulationFlinkBenchmark.runTimeMark(cfgPreminimization = cfgPreminimization, cfgOverApproximation = cfgOverApproximation)
+    } else if (params.has("tacasmark")) {
+      TacasBenchmarks.runTacasMark()
     } else {
       executeAlgorithm(env,
           cfgPath = cfgPath,

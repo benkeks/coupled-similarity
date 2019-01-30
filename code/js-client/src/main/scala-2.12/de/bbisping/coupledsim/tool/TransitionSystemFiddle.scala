@@ -1,7 +1,7 @@
 package de.bbisping.coupledsim.tool
 
 import scala.scalajs.js.JSApp
-import scala.scalajs.js.annotation.JSExport
+import scala.scalajs.js.annotation.JSExportTopLevel
 import de.bbisping.coupledsim.tool.arch.Action
 import de.bbisping.coupledsim.tool.arch.ActionDispatcher
 import de.bbisping.coupledsim.tool.arch.Control
@@ -12,7 +12,7 @@ import de.bbisping.coupledsim.tool.view.GraphRenderer
 import de.bbisping.coupledsim.tool.view.SourceEditor
 import de.bbisping.coupledsim.tool.control.Pipeline
 
-@JSExport
+@JSExportTopLevel("TransitionSystemFiddle")
 object TransitionSystemFiddle extends JSApp with Control with ActionDispatcher {
   
   val source = new Source(this)

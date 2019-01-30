@@ -36,7 +36,7 @@ lazy val shared = (project in file("shared")).settings(
 )
 
 lazy val jsClient = (project in file("js-client")).settings(
-  scalaVersion := "2.11.12",
+  scalaVersion := "2.12.8",
   name := "coupledsim-client",
   parallelExecution in ThisBuild := false,
   scalacOptions ++= scalacOpts,
@@ -59,7 +59,7 @@ lazy val jsClient = (project in file("js-client")).settings(
     "org.webjars" % "bootstrap" % "3.3.7" / "bootstrap.min.js"
   ),
   unmanagedSourceDirectories in Compile +=
-      baseDirectory.value / ".." / "shared" / "src" / "main" / "scala-2.11"
+      baseDirectory.value / ".." / "shared" / "src" / "main" / "scala-2.12"
 ).aggregate(shared).dependsOn(shared).enablePlugins(ScalaJSPlugin, ScalaJSWeb)
 
 val flinkVersion = "1.7.0"

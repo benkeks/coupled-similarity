@@ -12,74 +12,74 @@ context lts_tau
 begin
 
 definition fp_step :: 
-  "'s rel \<Rightarrow> 's rel"
+  \<open>'s rel \<Rightarrow> 's rel\<close>
   where
-  "fp_step R1 \<equiv> { (p,q)\<in>R1.
-    (\<forall> p' a. p \<longmapsto> a p' \<longrightarrow> 
-       (\<exists> q'. ((p',q')\<in>R1) \<and> (q \<longmapsto>^ a q')))
-  \<and> (\<exists> q'. q \<longmapsto>*tau q' \<and> ((q',p)\<in>R1)) }"
+  \<open>fp_step R1 \<equiv> { (p,q)\<in>R1.
+    (\<forall> p' a. p \<longmapsto>a p' \<longrightarrow> 
+       (\<exists> q'. ((p',q')\<in>R1) \<and> (q \<Rightarrow>^a q')))
+  \<and> (\<exists> q'. q \<longmapsto>*tau q' \<and> ((q',p)\<in>R1)) }\<close>
 
 lemma mono_fp_step:
-  "mono fp_step"
+  \<open>mono fp_step\<close>
 proof (rule, safe)
-  fix x y::"'s rel" and p q
+  fix x y::\<open>'s rel\<close> and p q
   assume
-    "x \<subseteq> y"
-    "(p, q) \<in> fp_step x"
-  thus  "(p, q) \<in> fp_step y"
+    \<open>x \<subseteq> y\<close>
+    \<open>(p, q) \<in> fp_step x\<close>
+  thus  \<open>(p, q) \<in> fp_step y\<close>
     unfolding fp_step_def
     by (auto, blast)
 qed
 
 lemma fp_fp_step:
   assumes
-    "R = fp_step R"
+    \<open>R = fp_step R\<close>
   shows
-    "coupled_simulation (\<lambda> p q. (p, q) \<in> R)"
+    \<open>coupled_simulation (\<lambda> p q. (p, q) \<in> R)\<close>
   using assms unfolding fp_step_def coupled_simulation_def
   by fastforce
 
 lemma gfp_fp_step_subset_gcs:
-  shows "(gfp fp_step) \<subseteq> { (p,q) . greatest_coupled_simulation p q }"
+  shows \<open>(gfp fp_step) \<subseteq> { (p,q) . greatest_coupled_simulation p q }\<close>
   unfolding gcs_eq_coupled_sim_by[symmetric]
 proof clarify
   fix a b
   assume
-    "(a, b) \<in> gfp fp_step"
-  thus "a \<sqsubseteq>cs  b"
+    \<open>(a, b) \<in> gfp fp_step\<close>
+  thus \<open>a \<sqsubseteq>cs  b\<close>
     using fp_fp_step mono_fp_step gfp_unfold by auto
 qed
 
 lemma fp_fp_step_gcs:
   assumes
-    "R = { (p,q) . greatest_coupled_simulation p q }"
+    \<open>R = { (p,q) . greatest_coupled_simulation p q }\<close>
   shows
-    "fp_step R = R"
+    \<open>fp_step R = R\<close>
   unfolding assms
 proof safe
   fix p q
   assume
-    "(p, q) \<in> fp_step {(x, y). greatest_coupled_simulation x y}"
-  hence "(\<forall>p' a. p \<longmapsto>a  p' \<longrightarrow> (\<exists>q'. greatest_coupled_simulation p' q' \<and> q \<longmapsto>^ a  q')) \<and>
-    (\<exists>q'. q \<longmapsto>* tau  q' \<and> greatest_coupled_simulation q' p)"
+    \<open>(p, q) \<in> fp_step {(x, y). greatest_coupled_simulation x y}\<close>
+  hence \<open>(\<forall>p' a. p \<longmapsto>a  p' \<longrightarrow> (\<exists>q'. greatest_coupled_simulation p' q' \<and> q \<Rightarrow>^a  q')) \<and>
+    (\<exists>q'. q \<longmapsto>* tau  q' \<and> greatest_coupled_simulation q' p)\<close>
     unfolding fp_step_def by auto
-  hence "(\<forall>p' a. p \<longmapsto>a  p' \<longrightarrow> (\<exists>q'. greatest_coupled_simulation p' q' \<and> q \<longmapsto>^^ a  q')) \<and>
-    (\<exists>q'. q \<longmapsto>* tau  q' \<and> greatest_coupled_simulation q' p)" using weak_step_tau2_def by simp
-  thus "greatest_coupled_simulation p q"
+  hence \<open>(\<forall>p' a. p \<longmapsto>a  p' \<longrightarrow> (\<exists>q'. greatest_coupled_simulation p' q' \<and> q \<Rightarrow>^^ a  q')) \<and>
+    (\<exists>q'. q \<longmapsto>* tau  q' \<and> greatest_coupled_simulation q' p)\<close> using weak_step_tau2_def by simp
+  thus \<open>greatest_coupled_simulation p q\<close>
     using lts_tau.gcs by metis
 next
   fix p q
   assume
-    "greatest_coupled_simulation p q"
-  hence "(p, q) \<in> {(x, y). greatest_coupled_simulation x y} \<and> (\<forall> p' a. p \<longmapsto> a p' \<longrightarrow> 
-      (\<exists> q'. (greatest_coupled_simulation p' q') \<and> (q \<longmapsto>^ a q')))
-    \<and> (\<exists> q'. q \<longmapsto>*tau q' \<and> (greatest_coupled_simulation q' p))"
+    \<open>greatest_coupled_simulation p q\<close>
+  hence \<open>(p, q) \<in> {(x, y). greatest_coupled_simulation x y} \<and> (\<forall> p' a. p \<longmapsto>a p' \<longrightarrow> 
+      (\<exists> q'. (greatest_coupled_simulation p' q') \<and> (q \<Rightarrow>^a q')))
+    \<and> (\<exists> q'. q \<longmapsto>*tau q' \<and> (greatest_coupled_simulation q' p))\<close>
     using gcs_is_coupled_simulation unfolding coupled_simulation_def by blast
-  thus "(p, q) \<in> fp_step {(x, y). greatest_coupled_simulation x y}"
+  thus \<open>(p, q) \<in> fp_step {(x, y). greatest_coupled_simulation x y}\<close>
     unfolding fp_step_def by blast
 qed
 
-lemma gfp_fp_step_gcs: "gfp fp_step = { (p,q) . greatest_coupled_simulation p q }"
+lemma gfp_fp_step_gcs: \<open>gfp fp_step = { (p,q) . greatest_coupled_simulation p q }\<close>
   using fp_fp_step_gcs gfp_fp_step_subset_gcs
   by (simp add: equalityI gfp_upperbound)
 
@@ -89,11 +89,11 @@ context lts_tau_finite
 begin
 lemma gfp_fp_step_while:
   shows
-    "gfp fp_step = while (\<lambda>R. fp_step R \<noteq> R) fp_step top"
+    \<open>gfp fp_step = while (\<lambda>R. fp_step R \<noteq> R) fp_step top\<close>
   using gfp_while_lattice[OF mono_fp_step] finite_state_rel Finite_Set.finite_set by blast
 
 theorem coupled_sim_fp_step_while:
-  shows "while (\<lambda>R. fp_step R \<noteq> R) fp_step top = { (p,q) . greatest_coupled_simulation p q }"
+  shows \<open>while (\<lambda>R. fp_step R \<noteq> R) fp_step top = { (p,q) . greatest_coupled_simulation p q }\<close>
   using gfp_fp_step_while gfp_fp_step_gcs by blast
 
 end

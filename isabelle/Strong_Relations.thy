@@ -1,4 +1,6 @@
-section \<open>Strong Simulation and Bisimulation\<close>
+section \<open>Notions of Equivalence\<close>
+
+subsection \<open>Strong Simulation and Bisimulation\<close>
 
 theory Strong_Relations
   imports Transition_Systems
@@ -8,37 +10,29 @@ context lts
 begin
   
 definition simulation :: 
-  "('s \<Rightarrow> 's \<Rightarrow> bool) \<Rightarrow> bool"
+  \<open>('s \<Rightarrow> 's \<Rightarrow> bool) \<Rightarrow> bool\<close>
 where
-  "simulation R \<equiv> \<forall> p q. R p q \<longrightarrow> 
-    (\<forall> p' a. p \<longmapsto> a p' \<longrightarrow> 
-      (\<exists> q'. R p' q' \<and> (q \<longmapsto> a q')))"
-
-definition simulation_on :: 
-  "('s \<Rightarrow> 's \<Rightarrow> bool) \<Rightarrow> 's set \<Rightarrow> 's set \<Rightarrow> bool"
-where
-  "simulation_on R S1 S2 \<equiv> \<forall> p \<in> S1. \<forall> q \<in> S2. R p q \<longrightarrow> 
-    (\<forall> p' \<in> S1 . \<forall> a . p \<longmapsto> a p' \<longrightarrow> 
-      (\<exists> q' \<in> S2 . R p' q' \<and> (q \<longmapsto> a q')))"
-  
+  \<open>simulation R \<equiv> \<forall> p q. R p q \<longrightarrow> 
+    (\<forall> p' a. p \<longmapsto>a p' \<longrightarrow> 
+      (\<exists> q'. R p' q' \<and> (q \<longmapsto>a q')))\<close>
   
 definition bisimulation :: 
-  "('s \<Rightarrow> 's \<Rightarrow> bool) \<Rightarrow> bool"
+  \<open>('s \<Rightarrow> 's \<Rightarrow> bool) \<Rightarrow> bool\<close>
 where
-  "bisimulation R \<equiv> \<forall> p q. R p q \<longrightarrow> 
-    (\<forall> p' a. p \<longmapsto> a p' \<longrightarrow> 
-      (\<exists> q'. R p' q' \<and> (q \<longmapsto> a q'))) \<and>
-    (\<forall> q' a. q \<longmapsto> a q' \<longrightarrow> 
-      (\<exists> p'. R p' q' \<and> (p \<longmapsto> a p')))"
-  
+  \<open>bisimulation R \<equiv> \<forall> p q. R p q \<longrightarrow> 
+    (\<forall> p' a. p \<longmapsto>a p' \<longrightarrow> 
+      (\<exists> q'. R p' q' \<and> (q \<longmapsto>a q'))) \<and>
+    (\<forall> q' a. q \<longmapsto>a q' \<longrightarrow> 
+      (\<exists> p'. R p' q' \<and> (p \<longmapsto>a p')))\<close>
+
 lemma bisim_ruleformat:
-assumes "bisimulation R"
-  and "R p q"
-shows
-  "p \<longmapsto> a p' \<Longrightarrow> (\<exists> q'. R p' q' \<and> (q \<longmapsto> a q'))"
-  "q \<longmapsto> a q' \<Longrightarrow> (\<exists> p'. R p' q' \<and> (p \<longmapsto> a p'))"
+  assumes \<open>bisimulation R\<close>
+    and \<open>R p q\<close>
+  shows
+    \<open>p \<longmapsto>a p' \<Longrightarrow> (\<exists> q'. R p' q' \<and> (q \<longmapsto>a q'))\<close>
+    \<open>q \<longmapsto>a q' \<Longrightarrow> (\<exists> p'. R p' q' \<and> (p \<longmapsto>a p'))\<close>
   using assms unfolding bisimulation_def by auto
-    
+
 end \<comment>\<open>context lts\<close>
 
 end

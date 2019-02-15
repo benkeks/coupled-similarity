@@ -1,116 +1,119 @@
-section \<open>Transition Systems with Silent Steps\<close>
+subsection \<open>Transition Systems with Silent Steps\<close>
 
 theory Weak_Transition_Systems
   imports Transition_Systems
-begin
+begin                
 
 locale lts_tau = lts trans for
-  trans :: "'s \<Rightarrow> 'a \<Rightarrow> 's \<Rightarrow> bool"
-+ fixes
-  \<tau> :: "'a"
-begin
+  trans :: \<open>'s \<Rightarrow> 'a \<Rightarrow> 's \<Rightarrow> bool\<close> + fixes
+  \<tau> :: \<open>'a\<close> begin
   
-definition tau :: "'a \<Rightarrow> bool" where "tau a \<equiv> (a = \<tau>)"
+definition tau :: \<open>'a \<Rightarrow> bool\<close> where \<open>tau a \<equiv> (a = \<tau>)\<close>
 
-lemma tau_tau[simp]: "tau \<tau>" unfolding tau_def by simp
+lemma tau_tau[simp]: \<open>tau \<tau>\<close> unfolding tau_def by simp
 
-abbreviation weak_step :: "'s \<Rightarrow> 'a \<Rightarrow> 's \<Rightarrow> bool"
-    ("_ \<longmapsto>~ _  _" [70, 70, 70] 80)
+abbreviation weak_step :: \<open>'s \<Rightarrow> 'a \<Rightarrow> 's \<Rightarrow> bool\<close>
+     ("_ \<Rightarrow>_  _" [70, 70, 70] 80)
 where
-  "(p \<longmapsto>~ a q) \<equiv> (\<exists> pq1 pq2. 
-        p \<longmapsto>* tau pq1
-    \<and> pq1 \<longmapsto>  a   pq2
-    \<and> pq2 \<longmapsto>* tau q)"
-text {*
-  this corresponds to @{text "\<Longrightarrow>^\<alpha>"} in Sangiorgi
-  the tau step transitive closure @{text "'\<Longrightarrow>'"} of Sangiorgi is  @{text "'\<longmapsto>* tau'"}
-  note that @{text "'\<Longrightarrow>^\<tau>'"} is defined as an alias for @{text "'\<Longrightarrow>'"} in [Par92] whereas Sangiorgi and
-  this formalization consider @{text "'\<Longrightarrow>^\<tau>'"} / @{text "'p \<longmapsto>~ a q \<and> tau a'"} to enforce at least one @{text "\<tau>"}-step.
-*}
+  \<open>(p \<Rightarrow>a q) \<equiv> (\<exists> pq1 pq2. 
+    p \<longmapsto>* tau pq1 \<and>
+    pq1 \<longmapsto>a   pq2 \<and>
+    pq2 \<longmapsto>* tau q)\<close>
 
 lemma step_weak_step:
-  assumes "p \<longmapsto> a p'"
-  shows   "p \<longmapsto>~ a p'"
-  using assms steps.refl by auto
+  assumes \<open>p \<longmapsto>a p'\<close>
+   shows   \<open>p \<Rightarrow>a p'\<close>
+   using assms steps.refl by auto
     
-abbreviation weak_step_tau :: "'s \<Rightarrow> 'a \<Rightarrow> 's \<Rightarrow> bool"
-    ("_ \<longmapsto>^ _  _" [70, 70, 70] 80)
+abbreviation weak_step_tau :: \<open>'s \<Rightarrow> 'a \<Rightarrow> 's \<Rightarrow> bool\<close>
+     ("_ \<Rightarrow>^_  _" [70, 70, 70] 80)
 where
-  "(p \<longmapsto>^ a q) \<equiv>
-      (tau a \<longrightarrow> p \<longmapsto>* tau q)
-    \<and> (\<not>tau a \<longrightarrow> p \<longmapsto>~ a q)"
+  \<open>(p \<Rightarrow>^a q) \<equiv>
+    (tau a \<longrightarrow> p \<longmapsto>* tau q) \<and>
+    (\<not>tau a \<longrightarrow> p \<Rightarrow>a q)\<close>
 
-abbreviation weak_step_delay :: "'s \<Rightarrow> 'a \<Rightarrow> 's \<Rightarrow> bool"
-    ("_ \<longmapsto>^~ _  _" [70, 70, 70] 80)
+abbreviation weak_step_delay :: \<open>'s \<Rightarrow> 'a \<Rightarrow> 's \<Rightarrow> bool\<close>
+     ("_ =\<rhd> _  _" [70, 70, 70] 80)
 where
-  "(p \<longmapsto>^~ a q) \<equiv> 
-      (tau a \<longrightarrow> p \<longmapsto>* tau q) \<and>
-      (\<not>tau a \<longrightarrow>  (\<exists> pq.
-            p \<longmapsto>* tau pq
-        \<and> pq \<longmapsto>  a   q))"
+  \<open>(p =\<rhd>a q) \<equiv> 
+    (tau a \<longrightarrow> p \<longmapsto>* tau q) \<and>
+    (\<not>tau a \<longrightarrow>  (\<exists> pq.
+      p \<longmapsto>* tau pq \<and>
+      pq \<longmapsto>a   q))\<close>
 
 lemma weak_step_delay_implies_weak_tau:
-  assumes "p \<longmapsto>^~ a p'"
-  shows "p \<longmapsto>^ a p'"
+  assumes \<open>p =\<rhd>a p'\<close>
+  shows \<open>p \<Rightarrow>^a p'\<close>
   using assms steps.refl[of p' tau] by blast
 
-primrec weak_step_seq :: "'s \<Rightarrow> 'a list \<Rightarrow> 's \<Rightarrow> bool"
-    ("_ \<longmapsto>^* _  _" [70, 70, 70] 80)
+lemma weak_step_delay_left:
+  assumes
+    \<open>\<not> p0 \<longmapsto>a p1\<close>
+    \<open>p0 =\<rhd>a p1\<close>
+    \<open>\<not>tau a\<close>
+  shows
+    \<open>\<exists> p0' t. tau t \<and> p0 \<longmapsto>t p0' \<and> p0' =\<rhd>a p1\<close>
+  using assms steps_left by metis
+
+primrec weak_step_seq :: \<open>'s \<Rightarrow> 'a list \<Rightarrow> 's \<Rightarrow> bool\<close>
+     ("_ \<Rightarrow>$ _  _" [70, 70, 70] 80)
   where
-    "weak_step_seq p0 [] p1 = p0 \<longmapsto>* tau p1"
-  | "weak_step_seq p0 (a#A) p1 = (\<exists> p01 . p0 \<longmapsto>^ a p01 \<and> weak_step_seq p01 A p1)"
+    \<open>weak_step_seq p0 [] p1 = p0 \<longmapsto>* tau p1\<close>
+  | \<open>weak_step_seq p0 (a#A) p1 = (\<exists> p01 . p0 \<Rightarrow>^a p01 \<and> weak_step_seq p01 A p1)\<close>
 
 lemma step_weak_step_tau:
-  assumes "p \<longmapsto> a p'"
-  shows   "p \<longmapsto>^ a p'"
+  assumes \<open>p \<longmapsto>a p'\<close>
+  shows   \<open>p \<Rightarrow>^a p'\<close>
   using step_weak_step[OF assms] steps_one_step[OF assms]
   by blast
     
 lemma step_tau_refl:
-  shows   "p \<longmapsto>^ \<tau> p"
+  shows   \<open>p \<Rightarrow>^\<tau> p\<close>
   using steps.refl[of p tau]
   by simp
     
 lemma weak_step_tau_weak_step[simp]:
-  assumes "p \<longmapsto>^ a p'" "\<not> tau a"
-  shows   "p \<longmapsto>~ a p'"
+  assumes \<open>p \<Rightarrow>^a p'\<close> \<open>\<not> tau a\<close>
+  shows   \<open>p \<Rightarrow>a p'\<close>
   using assms by auto
   
 lemma weak_steps:
   assumes
-    "p \<longmapsto>~ a  p'"
-    "\<And> a . tau a \<Longrightarrow> A a"
-    "A a"
+    \<open>p \<Rightarrow>a  p'\<close>
+    \<open>\<And> a . tau a \<Longrightarrow> A a\<close>
+    \<open>A a\<close>
   shows
-    "p \<longmapsto>* A  p'"
-proof-
+    \<open>p \<longmapsto>* A  p'\<close>
+proof -
   obtain pp pp' where pp:
-    "p \<longmapsto>* tau pp" "pp \<longmapsto> a  pp'" "pp' \<longmapsto>* tau p'"
-    using assms(1) by blast
+    \<open>p \<longmapsto>* tau pp\<close> \<open>pp \<longmapsto>a  pp'\<close> \<open>pp' \<longmapsto>* tau p'\<close>
+     using assms(1) by blast
   then have cascade:
-    "p \<longmapsto>* A pp" "pp \<longmapsto>* A  pp'" "pp' \<longmapsto>* A p'"
-    using steps_one_step steps_spec assms(2,3) by auto
-  have "p \<longmapsto>* A pp'" using steps_concat[OF cascade(2) cascade(1)] .
+    \<open>p \<longmapsto>* A pp\<close> \<open>pp \<longmapsto>* A  pp'\<close> \<open>pp' \<longmapsto>* A p'\<close>
+     using steps_one_step steps_spec assms(2,3) by auto
+  have \<open>p \<longmapsto>* A pp'\<close> using steps_concat[OF cascade(2) cascade(1)] .
   show ?thesis using steps_concat[OF cascade(3) `p \<longmapsto>* A  pp'`] .
 qed
   
 lemma weak_step_impl_weak_tau:
-  assumes "p \<longmapsto>~ a p'"
-  shows   "p \<longmapsto>^ a p'"
+  assumes
+    \<open>p \<Rightarrow>a p'\<close>
+  shows
+    \<open>p \<Rightarrow>^a p'\<close>
   using assms weak_steps[OF assms, of tau] by auto
   
 lemma weak_impl_strong_step:
   assumes
-    "p \<longmapsto>~ a  p''"
+    \<open>p \<Rightarrow>a  p''\<close>
   shows
-    "(\<exists> a' p' . tau a' \<and> p \<longmapsto> a'  p') \<or> (\<exists> p' . p \<longmapsto> a  p')"
-proof -
+    \<open>(\<exists> a' p' . tau a' \<and> p \<longmapsto>a'  p') \<or> (\<exists> p' . p \<longmapsto>a  p')\<close>
+proof  -
   from assms obtain pq1 pq2 where pq12:
-    "p \<longmapsto>* tau pq1"
-    "pq1 \<longmapsto>  a   pq2"
-    "pq2 \<longmapsto>* tau p''" by blast
+    \<open>p \<longmapsto>* tau pq1\<close>
+     \<open>pq1 \<longmapsto>a   pq2\<close>
+     \<open>pq2 \<longmapsto>* tau p''\<close> by blast
   show ?thesis
-  proof (cases "p = pq1")
+  proof (cases \<open>p = pq1\<close>)
     case True
     then show ?thesis using pq12 by blast
   next
@@ -121,99 +124,112 @@ qed
   
 lemma weak_step_extend:
   assumes 
-    "p1 \<longmapsto>* tau p2"
-    "p2 \<longmapsto>^ a p3"
-    "p3 \<longmapsto>* tau p4"
+    \<open>p1 \<longmapsto>* tau p2\<close>
+    \<open>p2 \<Rightarrow>^a p3\<close>
+    \<open>p3 \<longmapsto>* tau p4\<close>
   shows
-    "p1 \<longmapsto>^ a p4"
+    \<open>p1 \<Rightarrow>^a p4\<close>
   using assms steps_concat by blast
     
 lemma weak_step_tau_tau:
   assumes 
-    "p1 \<longmapsto>* tau p2"
-    "tau a"
+    \<open>p1 \<longmapsto>* tau p2\<close>
+    \<open>tau a\<close>
   shows
-    "p1 \<longmapsto>^ a p2"
+    \<open>p1 \<Rightarrow>^a p2\<close>
   using assms by blast
 
 lemma weak_single_step[iff]: 
-  "p \<longmapsto>^* [a] p' \<longleftrightarrow> p \<longmapsto>^ a  p'"
-  using steps.refl[of p' tau]
-  by (meson steps_concat weak_step_seq.simps(1) weak_step_seq.simps(2)) 
+  \<open>p \<Rightarrow>$ [a] p' \<longleftrightarrow> p \<Rightarrow>^a  p'\<close>
+   using steps.refl[of p' tau]
+  by (meson steps_concat weak_step_seq.simps(1) weak_step_seq.simps(2))
 
-abbreviation weak_enabled :: "'s \<Rightarrow> 'a \<Rightarrow> bool"
-where
-  "weak_enabled p a \<equiv>
-    \<exists> pq1 pq2. p \<longmapsto>* tau pq1 \<and> pq1 \<longmapsto>  a pq2"
+abbreviation weak_enabled :: \<open>'s \<Rightarrow> 'a \<Rightarrow> bool\<close> where
+  \<open>weak_enabled p a \<equiv>
+    \<exists> pq1 pq2. p \<longmapsto>* tau pq1 \<and> pq1 \<longmapsto>a pq2\<close>
 
 lemma weak_enabled_step:
-  shows "weak_enabled p a = (\<exists> p'. p \<longmapsto>~ a p')"
+  shows \<open>weak_enabled p a = (\<exists> p'. p \<Rightarrow>a p')\<close>
   using step_weak_step steps_concat by blast
 
-abbreviation tau_max :: "'s \<Rightarrow> bool" where
-  "tau_max p \<equiv>  (\<forall>p'. p \<longmapsto>* tau p' \<longrightarrow> p = p')"
+abbreviation tau_max :: \<open>'s \<Rightarrow> bool\<close> where
+  \<open>tau_max p \<equiv>  (\<forall>p'. p \<longmapsto>* tau p' \<longrightarrow> p = p')\<close>
 
 lemma tau_max_deadlock:
   fixes q
   assumes
-    "\<And> r1 r2. r1 \<longmapsto>* tau r2 \<and> r2 \<longmapsto>* tau r1 \<Longrightarrow> r1 = r2" \<comment>\<open>contracted cycles (anti-symmetry)\<close>
-    "finite {q'. q \<longmapsto>* tau q'}"
+    \<open>\<And> r1 r2. r1 \<longmapsto>* tau r2 \<and> r2 \<longmapsto>* tau r1 \<Longrightarrow> r1 = r2\<close> \<comment>\<open>contracted cycles (anti-symmetry)\<close>
+    \<open>finite {q'. q \<longmapsto>* tau q'}\<close>
   shows
-    "\<exists> q' . q \<longmapsto>* tau q' \<and> tau_max q'"
+    \<open>\<exists> q' . q \<longmapsto>* tau q' \<and> tau_max q'\<close>
   using step_max_deadlock assms by blast
 
-abbreviation stable_state :: "'s \<Rightarrow> bool" where
-  "stable_state p \<equiv> \<nexists> p' . step_pred p tau p'"
-  
+abbreviation stable_state :: \<open>'s \<Rightarrow> bool\<close> where
+  \<open>stable_state p \<equiv> \<nexists> p' . step_pred p tau p'\<close>
+   
 lemma stable_tauclosure_only_loop:
   assumes
-    "stable_state p"
+    \<open>stable_state p\<close>
   shows
-    "tau_max p"
+    \<open>tau_max p\<close>
   using assms  steps_left by blast
 
-coinductive divergent_state :: "'s \<Rightarrow> bool" where
-  omega: "divergent_state p' \<Longrightarrow> tau t \<Longrightarrow>  p \<longmapsto>t p'\<Longrightarrow> divergent_state p"
-text {* @{text \<open>this seems not to be in line with def in [Sangiorgi12, p. 115], which reads
-  "largest predicate s.t. divergent_state p implies p tau-steps to p' for some divergent_state p'."\<close>}*}
+coinductive divergent_state :: \<open>'s \<Rightarrow> bool\<close> where
+  omega: \<open>divergent_state p' \<Longrightarrow> tau t \<Longrightarrow>  p \<longmapsto>t p'\<Longrightarrow> divergent_state p\<close>
     
 lemma ex_divergent:
-  assumes "p \<longmapsto>a p" "tau a"
-  shows "divergent_state p"
-using assms proof (coinduct)
+  assumes \<open>p \<longmapsto>a p\<close> \<open>tau a\<close>
+  shows \<open>divergent_state p\<close>
+  using assms 
+proof (coinduct)
   case (divergent_state p)
   then show ?case using assms by auto
 qed
   
 lemma ex_not_divergent:
-  assumes "\<forall>a q. p \<longmapsto>a q \<longrightarrow> \<not> tau a" "divergent_state p"
-  shows "False"
-using assms(2) proof (cases rule:divergent_state.cases)
+  assumes \<open>\<forall>a q. p \<longmapsto>a q \<longrightarrow> \<not> tau a\<close> \<open>divergent_state p\<close>
+  shows \<open>False\<close> using assms(2)
+proof (cases rule:divergent_state.cases)
   case (omega p' t)
   thus ?thesis using assms(1) by auto
 qed
 
 lemma perpetual_instability_divergence:
   assumes
-    "\<forall> p' . p \<longmapsto>* tau p' \<longrightarrow> \<not> stable_state p'"
+    \<open>\<forall> p' . p \<longmapsto>* tau p' \<longrightarrow> \<not> stable_state p'\<close>
   shows
-    "divergent_state p"
+    \<open>divergent_state p\<close>
   using assms
 proof (coinduct rule: divergent_state.coinduct)
   case (divergent_state p)
-  then obtain t p' where "tau t" "p \<longmapsto>t  p'" using steps.refl by blast
-  then moreover have "\<forall>p''. p' \<longmapsto>* tau  p'' \<longrightarrow> \<not> stable_state p''"
-    using divergent_state step_weak_step_tau steps_concat by blast
+  then obtain t p' where \<open>tau t\<close> \<open>p \<longmapsto>t  p'\<close> using steps.refl by blast
+  then moreover have \<open>\<forall>p''. p' \<longmapsto>* tau  p'' \<longrightarrow> \<not> stable_state p''\<close>
+     using divergent_state step_weak_step_tau steps_concat by blast
   ultimately show ?case by blast 
 qed
 
 corollary non_divergence_implies_eventual_stability:
   assumes
-    "\<not> divergent_state p"
+    \<open>\<not> divergent_state p\<close>
   shows
-    "\<exists> p' . p \<longmapsto>* tau p' \<and> stable_state p'"
+    \<open>\<exists> p' . p \<longmapsto>* tau p' \<and> stable_state p'\<close>
   using assms perpetual_instability_divergence by blast
-  
+
 end \<comment>\<open>context @{locale lts_tau}\<close>
-  
+
+subsection \<open>Finite Transition Systems with Silent Steps\<close>
+
+locale lts_tau_finite = lts_tau trans \<tau> for
+  trans :: \<open>'s \<Rightarrow> 'a \<Rightarrow> 's \<Rightarrow> bool\<close> and
+  \<tau> :: \<open>'a\<close> +
+assumes 
+  finite_state_set: \<open>finite (top::'s set)\<close>
+begin
+
+lemma finite_state_rel: \<open>finite (top::('s rel))\<close>
+  using finite_state_set
+  by (simp add: finite_prod)
+
+end
+
 end

@@ -14,258 +14,258 @@ datatype ('s, 'a) cs_game_node =
   DefenderCouplingNode 's 's
 
 fun (in lts_tau) cs_game_moves ::
-  "('s, 'a) cs_game_node \<Rightarrow> ('s, 'a) cs_game_node \<Rightarrow> bool" where
+  \<open>('s, 'a) cs_game_node \<Rightarrow> ('s, 'a) cs_game_node \<Rightarrow> bool\<close> where
   simulation_challenge:
-    "cs_game_moves (AttackerNode p q) (DefenderStepNode a p1 q0) =
-      (p \<longmapsto> a p1 \<and> q = q0)" |
+    \<open>cs_game_moves (AttackerNode p q) (DefenderStepNode a p1 q0) =
+      (p \<longmapsto>a p1 \<and> q = q0)\<close> |
   simulation_answer: 
-    "cs_game_moves (DefenderStepNode a p1 q0) (AttackerNode p11 q1) =
-      (q0 \<longmapsto>^ a q1 \<and> p1 = p11)" |
+    \<open>cs_game_moves (DefenderStepNode a p1 q0) (AttackerNode p11 q1) =
+      (q0 \<Rightarrow>^a q1 \<and> p1 = p11)\<close> |
   coupling_challenge:
-    "cs_game_moves (AttackerNode p q) (DefenderCouplingNode p0 q0) =
-      (p = p0 \<and> q = q0)" |
+    \<open>cs_game_moves (AttackerNode p q) (DefenderCouplingNode p0 q0) =
+      (p = p0 \<and> q = q0)\<close> |
   coupling_answer:
-    "cs_game_moves (DefenderCouplingNode p0 q0) (AttackerNode q1 p00) =
-      (p0 = p00 \<and> q0 \<longmapsto>* tau q1)" |
+    \<open>cs_game_moves (DefenderCouplingNode p0 q0) (AttackerNode q1 p00) =
+      (p0 = p00 \<and> q0 \<longmapsto>* tau q1)\<close> |
   cs_game_moves_no_step:
-    "cs_game_moves _ _ = False"
+    \<open>cs_game_moves _ _ = False\<close>
 
-fun cs_game_defender_node :: "('s, 'a) cs_game_node \<Rightarrow> bool" where
-  "cs_game_defender_node (AttackerNode _ _) = False" |
-  "cs_game_defender_node (DefenderStepNode _ _ _) = True" |
-  "cs_game_defender_node (DefenderCouplingNode _ _) = True"
+fun cs_game_defender_node :: \<open>('s, 'a) cs_game_node \<Rightarrow> bool\<close> where
+  \<open>cs_game_defender_node (AttackerNode _ _) = False\<close> |
+  \<open>cs_game_defender_node (DefenderStepNode _ _ _) = True\<close> |
+  \<open>cs_game_defender_node (DefenderCouplingNode _ _) = True\<close>
 
 locale cs_game =
   lts_tau trans \<tau> +
   simple_game cs_game_moves cs_game_defender_node initial
 for
-  trans :: "'s \<Rightarrow> 'a \<Rightarrow> 's \<Rightarrow> bool" and
-  \<tau> :: "'a" and 
-  initial :: "('s, 'a) cs_game_node"
+  trans :: \<open>'s \<Rightarrow> 'a \<Rightarrow> 's \<Rightarrow> bool\<close> and
+  \<tau> :: \<open>'a\<close> and 
+  initial :: \<open>('s, 'a) cs_game_node\<close>
 begin
 
 subsection \<open>Coupled Simulation Implies Winning Strategy\<close>
 
-fun strategy_from_coupledsim :: "('s \<Rightarrow> 's \<Rightarrow> bool) \<Rightarrow> ('s, 'a) cs_game_node strategy" where
-  "strategy_from_coupledsim R ((DefenderStepNode a p1 q0)#play) =
-    (AttackerNode p1 (SOME q1 . R p1 q1 \<and> q0 \<longmapsto>^ a q1))" |
-  "strategy_from_coupledsim R ((DefenderCouplingNode p0 q0)#play) =
-    (AttackerNode (SOME q1 . R q1 p0 \<and> q0 \<longmapsto>* tau q1) p0)" |
-  "strategy_from_coupledsim _ _ = undefined"
+fun strategy_from_coupledsim :: \<open>('s \<Rightarrow> 's \<Rightarrow> bool) \<Rightarrow> ('s, 'a) cs_game_node strategy\<close> where
+  \<open>strategy_from_coupledsim R ((DefenderStepNode a p1 q0)#play) =
+    (AttackerNode p1 (SOME q1 . R p1 q1 \<and> q0 \<Rightarrow>^a q1))\<close> |
+  \<open>strategy_from_coupledsim R ((DefenderCouplingNode p0 q0)#play) =
+    (AttackerNode (SOME q1 . R q1 p0 \<and> q0 \<longmapsto>* tau q1) p0)\<close> |
+  \<open>strategy_from_coupledsim _ _ = undefined\<close>
 
-lemma attacker_followed_by_defender:
+lemma defender_preceded_by_attacker:
   assumes
-    "n0 # play \<in> plays"
-    "cs_game_defender_node n0"
-    "initial = AttackerNode p0 q0"
-  shows "\<exists> p q . hd play = AttackerNode p q \<and> cs_game_moves (AttackerNode p q) n0" "play \<noteq> []"
+    \<open>n0 # play \<in> plays\<close>
+    \<open>cs_game_defender_node n0\<close>
+    \<open>initial = AttackerNode p0 q0\<close>
+  shows \<open>\<exists> p q . hd play = AttackerNode p q \<and> cs_game_moves (AttackerNode p q) n0\<close> \<open>play \<noteq> []\<close>
 proof -
-  have n0_not_init: "n0 \<noteq> initial" using assms(2,3) by auto
-  hence "cs_game_moves (hd play) n0" using assms(1)
+  have n0_not_init: \<open>n0 \<noteq> initial\<close> using assms(2,3) by auto
+  hence \<open>cs_game_moves (hd play) n0\<close> using assms(1)
     by (metis list.sel(1) list.sel(3) plays.cases)
-  thus "\<exists>p q. hd play = AttackerNode p q \<and> cs_game_moves (AttackerNode p q) n0" using assms(2)
+  thus \<open>\<exists>p q. hd play = AttackerNode p q \<and> cs_game_moves (AttackerNode p q) n0\<close> using assms(2)
     by (metis cs_game_defender_node.elims(2,3) local.cs_game_moves_no_step(1,2,3,7))
-  show "play \<noteq> []" using n0_not_init assms(1) plays.cases by auto
+  show \<open>play \<noteq> []\<close> using n0_not_init assms(1) plays.cases by auto
 qed
 
 lemma strategy_from_coupledsim_retains_coupledsim:
   assumes
-    "R p0 q0"
-    "coupled_simulation R"
-    "initial = AttackerNode p0 q0"
-    "play \<in> plays_for_strategy (strategy_from_coupledsim R)"
+    \<open>R p0 q0\<close>
+    \<open>coupled_simulation R\<close>
+    \<open>initial = AttackerNode p0 q0\<close>
+    \<open>play \<in> plays_for_strategy (strategy_from_coupledsim R)\<close>
   shows
-    "hd play = AttackerNode p q \<Longrightarrow> R p q"
-    "length play > 1 \<Longrightarrow> hd (tl play) = AttackerNode p q \<Longrightarrow> R p q"
+    \<open>hd play = AttackerNode p q \<Longrightarrow> R p q\<close>
+    \<open>length play > 1 \<Longrightarrow> hd (tl play) = AttackerNode p q \<Longrightarrow> R p q\<close>
   using assms(4)
 proof (induct arbitrary: p q rule: plays_for_strategy.induct[OF assms(4)])
   case 1
   fix p q
-  assume "hd [initial] = AttackerNode p q"
-  hence "p = p0" "q = q0" using assms(3) by auto
-  thus "R p q" using assms(1) by simp
+  assume \<open>hd [initial] = AttackerNode p q\<close>
+  hence \<open>p = p0\<close> \<open>q = q0\<close> using assms(3) by auto
+  thus \<open>R p q\<close> using assms(1) by simp
 next
   case 1
   fix p q
-  assume "1 < length [initial]"
+  assume \<open>1 < length [initial]\<close>
   hence False by auto
-  thus "R p q"  ..
+  thus \<open>R p q\<close>  ..
 next
   case (2 n0 play)
-  hence n0play_is_play: "n0 # play \<in> plays" using strategy_plays_subset by blast
+  hence n0play_is_play: \<open>n0 # play \<in> plays\<close> using strategy_plays_subset by blast
   fix p q
   assume subassms:
-    "hd (strategy_from_coupledsim R (n0 # play) # n0 # play) = AttackerNode p q"
-    "strategy_from_coupledsim R (n0 # play) # n0 # play
-      \<in> plays_for_strategy (strategy_from_coupledsim R)"
+    \<open>hd (strategy_from_coupledsim R (n0 # play) # n0 # play) = AttackerNode p q\<close>
+    \<open>strategy_from_coupledsim R (n0 # play) # n0 # play
+      \<in> plays_for_strategy (strategy_from_coupledsim R)\<close>
   then obtain pi qi where 
-      piqi_def: "hd (play) = AttackerNode pi qi"
-        "cs_game_moves (AttackerNode pi qi) n0" "play \<noteq> []"
-    using attacker_followed_by_defender[OF n0play_is_play `cs_game_defender_node n0` assms(3)]
+      piqi_def: \<open>hd (play) = AttackerNode pi qi\<close>
+        \<open>cs_game_moves (AttackerNode pi qi) n0\<close> \<open>play \<noteq> []\<close>
+    using defender_preceded_by_attacker[OF n0play_is_play `cs_game_defender_node n0` assms(3)]
     by blast
-  hence "R pi qi" using 2(1,3) by simp
-  have "(\<exists> a . n0 = (DefenderStepNode a p qi) \<and> pi \<longmapsto> a p)
-    \<or> (n0 = (DefenderCouplingNode pi qi))"
+  hence \<open>R pi qi\<close> using 2(1,3) by simp
+  have \<open>(\<exists> a . n0 = (DefenderStepNode a p qi) \<and> pi \<longmapsto>a p)
+    \<or> (n0 = (DefenderCouplingNode pi qi))\<close>
     using piqi_def(2) 2(4,5) subassms(1)
     by (metis cs_game_defender_node.elims(2) cs_game_moves.simps(2) list.sel(1)
         coupling_challenge simulation_challenge)
-  thus "R p q"
+  thus \<open>R p q\<close>
   proof safe
     fix a
-    assume n0_def: "n0 = DefenderStepNode a p qi" "pi \<longmapsto>a p"
-    have "strategy_from_coupledsim R (n0 # play) =
-        (AttackerNode p (SOME q1 . R p q1 \<and> qi \<longmapsto>^ a q1))"
+    assume n0_def: \<open>n0 = DefenderStepNode a p qi\<close> \<open>pi \<longmapsto>a p\<close>
+    have \<open>strategy_from_coupledsim R (n0 # play) =
+        (AttackerNode p (SOME q1 . R p q1 \<and> qi \<Rightarrow>^a q1))\<close>
       unfolding n0_def(1) by auto
-    with subassms(1) have q_def: "q = (SOME q1. R p q1 \<and> qi \<longmapsto>^ a  q1)" by auto
-    have "\<exists> qii . R p qii \<and> qi \<longmapsto>^ a qii"
+    with subassms(1) have q_def: \<open>q = (SOME q1. R p q1 \<and> qi \<Rightarrow>^a  q1)\<close> by auto
+    have \<open>\<exists> qii . R p qii \<and> qi \<Rightarrow>^a qii\<close>
       using n0_def(2) `R pi qi` `coupled_simulation R`
       unfolding coupled_simulation_def by blast
-    from someI_ex[OF this] show "R p q" unfolding q_def by blast
+    from someI_ex[OF this] show \<open>R p q\<close> unfolding q_def by blast
   next
-    assume n0_def: "n0 = DefenderCouplingNode pi qi"
-    have "strategy_from_coupledsim R (n0 # play) =
-        (AttackerNode (SOME q1 . R q1 pi \<and> qi \<longmapsto>* tau q1) pi)"
+    assume n0_def: \<open>n0 = DefenderCouplingNode pi qi\<close>
+    have \<open>strategy_from_coupledsim R (n0 # play) =
+        (AttackerNode (SOME q1 . R q1 pi \<and> qi \<longmapsto>* tau q1) pi)\<close>
       unfolding n0_def(1) by auto
-    with subassms(1) have qp_def: "p = (SOME q1 . R q1 pi \<and> qi \<longmapsto>* tau q1)" "q = pi" by auto
-    have "\<exists> q1 . R q1 pi \<and> qi \<longmapsto>* tau q1"
+    with subassms(1) have qp_def: \<open>p = (SOME q1 . R q1 pi \<and> qi \<longmapsto>* tau q1)\<close> \<open>q = pi\<close> by auto
+    have \<open>\<exists> q1 . R q1 pi \<and> qi \<longmapsto>* tau q1\<close>
       using n0_def `R pi qi` `coupled_simulation R`
       unfolding coupled_simulation_def by blast
-    from someI_ex[OF this] show "R p q" unfolding qp_def by blast
+    from someI_ex[OF this] show \<open>R p q\<close> unfolding qp_def by blast
   qed
 next
   case (2 n0 play)
   fix p q
-  assume "hd (tl (strategy_from_coupledsim R (n0 # play) # n0 # play)) = AttackerNode p q"
+  assume \<open>hd (tl (strategy_from_coupledsim R (n0 # play) # n0 # play)) = AttackerNode p q\<close>
   hence False using 2(4) by auto
-  thus "R p q" ..
+  thus \<open>R p q\<close> ..
 next
   case (3 n1 play n1')
   fix p q
-  assume "hd (n1' # n1 # play) = AttackerNode p q"
+  assume \<open>hd (n1' # n1 # play) = AttackerNode p q\<close>
   hence False using 3(4,5) unfolding player1_position_def
     by (metis cs_game_moves_no_step(5) cs_game_defender_node.elims(3) list.sel(1))
-  thus "R p q" ..
+  thus \<open>R p q\<close> ..
 next
   case (3 n1 play n1')
   fix p q
-  assume "hd (tl (n1' # n1 # play)) = AttackerNode p q"
-  thus "R p q" using 3(1,2) by auto
+  assume \<open>hd (tl (n1' # n1 # play)) = AttackerNode p q\<close>
+  thus \<open>R p q\<close> using 3(1,2) by auto
 qed
 
 lemma strategy_from_coupledsim_sound:
   assumes
-    "R p0 q0"
-    "coupled_simulation R"
-    "initial = AttackerNode p0 q0"
+    \<open>R p0 q0\<close>
+    \<open>coupled_simulation R\<close>
+    \<open>initial = AttackerNode p0 q0\<close>
   shows
-    "sound_strategy (strategy_from_coupledsim R)"
+    \<open>sound_strategy (strategy_from_coupledsim R)\<close>
   unfolding sound_strategy_def
 proof clarify
   fix n0 play
   assume subassms:
-    "n0 # play \<in> plays_for_strategy(strategy_from_coupledsim R)"
-    "cs_game_defender_node n0"
+    \<open>n0 # play \<in> plays_for_strategy(strategy_from_coupledsim R)\<close>
+    \<open>cs_game_defender_node n0\<close>
   then obtain pi qi where 
-      piqi_def: "hd (play) = AttackerNode pi qi"
-        "cs_game_moves (AttackerNode pi qi) n0" "play \<noteq> []"
-    using attacker_followed_by_defender[OF _ `cs_game_defender_node n0` assms(3)]
+      piqi_def: \<open>hd (play) = AttackerNode pi qi\<close>
+        \<open>cs_game_moves (AttackerNode pi qi) n0\<close> \<open>play \<noteq> []\<close>
+    using defender_preceded_by_attacker[OF _ `cs_game_defender_node n0` assms(3)]
       strategy_plays_subset by blast
-  hence "R pi qi"
+  hence \<open>R pi qi\<close>
     using strategy_from_coupledsim_retains_coupledsim[OF assms] list.sel subassms by auto
-  have "(\<exists> a p . n0 = (DefenderStepNode a p qi) \<and> pi \<longmapsto> a p)
-    \<or> (n0 = (DefenderCouplingNode pi qi))"
+  have \<open>(\<exists> a p . n0 = (DefenderStepNode a p qi) \<and> pi \<longmapsto>a p)
+    \<or> (n0 = (DefenderCouplingNode pi qi))\<close>
     by (metis cs_game_defender_node.elims(2)
         coupling_challenge simulation_challenge piqi_def(2) subassms(2))
-  thus "cs_game_moves n0 (strategy_from_coupledsim R (n0 # play))"
+  thus \<open>cs_game_moves n0 (strategy_from_coupledsim R (n0 # play))\<close>
   proof safe
     fix a p
     assume dsn:
-      "pi \<longmapsto>a  p"
-      "n0 = DefenderStepNode a p qi"
+      \<open>pi \<longmapsto>a  p\<close>
+      \<open>n0 = DefenderStepNode a p qi\<close>
     hence qi_spec:
-      "(strategy_from_coupledsim R (n0 # play)) =
-        AttackerNode p (SOME q1 . R p q1 \<and> qi \<longmapsto>^ a q1)"
+      \<open>(strategy_from_coupledsim R (n0 # play)) =
+        AttackerNode p (SOME q1 . R p q1 \<and> qi \<Rightarrow>^a q1)\<close>
       by simp
     then obtain qii where qii_spec:
-      "AttackerNode p (SOME q1 . R p q1 \<and> qi \<longmapsto>^ a q1) = AttackerNode p qii" by blast
-    have "\<exists> qii . R p qii \<and> qi \<longmapsto>^ a qii"
+      \<open>AttackerNode p (SOME q1 . R p q1 \<and> qi \<Rightarrow>^a q1) = AttackerNode p qii\<close> by blast
+    have \<open>\<exists> qii . R p qii \<and> qi \<Rightarrow>^a qii\<close>
       using dsn `R pi qi` `coupled_simulation R`
       unfolding coupled_simulation_def by blast
-    from someI_ex[OF this] have "R p qii \<and> qi \<longmapsto>^ a qii" using qii_spec by blast
-    thus "cs_game_moves (DefenderStepNode a p qi)
-          (strategy_from_coupledsim R (DefenderStepNode a p qi # play))"
+    from someI_ex[OF this] have \<open>R p qii \<and> qi \<Rightarrow>^a qii\<close> using qii_spec by blast
+    thus \<open>cs_game_moves (DefenderStepNode a p qi)
+          (strategy_from_coupledsim R (DefenderStepNode a p qi # play))\<close>
       using qi_spec qii_spec unfolding dsn(2) by auto
   next \<comment>\<open>coupling quite analogous.\<close>
     assume dcn:
-      "n0 = DefenderCouplingNode pi qi"
+      \<open>n0 = DefenderCouplingNode pi qi\<close>
     hence qi_spec:
-      "(strategy_from_coupledsim R (n0 # play)) =
-      AttackerNode (SOME q1 . R q1 pi \<and> qi \<longmapsto>* tau q1) pi"
+      \<open>(strategy_from_coupledsim R (n0 # play)) =
+      AttackerNode (SOME q1 . R q1 pi \<and> qi \<longmapsto>* tau q1) pi\<close>
       by simp
     then obtain qii where qii_spec:
-      "AttackerNode (SOME q1 . R q1 pi \<and> qi \<longmapsto>* tau q1) pi = AttackerNode qii pi" by blast
-    have "\<exists> qii . R qii pi \<and> qi \<longmapsto>* tau qii"
+      \<open>AttackerNode (SOME q1 . R q1 pi \<and> qi \<longmapsto>* tau q1) pi = AttackerNode qii pi\<close> by blast
+    have \<open>\<exists> qii . R qii pi \<and> qi \<longmapsto>* tau qii\<close>
       using dcn `R pi qi` `coupled_simulation R`
       unfolding coupled_simulation_def by blast
-    from someI_ex[OF this] have "R qii pi \<and> qi \<longmapsto>* tau qii" using qii_spec by blast
-    thus "cs_game_moves (DefenderCouplingNode pi qi)
-        (strategy_from_coupledsim R (DefenderCouplingNode pi qi # play))"
+    from someI_ex[OF this] have \<open>R qii pi \<and> qi \<longmapsto>* tau qii\<close> using qii_spec by blast
+    thus \<open>cs_game_moves (DefenderCouplingNode pi qi)
+        (strategy_from_coupledsim R (DefenderCouplingNode pi qi # play))\<close>
       using qi_spec qii_spec unfolding dcn by auto
   qed
 qed
 
 lemma coupledsim_implies_winning_strategy:
   assumes
-    "R p q"
-    "coupled_simulation R"
-    "initial = AttackerNode p q"
+    \<open>R p q\<close>
+    \<open>coupled_simulation R\<close>
+    \<open>initial = AttackerNode p q\<close>
   shows
-    "player0_winning_strategy (strategy_from_coupledsim R)"
+    \<open>player0_winning_strategy (strategy_from_coupledsim R)\<close>
   unfolding player0_winning_strategy_def
 proof (clarify)
   fix play
   assume subassms:
-    "play \<in> plays_for_strategy (strategy_from_coupledsim R)"
-    "player1_wins play"
-  show "False" using subassms
+    \<open>play \<in> plays_for_strategy (strategy_from_coupledsim R)\<close>
+    \<open>player1_wins play\<close>
+  show \<open>False\<close> using subassms
   proof (induct rule: simple_game.plays_for_strategy.induct[OF subassms(1)])
     case 1
     then show ?case unfolding player1_wins_def using assms(3) by auto
   next
     case (2 n0 play)
-    hence "\<not> cs_game_defender_node (strategy_from_coupledsim R (n0 # play))"
+    hence \<open>\<not> cs_game_defender_node (strategy_from_coupledsim R (n0 # play))\<close>
       using cs_game_moves_no_step cs_game_defender_node.elims(2) by metis
-    hence "\<not>  player1_wins (strategy_from_coupledsim R (n0 # play) # n0 # play)"
+    hence \<open>\<not>  player1_wins (strategy_from_coupledsim R (n0 # play) # n0 # play)\<close>
       unfolding player1_wins_def by auto
     thus ?case using 2(6) by auto
   next
     case (3 n1 play n1')
-    then obtain p q where n1_def: "n1 = AttackerNode p q"
+    then obtain p q where n1_def: \<open>n1 = AttackerNode p q\<close>
       unfolding player1_position_def using cs_game_defender_node.elims(3) by blast
-    hence "R p q"
-      using strategy_from_coupledsim_retains_coupledsim[OF assms, of "n1 # play"] 3(1) by auto
-    have "(\<exists> p1 a . n1' = (DefenderStepNode a p1 q) \<and> (p \<longmapsto> a p1))
-        \<or> n1' = (DefenderCouplingNode p q)"
+    hence \<open>R p q\<close>
+      using strategy_from_coupledsim_retains_coupledsim[OF assms, of \<open>n1 # play\<close>] 3(1) by auto
+    have \<open>(\<exists> p1 a . n1' = (DefenderStepNode a p1 q) \<and> (p \<longmapsto>a p1))
+        \<or> n1' = (DefenderCouplingNode p q)\<close>
       using n1_def `cs_game_moves n1 n1'` coupling_challenge cs_game_moves_no_step(5)
         simulation_challenge
       by (metis cs_game_defender_node.elims(2, 3))
     then show ?case
     proof 
-      assume "(\<exists> p1 a . n1' = (DefenderStepNode a p1 q) \<and> (p \<longmapsto> a p1))"
+      assume \<open>(\<exists> p1 a . n1' = (DefenderStepNode a p1 q) \<and> (p \<longmapsto>a p1))\<close>
       then obtain p1 a where 
-        n1'_def: "n1' = (DefenderStepNode a p1 q)" "p \<longmapsto> a p1"
+        n1'_def: \<open>n1' = (DefenderStepNode a p1 q)\<close> \<open>p \<longmapsto>a p1\<close>
         by blast
-      hence "\<exists> q1 . q \<longmapsto>^ a q1" 
+      hence \<open>\<exists> q1 . q \<Rightarrow>^a q1\<close> 
         using `R p q` `coupled_simulation R` unfolding coupled_simulation_def by blast
-      hence "\<exists> q1 . cs_game_moves (DefenderStepNode a p1 q) (AttackerNode p1 q1)"
+      hence \<open>\<exists> q1 . cs_game_moves (DefenderStepNode a p1 q) (AttackerNode p1 q1)\<close>
         by auto
       with `player1_wins (n1' # n1 # play)` show False unfolding player1_wins_def n1'_def
         by (metis list.sel(1))
     next
-      assume n1'_def: "n1' = DefenderCouplingNode p q"
-      have "\<exists> q1 . q \<longmapsto>*tau q1" 
+      assume n1'_def: \<open>n1' = DefenderCouplingNode p q\<close>
+      have \<open>\<exists> q1 . q \<longmapsto>*tau q1\<close> 
         using `coupled_simulation R` `R p q` unfolding coupled_simulation_def by blast
-      hence "\<exists> q1 . cs_game_moves (DefenderCouplingNode p q) (AttackerNode q1 p)"
+      hence \<open>\<exists> q1 . cs_game_moves (DefenderCouplingNode p q) (AttackerNode q1 p)\<close>
         by auto
       with `player1_wins (n1' # n1 # play)` show False unfolding player1_wins_def n1'_def
         by (metis list.sel(1))
@@ -277,89 +277,89 @@ subsection \<open>Winning Strategy Induces Coupled Simulation\<close>
 
 lemma winning_strategy_implies_coupledsim:
   assumes
-    "player0_winning_strategy f"
-    "sound_strategy f"
+    \<open>player0_winning_strategy f\<close>
+    \<open>sound_strategy f\<close>
   defines
-    "R == \<lambda> p q . (\<exists> play \<in> plays_for_strategy f . hd play = AttackerNode p q)"
+    \<open>R == \<lambda> p q . (\<exists> play \<in> plays_for_strategy f . hd play = AttackerNode p q)\<close>
   shows
-    "coupled_simulation R"
+    \<open>coupled_simulation R\<close>
   unfolding coupled_simulation_def
 proof safe
   fix p q p' a
   assume challenge:
-    "R p q"
-    "p \<longmapsto>a  p'"
-  hence game_move: "cs_game_moves (AttackerNode p q) (DefenderStepNode a p' q)" by auto
-  have "(\<exists> play \<in> plays_for_strategy f . hd play = AttackerNode p q)"
+    \<open>R p q\<close>
+    \<open>p \<longmapsto>a  p'\<close>
+  hence game_move: \<open>cs_game_moves (AttackerNode p q) (DefenderStepNode a p' q)\<close> by auto
+  have \<open>(\<exists> play \<in> plays_for_strategy f . hd play = AttackerNode p q)\<close>
     using challenge(1) assms by blast
   then obtain play where
-      play_spec: "AttackerNode p q # play \<in> plays_for_strategy f"
+      play_spec: \<open>AttackerNode p q # play \<in> plays_for_strategy f\<close>
     by (metis list.sel(1) simple_game.plays.cases strategy_plays_subset)
-  hence interplay: "(DefenderStepNode a p' q) # AttackerNode p q # play \<in> plays_for_strategy f"
+  hence interplay: \<open>(DefenderStepNode a p' q) # AttackerNode p q # play \<in> plays_for_strategy f\<close>
     using game_move by (simp add: player1_position_def simple_game.plays_for_strategy.p1move)
-  hence "\<not> player1_wins ((DefenderStepNode a p' q) # AttackerNode p q # play)"
+  hence \<open>\<not> player1_wins ((DefenderStepNode a p' q) # AttackerNode p q # play)\<close>
     using assms(1) unfolding player0_winning_strategy_def by blast
   then obtain n1 where n1_def:
-      "n1 = f (DefenderStepNode a p' q # AttackerNode p q # play)"
-      "cs_game_moves (DefenderStepNode a p' q) n1"
+      \<open>n1 = f (DefenderStepNode a p' q # AttackerNode p q # play)\<close>
+      \<open>cs_game_moves (DefenderStepNode a p' q) n1\<close>
     using interplay assms(2) unfolding player0_winning_strategy_def sound_strategy_def by simp
   obtain q' where q'_spec:
-      "(AttackerNode p' q') = n1" "q \<longmapsto>^ a q'"
+      \<open>(AttackerNode p' q') = n1\<close> \<open>q \<Rightarrow>^a q'\<close>
     using n1_def(2) by (cases n1, auto)
-  hence "(AttackerNode p' q') # (DefenderStepNode a p' q) # AttackerNode p q # play
-      \<in> plays_for_strategy f"
+  hence \<open>(AttackerNode p' q') # (DefenderStepNode a p' q) # AttackerNode p q # play
+      \<in> plays_for_strategy f\<close>
     using interplay n1_def by (simp add: simple_game.plays_for_strategy.p0move)
-  hence "R p' q'" unfolding R_def by (meson list.sel(1))
-  thus "\<exists>q'. R p' q' \<and> q \<longmapsto>^ a  q'" using q'_spec(2) by blast
+  hence \<open>R p' q'\<close> unfolding R_def by (meson list.sel(1))
+  thus \<open>\<exists>q'. R p' q' \<and> q \<Rightarrow>^a  q'\<close> using q'_spec(2) by blast
 next
   fix p q 
   assume challenge:
-    "R p q"
-  hence game_move: "cs_game_moves (AttackerNode p q) (DefenderCouplingNode p q)" by auto
-  have "(\<exists> play \<in> plays_for_strategy f . hd play = AttackerNode p q)"
+    \<open>R p q\<close>
+  hence game_move: \<open>cs_game_moves (AttackerNode p q) (DefenderCouplingNode p q)\<close> by auto
+  have \<open>(\<exists> play \<in> plays_for_strategy f . hd play = AttackerNode p q)\<close>
     using challenge assms by blast
   then obtain play where
-      play_spec: "AttackerNode p q # play \<in> plays_for_strategy f"
+      play_spec: \<open>AttackerNode p q # play \<in> plays_for_strategy f\<close>
     by (metis list.sel(1) simple_game.plays.cases strategy_plays_subset)
-  hence interplay: "(DefenderCouplingNode p q) # AttackerNode p q # play
-      \<in> plays_for_strategy f"
+  hence interplay: \<open>(DefenderCouplingNode p q) # AttackerNode p q # play
+      \<in> plays_for_strategy f\<close>
     using game_move by (simp add: player1_position_def simple_game.plays_for_strategy.p1move)
-  hence "\<not> player1_wins ((DefenderCouplingNode p q) # AttackerNode p q # play)"
+  hence \<open>\<not> player1_wins ((DefenderCouplingNode p q) # AttackerNode p q # play)\<close>
     using assms(1) unfolding player0_winning_strategy_def by blast
   then obtain n1 where n1_def:
-      "n1 = f (DefenderCouplingNode p q # AttackerNode p q # play)"
-      "cs_game_moves (DefenderCouplingNode p q) n1"
+      \<open>n1 = f (DefenderCouplingNode p q # AttackerNode p q # play)\<close>
+      \<open>cs_game_moves (DefenderCouplingNode p q) n1\<close>
     using interplay assms(2)
     unfolding player0_winning_strategy_def sound_strategy_def by simp
   obtain q' where q'_spec:
-      "(AttackerNode q' p) = n1" "q \<longmapsto>* tau q'"
+      \<open>(AttackerNode q' p) = n1\<close> \<open>q \<longmapsto>* tau q'\<close>
     using n1_def(2) by (cases n1, auto)
-  hence "(AttackerNode q' p) # (DefenderCouplingNode p q) # AttackerNode p q # play
-      \<in> plays_for_strategy f"
+  hence \<open>(AttackerNode q' p) # (DefenderCouplingNode p q) # AttackerNode p q # play
+      \<in> plays_for_strategy f\<close>
     using interplay n1_def by (simp add: simple_game.plays_for_strategy.p0move)
-  hence "R q' p" unfolding R_def by (meson list.sel(1))
-  thus "\<exists>q'. q \<longmapsto>* tau  q' \<and> R q' p" using q'_spec(2) by blast
+  hence \<open>R q' p\<close> unfolding R_def by (meson list.sel(1))
+  thus \<open>\<exists>q'. q \<longmapsto>* tau  q' \<and> R q' p\<close> using q'_spec(2) by blast
 qed
 
 theorem winning_strategy_iff_coupledsim:
   assumes
-    "initial = AttackerNode p q"
+    \<open>initial = AttackerNode p q\<close>
   shows 
-    "(\<exists> f . player0_winning_strategy f \<and> sound_strategy f)
-    = p \<sqsubseteq>cs q"
+    \<open>(\<exists> f . player0_winning_strategy f \<and> sound_strategy f)
+    = p \<sqsubseteq>cs q\<close>
 proof (rule)
   assume
-    "(\<exists>f. player0_winning_strategy f \<and> sound_strategy f)"
+    \<open>(\<exists>f. player0_winning_strategy f \<and> sound_strategy f)\<close>
   then obtain f where
-    "coupled_simulation (\<lambda>p q. \<exists>play\<in>plays_for_strategy f. hd play = AttackerNode p q)"
+    \<open>coupled_simulation (\<lambda>p q. \<exists>play\<in>plays_for_strategy f. hd play = AttackerNode p q)\<close>
     using winning_strategy_implies_coupledsim by blast
-  moreover have "(\<lambda>p q. \<exists>play\<in>plays_for_strategy f. hd play = AttackerNode p q) p q"
+  moreover have \<open>(\<lambda>p q. \<exists>play\<in>plays_for_strategy f. hd play = AttackerNode p q) p q\<close>
     using assms plays_for_strategy.init[of f] by (meson list.sel(1))
-  ultimately show "p \<sqsubseteq>cs q" by blast
+  ultimately show \<open>p \<sqsubseteq>cs q\<close> by blast
 next
   assume
-    "p \<sqsubseteq>cs  q"
-  thus "(\<exists>f. player0_winning_strategy f \<and> sound_strategy f)"
+    \<open>p \<sqsubseteq>cs  q\<close>
+  thus \<open>(\<exists>f. player0_winning_strategy f \<and> sound_strategy f)\<close>
     using coupledsim_implies_winning_strategy[OF _ _ assms]
           strategy_from_coupledsim_sound[OF _ _ assms] by blast
 qed

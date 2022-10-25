@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: Linear-Time—Branching-Time Spectroscope
+authors:
+  - family-names: Bisping
+    given-names: Benjamin
+    orcid: https://orcid.org/0000-0002-0637-0171
+version: v0.1.0
+date-released: 2019-03-12
+identifiers:
+  - description: "Isabelle/HOL proof and Apache Flink program for TACAS 2019 paper: Computing Coupled Similarity"
+    type: doi
+    value: "10.6084/m9.figshare.7831382.v1"
+license: MIT
+repository-code: "https://github.com/benkeks/coupled-similarity"
+preferred-citation:
+  type: conference-paper
+  authors:
+  - family-names: Bisping
+    given-names: Benjamin
+    orcid: https://orcid.org/0000-0002-0637-0171
+  - family-names: Nestmann
+    given-names: Uwe
+    orcid: https://orcid.org/0000-0002-8520-5448
+  doi: "10.1007/978-3-030-17462-0_14"
+  title: "Computing Coupled Similarity"
+  year: 2019
+  conference:
+      name: "Tools and Algorithms for the Construction and Analysis of Systems 2019"
